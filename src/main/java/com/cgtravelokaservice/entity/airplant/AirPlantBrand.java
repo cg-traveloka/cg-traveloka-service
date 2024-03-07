@@ -19,7 +19,7 @@ public class AirPlantBrand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    private String names;
     @ManyToOne
     @JoinColumn(name = "partner_id", referencedColumnName = "id")
     private Partner partner;
