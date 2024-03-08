@@ -1,0 +1,16 @@
+{
+  "hotelName": "Khách sạn Hoàng Kim",
+  "description": "Khách sạn được xây dựng từ những năm 1980, được vinh hạnh đón tiếp các nhân vật tầm cỡ như tổng thống Obama, tổng thống Vladimir Putin.",
+  "hotelStar": 3.5,
+  "address": "Khu dân cư Hoàng Kim, Tp.HCM",
+  "cityId": 36,
+  "utilitiesId": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ]
+}
