@@ -1,6 +1,6 @@
 package com.cgtravelokaservice;
 
-import com.cgtravelokaservice.service.EmailService;
+import com.cgtravelokaservice.service.implement.EmailService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

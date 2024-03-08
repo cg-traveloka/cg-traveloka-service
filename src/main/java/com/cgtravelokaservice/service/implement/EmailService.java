@@ -1,4 +1,4 @@
-package com.cgtravelokaservice.service;
+package com.cgtravelokaservice.service.implement;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
