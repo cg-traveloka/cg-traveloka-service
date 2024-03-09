@@ -1,6 +1,5 @@
 package com.cgtravelokaservice.service.implement;
 
-import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
 import com.cgtravelokaservice.service.IImageService;
@@ -16,20 +15,12 @@ public class AirplaneBrandService implements IAirplaneBrandService {
     }
 
     @Override
-    public AirPlantBrand convertToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
-        AirPlantBrand brand = new AirPlantBrand();
-        brand.setName(airplaneBrandDto.getName());
-        brand.setLogoUrl(String.valueOf(airplaneBrandDto.getLogoUrl()));
-        return brand;
-    }
-
-    @Override
     public boolean setLogoUrl(AirPlantBrand airPlantBrand, MultipartFile logoUrl) {
         try {
             String url = imageService.save(logoUrl);
-            AirPlantBrand brand = new AirPlantBrand();
-            brand.setLogoUrl(url);
+            airPlantBrand.setLogoUrl(url);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
