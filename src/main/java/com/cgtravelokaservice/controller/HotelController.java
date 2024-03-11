@@ -7,7 +7,7 @@ import com.cgtravelokaservice.repo.HotelHotelUtilityRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
 import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IHotelUtilityService;
-import com.cgtravelokaservice.util.implement.ConvertUtility;
+import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -30,7 +30,7 @@ public class HotelController {
     @Autowired
     HotelHotelUtilityRepo hotelHotelUtilityRepo;
     @Autowired
-    ConvertUtility convertUtility;
+    IConvertUtil convertUtility;
 
     @PostMapping(value = "/api/hotels", consumes = "multipart/form-data")
     public ResponseEntity <?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
