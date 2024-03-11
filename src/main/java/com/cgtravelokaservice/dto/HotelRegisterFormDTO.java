@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotelRegisterForm implements Serializable {
+public class HotelRegisterFormDTO implements Serializable {
     @NotBlank
     private String hotelName;
     @NotBlank
