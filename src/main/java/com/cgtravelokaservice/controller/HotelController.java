@@ -1,12 +1,13 @@
 package com.cgtravelokaservice.controller;
 
-import com.cgtravelokaservice.dto.HotelRegisterForm;
+import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelHotelUtility;
 import com.cgtravelokaservice.repo.HotelHotelUtilityRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
 import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IHotelUtilityService;
+import com.cgtravelokaservice.util.implement.ConvertUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,12 +29,14 @@ public class HotelController {
     IHotelUtilityService hotelUtilityService;
     @Autowired
     HotelHotelUtilityRepo hotelHotelUtilityRepo;
+    @Autowired
+    ConvertUtility convertUtility;
 
     @PostMapping(value = "/api/hotels", consumes = "multipart/form-data")
-    public ResponseEntity <?> registerHotel(@Validated @ModelAttribute HotelRegisterForm hotelRegisterForm, BindingResult bindingResult) {
+    public ResponseEntity <?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
 //        Tạo data bảng hotel
         Hotel hotel =
-                hotelService.convertToNewHotel(hotelRegisterForm);
+                convertUtility.hotelRegisterFormToHotel(hotelRegisterForm);
         hotel = hotelRepo.saveAndFlush(hotel);
 
 //        Tạo data bảng tiện ích - hotel

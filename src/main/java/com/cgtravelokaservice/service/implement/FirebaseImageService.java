@@ -37,9 +37,9 @@ public class FirebaseImageService implements IImageService {
 
             FirebaseOptions options =
                     new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream())).setStorageBucket(properties.getBucketName()).build();
-
-            FirebaseApp.initializeApp(options);
-
+            if (FirebaseApp.getApps().isEmpty()) { //<--- check with this line
+                FirebaseApp.initializeApp(options);
+            }
         } catch (Exception ex) {
 
             ex.printStackTrace();
