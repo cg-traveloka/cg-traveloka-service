@@ -39,13 +39,17 @@ public class FirebaseImageService implements IImageService {
             FirebaseOptions options =
                     new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream())).setStorageBucket(properties.getBucketName()).build();
 
+
             FirebaseApp.initializeApp(options);
             firebaseInitialized=true;
 
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+
+
         } catch (Exception ex) {
-
             ex.printStackTrace();
-
         }
     }
 
@@ -66,9 +70,7 @@ public class FirebaseImageService implements IImageService {
         Blob blob =
                 bucket.create(name, file.getBytes(), file.getContentType());
 
-        String url =
-                properties.getImageUrl() + "o/" + blob.getName() + "?alt=media";
-        return url;
+        return properties.getImageUrl() + "o/" + blob.getName() + "?alt=media";
     }
 
     @Override
