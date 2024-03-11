@@ -5,7 +5,7 @@ import com.cgtravelokaservice.dto.request.ValidateCodeRequest;
 import com.cgtravelokaservice.entity.token.Token;
 import com.cgtravelokaservice.entity.user.User;
 import com.cgtravelokaservice.repo.UserRepo;
-import com.cgtravelokaservice.service.EmailService;
+import com.cgtravelokaservice.service.implement.EmailService;
 import com.cgtravelokaservice.service.IUserService;
 import com.cgtravelokaservice.service.implement.TokenService;
 import com.cgtravelokaservice.service.implement.TokenTypeService;
