@@ -1,11 +1,15 @@
 package com.cgtravelokaservice.util.implement;
 
 import com.cgtravelokaservice.dto.AirplaneBrandDto;
+import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
+import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
+import com.cgtravelokaservice.repo.AirportLocationRepo;
 import com.cgtravelokaservice.repo.BedTypeRepo;
 import com.cgtravelokaservice.repo.CityRepo;
 import com.cgtravelokaservice.repo.HotelImgRepo;
@@ -35,6 +39,11 @@ public class ConvertUtil implements IConvertUtil {
     HotelRepo hotelRepo;
     @Autowired
     BedTypeRepo bedTypeRepo;
+    @Autowired
+    private AirportLocationRepo
+            airportLocationRepo;
+    @Autowired
+    private AirplaneBrandRepo airplaneBrandRepo;
 
     @Override
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
@@ -45,6 +54,7 @@ public class ConvertUtil implements IConvertUtil {
         airplaneBrandService.setLogoUrl(brand, logoUrl);
         return brand;
     }
+
 
     public Hotel hotelRegisterFormToHotel(HotelRegisterFormDTO hotelRegisterForm) {
         Hotel hotel = new Hotel();
@@ -68,5 +78,17 @@ public class ConvertUtil implements IConvertUtil {
         room.setUnitPriceOrigin(roomRegisterFormDTO.getUnitPriceOrigin());
         room.setUnitPriceSell(roomRegisterFormDTO.getUnitPriceSell());
         return room;
+    }
+
+    @Override
+    public FlightInformation convertToNewFlightInformation(FlightInformationDto flightInformationDto) {
+        FlightInformation flightInformation =
+                new FlightInformation();
+        flightInformation.setStartTime(flightInformationDto.getStartTime());
+        flightInformation.setEndTime(flightInformationDto.getEndTime());
+        flightInformation.setFromAirPortLocation(airportLocationRepo.getReferenceById(flightInformationDto.getFromAirportLocationId()));
+        flightInformation.setToAirPortLocation(airportLocationRepo.getReferenceById(flightInformationDto.getToAirportLocationId()));
+        flightInformation.setAirPlantBrand(airplaneBrandRepo.getReferenceById(flightInformationDto.getAirplaneBrandId()));
+        return flightInformation;
     }
 }

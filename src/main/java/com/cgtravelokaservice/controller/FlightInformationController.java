@@ -11,16 +11,20 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.cgtravelokaservice.util.implement.ConvertUtil;
 
 @RestController
 public class FlightInformationController {
     private final FlightInformationService flightInformationService;
     private final SeatService seatService;
 
+    private final ConvertUtil convertUtil;
+
     @Autowired
-    public FlightInformationController(FlightInformationService flightInformationService, SeatService seatService) {
+    public FlightInformationController(FlightInformationService flightInformationService, SeatService seatService, ConvertUtil convertUtil) {
         this.flightInformationService = flightInformationService;
         this.seatService = seatService;
+        this.convertUtil = convertUtil;
     }
 
     @PostMapping(value = "/api/flights", consumes = "application/json")
@@ -28,7 +32,7 @@ public class FlightInformationController {
     public ResponseEntity<?> createFlightAndSeats(@Validated @RequestBody FlightInformationDto flightInformationDto) {
         try {
             // Tạo thông tin chuyến bay
-            FlightInformation flightInformation = flightInformationService.convertToNewFlightInformation(flightInformationDto);
+            FlightInformation flightInformation = convertUtil.convertToNewFlightInformation(flightInformationDto);
             // Lưu thông tin chuyến bay vào cơ sở dữ liệu
             flightInformationService.saveFlightInformation(flightInformation);
 
