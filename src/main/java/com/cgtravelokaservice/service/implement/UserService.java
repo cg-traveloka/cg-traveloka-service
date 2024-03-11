@@ -1,10 +1,14 @@
 package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.UserDTO;
+import com.cgtravelokaservice.entity.user.Customer;
+import com.cgtravelokaservice.entity.user.Partner;
 import com.cgtravelokaservice.entity.user.Role;
 import com.cgtravelokaservice.entity.user.User;
 import com.cgtravelokaservice.entity.user.UserPrinciple;
 import com.cgtravelokaservice.entity.user.UserRole;
+import com.cgtravelokaservice.repo.CustomerRepo;
+import com.cgtravelokaservice.repo.PartnerRepo;
 import com.cgtravelokaservice.repo.RoleRepo;
 import com.cgtravelokaservice.repo.UserRepo;
 import com.cgtravelokaservice.service.IUserService;
@@ -37,6 +41,12 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private RoleRepo roleRepo;
+
+    @Autowired
+    private PartnerRepo partnerRepo;
+
+    @Autowired
+    private CustomerRepo customerRepo;
 
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -78,6 +88,16 @@ public class UserService implements UserDetailsService, IUserService {
             userRoles.add(userRole);
             user.setUserRoles(userRoles);
             userRepo.save(user);
+            if (role.equalsIgnoreCase("ROLE_PARTNER")) {
+                Partner partner = new Partner();
+                partner.setUser(user);
+                partnerRepo.save(partner);
+            }
+            if (role.equalsIgnoreCase("ROLE_CUSTOMER")) {
+                Customer customer = new Customer();
+                customer.setUser(user);
+                customerRepo.save(customer);
+            }
             return true;
 
         } catch (Exception e) {
@@ -85,6 +105,8 @@ public class UserService implements UserDetailsService, IUserService {
             return false;
         }
     }
+
+
 
     @Override
     public boolean updateUserPass(String username, String newPass) {

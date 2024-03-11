@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -19,6 +20,9 @@ public class UserDTO {
     private String phone;
     private boolean enable;
     private boolean isActive;
-    private Set<UserRole> userRoles;
-    private Set<UserProvider> userProvider;
+//    private Set<UserRole> userRoles;
+//    private Set<UserProvider> userProvider;
+    private String name;
+    private LocalDate dateOfBirth;
+    private String gender;
 }

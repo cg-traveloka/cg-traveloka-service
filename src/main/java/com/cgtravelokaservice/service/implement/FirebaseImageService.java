@@ -21,6 +21,7 @@ import java.io.IOException;
 
 @Service
 public class FirebaseImageService implements IImageService {
+    private static boolean firebaseInitialized = false;
 
     @Autowired
     FireBaseProperties properties;
@@ -39,6 +40,7 @@ public class FirebaseImageService implements IImageService {
                     new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream())).setStorageBucket(properties.getBucketName()).build();
 
             FirebaseApp.initializeApp(options);
+            firebaseInitialized=true;
 
         } catch (Exception ex) {
 

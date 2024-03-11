@@ -1,13 +1,14 @@
+
 {
-  "type": "service_account",
-  "project_id": "mazii-dictionary",
-  "private_key_id": "94b6ebee02769765be21a4eafac734ceed649afb",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCRxMDm3HyBqBts\nUCujOPbyEg6cwCf65nSjE8p3j2YV1JzqBvHTtINnTF7+qrfXaIdij8yq1yXqh9xF\nbJe1EkAWnp8V/I10iTWVZ1w6tcgfVVrdovEf9C3QtTt8vz2LoDz+hIlCRTrqLfqo\nDPtAeq2nen6Ro4sawwBaUEBmnASH0cWfXXB/YodY2ruxjaUF6dXTa06JuNtXvSaH\nWy5FV7ULraZaPh6+/wAZwZ9HHVTK2XiF2nMF9wwS8suBDyKsmOCyq6vXUuoExbgR\ndDHKs4MKbP/1bir3PYRUj0gN9a76LauyGg9nladBkL6TXeOYxz7n/BbFPWEdAXyS\n8EifZBlzAgMBAAECggEAMVApnjA7IrXXSSY6DQbpa+016kuLevLZxI2eciId/Aao\navecee1YguqwPGFOvl3LZ0mUiLsuRZBesVHSZNxeuAhDc3Gz/Rep+/gymF4E7Ky4\nh8Bm6FN36GJXVJVx4bl8yPHXaYb4Ll8NrCpwGVknREBJb0Wveoc7qFH753qigbuv\n63zT+B9ob0AwUjHg3lj93pCi9TwqyXAth0PiNMz/0saL26qyGdLcS+uZRRDyiM6v\nhlYsaeD4r3u1WtXufqaJ9Sy2ykGNA+UOf8fY8xIg5LL9hhzUoC6gaT4q/r67DVOL\necpNnao5XOhE2t43f5w5F9G6ES8QujETF28xg6n3YQKBgQDGLFil6d1fFtnrb88P\neMSYr1a1VOix0F/Iy4O2ZO07DYA8UYqwa7xq9j+3WZDFVUzFT55pY2qU8XmJLQVO\nSZ4UEOzEgU061xelWPdVFWcwK4+fnqH9v2fZADKLoK+w1JOwGNeAhBcyNbcMvMZ4\nCovxDgXAQZRPO9jRZBqwCBehQwKBgQC8Tb/Ik1Ve9UTLGkOofyoEQYHG946QzmZf\ndewS0wT8cvqLRjQNJ4uIXuSUxegy7WyM6VZpuawP2kLactpehgveqM3zBYPopAsi\nYTbkjJ5W+LsC0mNwuC8UUw0BANG4fz4V6NeBOrgNKO3Su6QPOCSwDg0WCf4B/Qjg\nqTaxL9vMEQKBgG+iT5W29iM4xi2gYG4AxA6WxyuC10pDbZG5Q0sd851Ob6yK6quT\nJSLD8QSiCbF/6a1EuqH3hPS+So6Bs/lz8v6uwhG4HP9GZ2WXhkyBsA0snM14GRzO\nE/vj5pVNQWtFdKTAebVFs6NvKtycAtlgZ5C1K3wv9RHlTrA1yerbxCPtAoGBALL2\necVZMZP0KxOUvKTRZs9wqrS85wP9BhLH8jvZzi1X4YKokCPIZ7aN6VTz2sE8ISSz\nR2toCX1vhIY1DhEz+Of/Ku1DWqCp9+MO3arNcldaQfJmnhetFSGN5RgE/U0JsaoF\nB3xMoEvxkEXuC/hi9YtVb1541K5zHBLY/5/aylzhAoGBALRrWqxNFGzQJGpmiKGr\n7VPuURIOsYgTNRfKBeJ66n30+vrar1KkWCjH4x7635KOmKtHJL0/wK4KCtwr3bjr\nrFXB92VtxbzGliefnQomgS6kuLdw9/XbmCjzjkGcrDZ8TYJ4VCpmJOpOPjxIVCmH\nKWTO5wQXLeX2NOZVBQbZOmTo\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-xbwqg@mazii-dictionary.iam.gserviceaccount.com",
-  "client_id": "102979375506554006329",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xbwqg%40mazii-dictionary.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+"type": "service_account",
+"project_id": "mazii-dictionary",
+"private_key_id": "94b6ebee02769765be21a4eafac734ceed649afb",
+"private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCRxMDm3HyBqBts\nUCujOPbyEg6cwCf65nSjE8p3j2YV1JzqBvHTtINnTF7+qrfXaIdij8yq1yXqh9xF\nbJe1EkAWnp8V/I10iTWVZ1w6tcgfVVrdovEf9C3QtTt8vz2LoDz+hIlCRTrqLfqo\nDPtAeq2nen6Ro4sawwBaUEBmnASH0cWfXXB/YodY2ruxjaUF6dXTa06JuNtXvSaH\nWy5FV7ULraZaPh6+/wAZwZ9HHVTK2XiF2nMF9wwS8suBDyKsmOCyq6vXUuoExbgR\ndDHKs4MKbP/1bir3PYRUj0gN9a76LauyGg9nladBkL6TXeOYxz7n/BbFPWEdAXyS\n8EifZBlzAgMBAAECggEAMVApnjA7IrXXSSY6DQbpa+016kuLevLZxI2eciId/Aao\navecee1YguqwPGFOvl3LZ0mUiLsuRZBesVHSZNxeuAhDc3Gz/Rep+/gymF4E7Ky4\nh8Bm6FN36GJXVJVx4bl8yPHXaYb4Ll8NrCpwGVknREBJb0Wveoc7qFH753qigbuv\n63zT+B9ob0AwUjHg3lj93pCi9TwqyXAth0PiNMz/0saL26qyGdLcS+uZRRDyiM6v\nhlYsaeD4r3u1WtXufqaJ9Sy2ykGNA+UOf8fY8xIg5LL9hhzUoC6gaT4q/r67DVOL\necpNnao5XOhE2t43f5w5F9G6ES8QujETF28xg6n3YQKBgQDGLFil6d1fFtnrb88P\neMSYr1a1VOix0F/Iy4O2ZO07DYA8UYqwa7xq9j+3WZDFVUzFT55pY2qU8XmJLQVO\nSZ4UEOzEgU061xelWPdVFWcwK4+fnqH9v2fZADKLoK+w1JOwGNeAhBcyNbcMvMZ4\nCovxDgXAQZRPO9jRZBqwCBehQwKBgQC8Tb/Ik1Ve9UTLGkOofyoEQYHG946QzmZf\ndewS0wT8cvqLRjQNJ4uIXuSUxegy7WyM6VZpuawP2kLactpehgveqM3zBYPopAsi\nYTbkjJ5W+LsC0mNwuC8UUw0BANG4fz4V6NeBOrgNKO3Su6QPOCSwDg0WCf4B/Qjg\nqTaxL9vMEQKBgG+iT5W29iM4xi2gYG4AxA6WxyuC10pDbZG5Q0sd851Ob6yK6quT\nJSLD8QSiCbF/6a1EuqH3hPS+So6Bs/lz8v6uwhG4HP9GZ2WXhkyBsA0snM14GRzO\nE/vj5pVNQWtFdKTAebVFs6NvKtycAtlgZ5C1K3wv9RHlTrA1yerbxCPtAoGBALL2\necVZMZP0KxOUvKTRZs9wqrS85wP9BhLH8jvZzi1X4YKokCPIZ7aN6VTz2sE8ISSz\nR2toCX1vhIY1DhEz+Of/Ku1DWqCp9+MO3arNcldaQfJmnhetFSGN5RgE/U0JsaoF\nB3xMoEvxkEXuC/hi9YtVb1541K5zHBLY/5/aylzhAoGBALRrWqxNFGzQJGpmiKGr\n7VPuURIOsYgTNRfKBeJ66n30+vrar1KkWCjH4x7635KOmKtHJL0/wK4KCtwr3bjr\nrFXB92VtxbzGliefnQomgS6kuLdw9/XbmCjzjkGcrDZ8TYJ4VCpmJOpOPjxIVCmH\nKWTO5wQXLeX2NOZVBQbZOmTo\n-----END PRIVATE KEY-----\n",
+"client_email": "firebase-adminsdk-xbwqg@mazii-dictionary.iam.gserviceaccount.com",
+"client_id": "102979375506554006329",
+"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+"token_uri": "https://oauth2.googleapis.com/token",
+"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xbwqg%40mazii-dictionary.iam.gserviceaccount.com",
+"universe_domain": "googleapis.com"
 }
