@@ -24,6 +24,8 @@ public class SeatInformation {
     @ManyToOne
     @JoinColumn(name = "seat_type_id", referencedColumnName = "id")
     private SeatType seatType;
+
     private Integer quantity;
+
     private Integer unitPrice;
 }
