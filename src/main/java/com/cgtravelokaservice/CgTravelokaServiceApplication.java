@@ -14,6 +14,5 @@ public class CgTravelokaServiceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CgTravelokaServiceApplication.class, args);
-
     }
 }
