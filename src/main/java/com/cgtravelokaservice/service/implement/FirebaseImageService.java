@@ -41,9 +41,7 @@ public class FirebaseImageService implements IImageService {
                 FirebaseApp.initializeApp(options);
             }
         } catch (Exception ex) {
-
             ex.printStackTrace();
-
         }
     }
 
@@ -64,9 +62,7 @@ public class FirebaseImageService implements IImageService {
         Blob blob =
                 bucket.create(name, file.getBytes(), file.getContentType());
 
-        String url =
-                properties.getImageUrl() + "o/" + blob.getName() + "?alt=media";
-        return url;
+        return properties.getImageUrl() + "o/" + blob.getName() + "?alt=media";
     }
 
     @Override
