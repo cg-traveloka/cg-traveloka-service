@@ -1,21 +1,23 @@
-package com.cgtravelokaservice.entity.user;
+package com.cgtravelokaservice.entity.token;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class TokenType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
+
     private String name;
 
+    public TokenType(String name) {
+        this.name = name;
+    }
 }
