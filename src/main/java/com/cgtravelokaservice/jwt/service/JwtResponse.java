@@ -1,11 +1,10 @@
-package com.codegym.jwt.service;
+package com.cgtravelokaservice.jwt.service;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 

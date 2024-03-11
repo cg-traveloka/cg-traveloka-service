@@ -1,7 +1,6 @@
-package com.cgtravelokaservice.entity;
+package com.cgtravelokaservice.entity.user;
 
-import com.codegym.model.entity.Role;
-import com.codegym.model.entity.User;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +24,8 @@ public class UserPrinciple implements UserDetails {
 
     public static UserPrinciple build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (UserRole userRole : user.getUserRoles()) {
+            authorities.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
         }
 
         return new UserPrinciple(

@@ -1,15 +1,15 @@
-package com.codegym.configuration;
+package com.cgtravelokaservice.security;
 
-import com.codegym.oauth.OAuthLoginSuccessHandler;
-import com.codegym.jwt.CustomAccessDeniedHandler;
-import com.codegym.jwt.JwtAuthenticationTokenFilter;
-import com.codegym.jwt.RestAuthenticationEntryPoint;
-import com.codegym.service.impl.CustomOAut2UserService;
-import com.codegym.service.impl.UserService;
+
+import com.cgtravelokaservice.jwt.CustomAccessDeniedHandler;
+import com.cgtravelokaservice.jwt.JwtAuthenticationTokenFilter;
+import com.cgtravelokaservice.jwt.RestAuthenticationEntryPoint;
+import com.cgtravelokaservice.oauth.OAuthLoginSuccessHandler;
+import com.cgtravelokaservice.service.implement.CustomOAut2UserService;
+import com.cgtravelokaservice.service.implement.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,12 +32,16 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Autowired
+    private OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
+
+    @Autowired
+    private CustomOAut2UserService oAut2UserService;
 
     @Bean
     public JwtAuthenticationTokenFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationTokenFilter();
     }
-
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -60,7 +64,6 @@ public class SecurityConfig {
         return authProvider;
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
@@ -82,28 +85,18 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((authorizeHttpRequests) ->
-                        authorizeHttpRequests
+                                authorizeHttpRequests
 //
-                                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                                .requestMatchers("/login", "/login/**", "/register/**", "/login/oauth2/**",
-                                        "/forgetPass/**", "/actuator/beans").permitAll()
-                                .requestMatchers("/logout").permitAll()
-                                .requestMatchers("/register", "/oauth2/**").permitAll()
-                                .requestMatchers("/error/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole(new String[]{"ADMIN", "USER"})
-                                .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("ADMIN")
-                                .anyRequest().authenticated()
-                )
-
-                .formLogin((formLogin) ->
-                        formLogin
-                                .usernameParameter("username")
-                                .passwordParameter("password")
-                                .loginPage("/login")
-                                .failureUrl("/login?error=true")
-                                .defaultSuccessUrl("/list")
-
+                                        .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
+                                        .requestMatchers("/login", "/login/**", "/register/**", "/login/oauth2/**",
+                                                "/forgetPass/**").permitAll()
+                                        .requestMatchers("/logout").permitAll()
+                                        .requestMatchers("/register", "/oauth2/**").permitAll()
+                                        .requestMatchers("/error/**").permitAll()
+//                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+//                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
+//                                        .anyRequest().authenticated(
+                                        .anyRequest().permitAll()
                 )
                 .oauth2Login(o -> o
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService))
@@ -126,12 +119,6 @@ public class SecurityConfig {
         return new InMemoryTokenRepositoryImpl();
     }
 
-    @Autowired
-    private OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
-
-
-    @Autowired
-    private CustomOAut2UserService oAut2UserService;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

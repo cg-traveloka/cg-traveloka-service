@@ -1,7 +1,8 @@
-package com.codegym.jwt.service;
+package com.cgtravelokaservice.jwt.service;
 
-import com.codegym.model.CustomOAuth2User;
-import com.codegym.model.UserPrinciple;
+
+import com.cgtravelokaservice.entity.user.CustomOAuth2User;
+import com.cgtravelokaservice.entity.user.UserPrinciple;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,7 +24,6 @@ public class JwtService {
         String username;
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
            username = ((UserPrinciple) authentication.getPrincipal()).getUsername();
-            System.out.println(username);
         } else {
             username = ((CustomOAuth2User) authentication.getPrincipal()).getEmail();
         }

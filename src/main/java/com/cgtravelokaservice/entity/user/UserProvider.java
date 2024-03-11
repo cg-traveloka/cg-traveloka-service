@@ -1,6 +1,6 @@
-package com.cgtravelokaservice.entity.token;
+package com.cgtravelokaservice.entity.user;
 
-import com.cgtravelokaservice.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,30 +11,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.sql.Timestamp;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-public class Token {
+public class UserProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String code;
     @ManyToOne
-    @JoinColumn(name = "token_type_id")
-    private TokenType type;
-    private Timestamp createdTime;
-    private Timestamp expiredTime;
-    private boolean status;
-    private String description;
+    @JoinColumn(name = "provider_id", referencedColumnName = "id")
+    private Provider provider;
     @ManyToOne
-    @JoinColumn(name = "user_email")
+    @JoinColumn(name = "user_email", referencedColumnName = "email")
+    @JsonBackReference
     private User user;
-}
 
+}

@@ -1,27 +1,27 @@
-package com.codegym.controller;
+package com.cgtravelokaservice.controller;
 
-import com.codegym.model.ForgetPassMail;
-import com.codegym.model.entity.Token;
-import com.codegym.model.entity.User;
-import com.codegym.repository.TokenTypeRepo;
-import com.codegym.service.impl.MailService;
-import com.codegym.service.impl.TokenService;
-import com.codegym.service.impl.TokenTypeService;
-import com.codegym.service.impl.UserService;
+import com.cgtravelokaservice.dto.request.EmailRequest;
+import com.cgtravelokaservice.dto.request.ResetPassRequest;
+import com.cgtravelokaservice.dto.request.ValidateCodeRequest;
+import com.cgtravelokaservice.entity.token.Token;
+import com.cgtravelokaservice.entity.user.User;
+import com.cgtravelokaservice.service.EmailService;
+import com.cgtravelokaservice.service.IUserService;
+import com.cgtravelokaservice.service.implement.TokenService;
+import com.cgtravelokaservice.service.implement.TokenTypeService;
+import com.cgtravelokaservice.util.RandomDigitsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.HttpSessionRequiredException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.thymeleaf.context.Context;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
+import java.sql.Timestamp;
 import java.util.Optional;
 
 
@@ -29,10 +29,10 @@ import java.util.Optional;
 @RequestMapping("/forgetPass")
 public class ForgetPassController {
     @Autowired
-    private MailService mailService;
+    private EmailService emailService;
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @Autowired
     private TokenService tokenService;
@@ -42,25 +42,25 @@ public class ForgetPassController {
 
 
     @PostMapping({"/sendCode", "/sendCodeAgain"})
-    public ResponseEntity<?> sendCode(@RequestBody String email, HttpServletRequest request) {
-        if (userService.checkValidUser(email)) {
-            HttpSession session = request.getSession();
-            session.setAttribute("emailForgetPass", email);
-            Optional<User> userOptional = userService.findValidUserByAccountName(email);
+    public ResponseEntity<?> sendCode(@RequestBody @Validated EmailRequest request) {
+        if (userService.checkValidUser(request.getEmail())) {
+            Optional<User> userOptional = userService.findValidUserByAccountName(request.getEmail());
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                tokenService.disableTokenByType(user.getId(), "FORGET_PASSWORD");
-                ForgetPassMail mail = new ForgetPassMail();
-                Token token = mail.getToken();
-                token.setUser(user);
-                token.setType(tokenTypeService.findByName("FORGET_PASSWORD").get());
+                tokenService.disableTokenByType(user.getEmail(), "FORGET_PASSWORD");
+                String code = RandomDigitsGenerator.generate(6);
+                Token token =
+                        Token.builder().code(code).user(user).createdTime(new Timestamp(System.currentTimeMillis())).
+                                expiredTime(new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000)).
+                                type(tokenTypeService.findByName("FORGET_PASSWORD").get()).status(true).build();
+
                 tokenService.add(token);
-                mailService.send(mail, email);
-                if (mailService.getSendingStatus()) {
-                    return ResponseEntity.ok("Send code success" + mail.getContent());
-                } else {
-                    return ResponseEntity.internalServerError().body("Can not send email");
-                }
+                Context context = new Context();
+                context.setVariable("message", code);
+                emailService.sendMail("Traveloka - Code for reset password", user.getEmail(), context, "email" +
+                        "-template");
+                return ResponseEntity.ok("Sent code for reset pass success. Code: " + code);
+
             } else {
                 return ResponseEntity.status(404).body("User not existed");
             }
@@ -70,8 +70,11 @@ public class ForgetPassController {
     }
 
     @PostMapping("/validateCode")
-    public ResponseEntity<?> validateCode(@RequestBody String code, @SessionAttribute("emailForgetPass") String email) {
-        if (tokenService.isTokenValid(email, code)) {
+    public ResponseEntity<?> validateCode(@RequestBody @Validated ValidateCodeRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Invalid request. Check regex or field name" + bindingResult.getFieldError());
+        }
+        if (tokenService.isTokenValid(request.getEmail(), request.getCode())) {
             return ResponseEntity.ok("Validate code success");
         } else {
             return ResponseEntity.badRequest().body("Validate code fail");
@@ -79,15 +82,16 @@ public class ForgetPassController {
     }
 
     @PostMapping("/resetPass")
-    public ResponseEntity<?> resetPass(@RequestBody String newPass, @SessionAttribute("emailForgetPass") String email) {
-            if (userService.updateUserPass(email, newPass)) {
-                return ResponseEntity.ok("Reset pass success");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during update user");
-            }
+    public ResponseEntity<?> resetPass(@RequestBody @Validated ResetPassRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Invalid request. Check regex or field name " + bindingResult.getAllErrors());
+        }
+        if (userService.updateUserPass(request.getEmail(), request.getNewPass())) {
+            return ResponseEntity.ok("Reset pass success");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during update user");
+        }
     }
-
-
 
 
 }

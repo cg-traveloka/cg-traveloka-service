@@ -1,26 +1,27 @@
-package com.codegym.service.impl;
+package com.cgtravelokaservice.service.implement;
 
-import com.codegym.model.entity.Token;
-import com.codegym.repository.TokenRepo;
+
+import com.cgtravelokaservice.entity.token.Token;
+import com.cgtravelokaservice.repo.TokenRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TokenService {
+public class TokenService implements com.cgtravelokaservice.service.ITokenService {
     @Autowired
     private TokenRepo tokenRepo;
 
-    private final long EXPIRED_TIME = 15 * 60 * 1000;
 
-    public List<Token> getTokenByUserIdAndTokenType(long userId, String tokenType) {
-        return tokenRepo.getByUser_IdAndType_Name(userId, tokenType);
+    @Override
+    public List<Token> getTokenByUserIdAndTokenType(String email, String tokenType) {
+        return tokenRepo.getByUser_EmailAndType_Name(email, tokenType);
     }
 
+    @Override
     public boolean isTokenValid(String email, String code) {
         Optional<Token> tokenOptional = tokenRepo.findByCode(code);
         if (tokenOptional.isPresent()) {
@@ -30,10 +31,9 @@ public class TokenService {
         return false;
     }
 
+    @Override
     public boolean add(Token token) {
         try {
-            token.setCreatedTime(new Timestamp(System.currentTimeMillis()));
-            token.setExpiredTime(new Timestamp(token.getCreatedTime().getTime() + EXPIRED_TIME));
             tokenRepo.save(token);
             return true;
         } catch (Exception e) {
@@ -42,8 +42,9 @@ public class TokenService {
         }
     }
 
-    public boolean disableTokenByType(long userId, String type) {
-        List<Token> tokens = getTokenByUserIdAndTokenType(userId, type);
+    @Override
+    public boolean disableTokenByType(String email, String type) {
+        List<Token> tokens = getTokenByUserIdAndTokenType(email, type);
         if (!tokens.isEmpty()) {
             for (Token token : tokens) {
                 token.setStatus(false);
@@ -52,6 +53,7 @@ public class TokenService {
         return true;
     }
 
+    @Override
     @Scheduled(fixedRate = 5000)
     public void clearToken() {
         tokenRepo.findAll().forEach(token -> {

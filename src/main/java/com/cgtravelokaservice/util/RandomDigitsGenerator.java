@@ -1,4 +1,4 @@
-package com.codegym.utils;
+package com.cgtravelokaservice.util;
 
 import java.util.Random;
 

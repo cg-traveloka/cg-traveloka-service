@@ -1,9 +1,12 @@
-package com.codegym.controller;
+package com.cgtravelokaservice.controller;
 
-import com.codegym.model.dto.UserDTO;
-import com.codegym.model.entity.Role;
-import com.codegym.model.request.SetRoleRequest;
-import com.codegym.service.impl.UserService;
+import com.cgtravelokaservice.dto.UserDTO;
+import com.cgtravelokaservice.dto.request.SetRoleRequest;
+import com.cgtravelokaservice.entity.user.User;
+import com.cgtravelokaservice.entity.user.UserRole;
+import com.cgtravelokaservice.repo.RoleRepo;
+import com.cgtravelokaservice.repo.UserRoleRepo;
+import com.cgtravelokaservice.service.implement.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +25,17 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
-
 public class UserController {
 
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRoleRepo userRoleRepo;
+
+    @Autowired
+    private RoleRepo roleRepo;
 
 
     /* ---------------- GET ALL USER ------------------------ */
@@ -38,41 +46,41 @@ public class UserController {
     }
 
     /* ---------------- GET USER BY ID ------------------------ */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-    public @ResponseBody UserDTO getUserById(@PathVariable Long id) {
-        Optional<UserDTO> user = userService.findById(id);
+    @RequestMapping(value = "/users/{email}", method = RequestMethod.GET)
+    public @ResponseBody UserDTO getUserById(@PathVariable String email) {
+        Optional<UserDTO> user = userService.findById(email);
         return user.orElse(null);
     }
 
-    /* ---------------- CREATE NEW USER ------------------------ */
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<String> createUser(@RequestBody UserDTO user) {
-        if (userService.add(user)) {
-            return new ResponseEntity<>("Created!", HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("User Existed!", HttpStatus.BAD_REQUEST);
-        }
-    }
 
     /* ---------------- DELETE USER ------------------------ */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
-        userService.delete(id);
+    @RequestMapping(value = "/users/{email}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteUserById(@PathVariable String email) {
+        userService.delete(email);
         return new ResponseEntity<>("Deleted!", HttpStatus.OK);
     }
 
 
-    @PostMapping("/setRole")
-    public ResponseEntity<?> check(@RequestBody SetRoleRequest request) {
-        Optional<UserDTO> userDTO = userService.findValidUserDTOByAccountName(request.getUsername());
-        if (userDTO.isPresent()) {
-            Set<Role> roles = userDTO.get().getRoles();
-            for (Role role : roles) {
-                if (role.getName().equals(request.getNewRole())) {
+    @PostMapping("/users/setRole")
+    public ResponseEntity<?> setRole(@RequestBody SetRoleRequest request) {
+        Optional<User> user = userService.findValidUserByAccountName(request.getUsername());
+        if (user.isPresent()) {
+            Set<UserRole> userRoles = user.get().getUserRoles();
+            for (UserRole userRole : userRoles) {
+                if (userRole.getRole().getName().equals(request.getNewRole().toUpperCase())) {
                     return ResponseEntity.badRequest().body("User already have this role");
                 }
             }
-            return ResponseEntity.ok("Update role success");
+            try {
+                UserRole userRole =
+                        UserRole.builder().user(user.get()).role(roleRepo.findByName(request.getNewRole().toUpperCase()).get()).build();
+                userRoleRepo.save(userRole);
+                return ResponseEntity.ok("Update role success " + roleRepo.findByName(request.getNewRole().toUpperCase()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.internalServerError().body("Error during saving user_role");
+            }
+
         } else {
             return ResponseEntity.status(406).body("User is not exist or user is not active");
         }

@@ -1,6 +1,6 @@
-package com.codegym.repository;
+package com.cgtravelokaservice.repo;
 
-import com.codegym.model.entity.TokenType;
+import com.cgtravelokaservice.entity.token.TokenType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

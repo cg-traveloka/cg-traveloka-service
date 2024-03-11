@@ -1,4 +1,4 @@
-package com.cgtravelokaservice.controller.request;
+package com.cgtravelokaservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

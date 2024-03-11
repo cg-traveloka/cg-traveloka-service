@@ -1,5 +1,6 @@
-package com.cgtravelokaservice.entity;
+package com.cgtravelokaservice.entity.user;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -8,6 +9,7 @@ import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User {
     private OAuth2User oauth2User;
+    @Getter
     private String oauth2ClientName;
 
     public CustomOAuth2User(OAuth2User oauth2User, String oauth2ClientName) {
@@ -34,9 +36,6 @@ public class CustomOAuth2User implements OAuth2User {
         return oauth2User.<String>getAttribute("email");
     }
 
-
-    public String getOauth2ClientName() {return this.oauth2ClientName;
-    }
 
     @Override
     public String toString() {

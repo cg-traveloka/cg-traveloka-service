@@ -1,12 +1,11 @@
-package com.codegym.controller;
+package com.cgtravelokaservice.controller;
 
-import com.codegym.jwt.service.JwtResponse;
-import com.codegym.jwt.service.JwtService;
-import com.codegym.model.CustomOAuth2User;
-import com.codegym.model.dto.UserDTO;
-import com.codegym.model.entity.User;
-import com.codegym.model.request.LoginRequest;
-import com.codegym.service.impl.UserService;
+import com.cgtravelokaservice.dto.UserDTO;
+import com.cgtravelokaservice.entity.user.CustomOAuth2User;
+import com.cgtravelokaservice.dto.request.LoginRequest;
+import com.cgtravelokaservice.jwt.service.JwtResponse;
+import com.cgtravelokaservice.jwt.service.JwtService;
+import com.cgtravelokaservice.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -34,7 +35,7 @@ public class LoginController {
     private JwtService jwtService;
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @PostMapping("/account")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
@@ -48,18 +49,24 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            UserDTO userInfo = userService.findValidUserDTOByAccountName(loginRequest.getUsername()).get();
-            if (userInfo.isActive()) {
-                return ResponseEntity.ok(new JwtResponse(jwt,
-                        userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
+            Optional<UserDTO> userInfoOp = userService.findValidUserDTOByAccountName(loginRequest.getUsername());
+            if (userInfoOp.isPresent()) {
+                UserDTO userInfo = userInfoOp.get();
+                if (userInfo.isActive()) {
+                    return ResponseEntity.ok(new JwtResponse(jwt,
+                            userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill " +
+                            "full " +
+                            "register steps to login");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill full " +
                         "register steps to login");
             }
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login fail");
         }
     }
 
@@ -73,10 +80,9 @@ public class LoginController {
                     userInfo.getAuthorities()));
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login with oauth fail");
         }
-        return null;
     }
-
 
 
 }
