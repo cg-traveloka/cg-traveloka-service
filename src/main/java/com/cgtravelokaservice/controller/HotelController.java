@@ -1,6 +1,8 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.HotelSearchDTO;
+import com.cgtravelokaservice.dto.response.HotelsResponeDTO;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelHotelUtility;
 import com.cgtravelokaservice.repo.HotelHotelUtilityRepo;
@@ -12,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,4 +57,10 @@ public class HotelController {
         return ResponseEntity.ok().body(hotel);
     }
 
+    @GetMapping("/api/search/hotels")
+    public ResponseEntity <?> search(@RequestBody HotelSearchDTO hotelSearchDTO) {
+        HotelsResponeDTO hotelsResponeDTO =
+                hotelService.search(hotelSearchDTO);
+        return ResponseEntity.ok().body(hotelsResponeDTO);
+    }
 }

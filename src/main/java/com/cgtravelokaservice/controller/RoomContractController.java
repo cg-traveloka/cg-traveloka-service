@@ -21,7 +21,7 @@ public class RoomContractController {
     @Autowired
     private RoomContractRepo roomContractRepo;
 
-    @PostMapping(value = "/api/contract")
+    @PostMapping(value = "/api/contracts")
     public ResponseEntity <?> makeContract(@RequestBody RoomContractRegisterFormDTO roomContractRegisterFormDTO) {
         RoomContract roomContract =
                 convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);

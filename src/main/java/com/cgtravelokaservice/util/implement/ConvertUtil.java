@@ -4,6 +4,7 @@ import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
@@ -108,6 +109,16 @@ public class ConvertUtil implements IConvertUtil {
         Integer totalMoney =
                 roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
         roomContract.setTotalMoney(totalMoney);
+        return roomContract;
+    }
+
+    public RoomContract convertToRoomContract(Room room, HotelSearchDTO hotelSearchDTO) {
+        RoomContract roomContract =
+                new RoomContract();
+        roomContract.setRoom(room);
+        roomContract.setRoomQuantity(hotelSearchDTO.getQuantity());
+        roomContract.setStartDate(hotelSearchDTO.getStartDate());
+        roomContract.setEndDate(hotelSearchDTO.getEndDate());
         return roomContract;
     }
 }

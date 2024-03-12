@@ -1,12 +1,24 @@
 package com.cgtravelokaservice.service.implement;
 
+import com.cgtravelokaservice.dto.request.HotelSearchDTO;
+import com.cgtravelokaservice.dto.response.HotelsResponeDTO;
+import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelImg;
+import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.repo.CityRepo;
 import com.cgtravelokaservice.repo.HotelImgRepo;
+import com.cgtravelokaservice.repo.HotelRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IImageService;
+import com.cgtravelokaservice.service.IRoomContractService;
+import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,17 +33,14 @@ public class HotelService implements IHotelService {
     IImageService imageService;
     @Autowired
     HotelImgRepo hotelImgRepo;
-
-//    public Hotel convertToNewHotel(HotelRegisterForm hotelRegisterForm) {
-//        Hotel hotel = new Hotel();
-//        hotel.setHotelName(hotelRegisterForm.getHotelName());
-//        hotel.setDescription(hotelRegisterForm.getDescription());
-//        hotel.setHotelStar(hotelRegisterForm.getHotelStar());
-//        hotel.setAddress(hotelRegisterForm.getAddress());
-//        hotel.setHotelBookedNumbers(0);
-//        hotel.setCity(cityRepo.getReferenceById(hotelRegisterForm.getCityId()));
-//        return hotel;
-//    }
+    @Autowired
+    HotelRepo hotelRepo;
+    @Autowired
+    RoomRepo roomRepo;
+    @Autowired
+    IRoomContractService roomContractService;
+    @Autowired
+    IConvertUtil convertUtil;
 
     public boolean setImagesForHotel(Hotel hotel, List <MultipartFile> files) {
         List <HotelImg> hotelImgs =
@@ -51,5 +60,53 @@ public class HotelService implements IHotelService {
         }
         hotelImgRepo.saveAllAndFlush(hotelImgs);
         return true;
+    }
+
+    public HotelsResponeDTO search(HotelSearchDTO hotelSearchDTO) {
+        Integer cityId =
+                hotelSearchDTO.getCityId();
+        List <Integer> hotelStars =
+                hotelSearchDTO.getHotelStars();
+        Integer personQuantity =
+                hotelSearchDTO.getPersonQuantity() / hotelSearchDTO.getQuantity();
+        Integer minPrice =
+                hotelSearchDTO.getMinPrice();
+        Integer maxPrice =
+                hotelSearchDTO.getMaxPrice();
+        Integer quantity =
+                hotelSearchDTO.getQuantity();
+        Sort sort =
+                Sort.by(hotelSearchDTO.getSort()).descending();
+        Pageable pageable =
+                PageRequest.of(hotelSearchDTO.getPageNumber(), 5, sort);
+        Slice <Hotel> hotels =
+                hotelRepo.search(cityId, hotelStars, personQuantity, minPrice, maxPrice, quantity, pageable);
+        List <Hotel> hotelList =
+                new ArrayList <>(hotels.getContent());
+        for (int j =
+             0; j < hotelList.size(); j++) {
+            List <Room> rooms =
+                    roomRepo.findAllByHotel(hotelList.get(j));
+            for (int i =
+                 0; i < rooms.size(); i++) {
+                RoomContract roomContract =
+                        convertUtil.convertToRoomContract(rooms.get(i), hotelSearchDTO);
+                boolean isValid =
+                        roomContractService.isContractValid(roomContract);
+                if (! isValid) {
+                    rooms.remove(rooms.get(i));
+                    i--;
+                }
+            }
+            if (rooms.isEmpty()) {
+                hotelList.remove(hotelList.get(j));
+                j--;
+            }
+        }
+        HotelsResponeDTO hotelsResponeDTO =
+                new HotelsResponeDTO();
+        hotelsResponeDTO.setHotels(hotelList);
+        hotelsResponeDTO.setPageNumber(hotelSearchDTO.getPageNumber());
+        return hotelsResponeDTO;
     }
 }
