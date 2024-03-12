@@ -1,5 +1,7 @@
 package com.cgtravelokaservice.service.implement;
 
+import com.cgtravelokaservice.dto.FlightDetailsDTO;
+import com.cgtravelokaservice.dto.FlightInForShortDescription;
 import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -7,11 +9,16 @@ import com.cgtravelokaservice.entity.airplant.SeatType;
 import com.cgtravelokaservice.repo.SeatInformationRepo;
 import com.cgtravelokaservice.repo.SeatTypeRepo;
 import com.cgtravelokaservice.service.ISeatService;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SeatService implements ISeatService {
@@ -64,5 +71,20 @@ public class SeatService implements ISeatService {
         seatInformation.setQuantity(quantity);
         seatInformation.setUnitPrice(price);
         return seatInformation;
+    }
+    public SeatInformation getLowestPriceSeat(List<FlightInformation> flightInformations) {
+
+        return flightInformations.stream()
+                .flatMap(flight -> seatInformationRepo.findByFlightInformation_Id(flight.getId()).stream())
+                .min(Comparator.comparing(SeatInformation::getUnitPrice))
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+
+    public SeatInformation getShortestFlight(List<FlightInformation> seatInformationList) {
+        return seatInformationList.stream()
+                .flatMap(flightInformation -> seatInformationRepo.findByFlightInformation_Id(flightInformation.getId()).stream())
+                .min(Comparator.comparing(seat -> Duration.between(seat.getFlightInformation().getStartTime(), seat.getFlightInformation().getEndTime()).toMinutes()))
+                .orElseThrow(NoSuchElementException::new);
     }
 }
