@@ -2,11 +2,17 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelImg;
+import com.cgtravelokaservice.entity.hotel.HotelReview;
 import com.cgtravelokaservice.repo.CityRepo;
 import com.cgtravelokaservice.repo.HotelImgRepo;
+import com.cgtravelokaservice.repo.HotelRepo;
+import com.cgtravelokaservice.repo.HotelReviewRepo;
 import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,11 +22,15 @@ import java.util.List;
 @Service
 public class HotelService implements IHotelService {
     @Autowired
-    CityRepo cityRepo;
+    private CityRepo cityRepo;
     @Autowired
-    IImageService imageService;
+    private IImageService imageService;
     @Autowired
-    HotelImgRepo hotelImgRepo;
+    private HotelImgRepo hotelImgRepo;
+    @Autowired
+    private HotelRepo hotelRepo;
+    @Autowired
+    private HotelReviewRepo hotelReviewRepo;
 
 //    public Hotel convertToNewHotel(HotelRegisterForm hotelRegisterForm) {
 //        Hotel hotel = new Hotel();
@@ -33,9 +43,9 @@ public class HotelService implements IHotelService {
 //        return hotel;
 //    }
 
-    public boolean setImagesForHotel(Hotel hotel, List <MultipartFile> files) {
-        List <HotelImg> hotelImgs =
-                new ArrayList <>();
+    public boolean setImagesForHotel(Hotel hotel, List<MultipartFile> files) {
+        List<HotelImg> hotelImgs =
+                new ArrayList<>();
         for (MultipartFile file : files) {
             try {
                 String imageUrl =
@@ -51,5 +61,25 @@ public class HotelService implements IHotelService {
         }
         hotelImgRepo.saveAllAndFlush(hotelImgs);
         return true;
+    }
+
+    @Override
+    public Slice<Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable) {
+        return hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
+    }
+
+    @Override
+    public Double calculateAverageRatingPoints(Integer hotelId) {
+        List<HotelReview> reviews = hotelReviewRepo.findByHotelId(hotelId);
+        if (reviews.isEmpty()) {
+            return null;
+        }
+        int totalRatingPoints = reviews.stream().mapToInt(HotelReview::getRatingPoint).sum();
+        return (double) totalRatingPoints / reviews.size();
+    }
+
+    @Override
+    public Slice<Hotel> getHotels(Pageable pageable) {
+        return hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
     }
 }
