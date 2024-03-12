@@ -6,7 +6,7 @@ import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
-import com.cgtravelokaservice.service.IFlightInFormationService;
+import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.util.implement.ConvertUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +26,10 @@ public class AirplaneBrandController {
 
     private final AirplaneBrandRepo airplaneBrandRepo;
 
-    private final IFlightInFormationService flightInFormationService;
+    private final IFlightInformationService flightInFormationService;
     private final ConvertUtil convertUtil;
 
-    public AirplaneBrandController(IAirplaneBrandService airplaneBrandService, AirplaneBrandRepo airplaneBrandRepo, IFlightInFormationService flightInFormationService, ConvertUtil convertUtil) {
+    public AirplaneBrandController(IAirplaneBrandService airplaneBrandService, AirplaneBrandRepo airplaneBrandRepo, IFlightInformationService flightInFormationService, ConvertUtil convertUtil) {
         this.airplaneBrandService = airplaneBrandService;
         this.airplaneBrandRepo = airplaneBrandRepo;
         this.flightInFormationService = flightInFormationService;

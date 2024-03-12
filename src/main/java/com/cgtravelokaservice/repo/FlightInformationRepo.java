@@ -49,6 +49,6 @@ public interface FlightInformationRepo extends JpaRepository<FlightInformation, 
 
     default List<FlightInformation> searchForList(Integer fromAirportLocationId, Integer toAirportLocationId, LocalDateTime startTime, Integer airPlantBrandId, Integer seatTypeId, Integer seatQuantity
     ) {
-        return search(fromAirportLocationId,toAirportLocationId,startTime,airPlantBrandId,seatTypeId,seatQuantity,null,null,null,null,null,null,Pageable.unpaged()).getContent();
+        return search(fromAirportLocationId,toAirportLocationId,startTime,airPlantBrandId,seatTypeId,seatQuantity,null,null,0,null,0,null,Pageable.unpaged()).getContent();
     }
 }

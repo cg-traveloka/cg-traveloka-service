@@ -6,7 +6,7 @@ import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.request.FlightDetailsRequestDTO;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
-import com.cgtravelokaservice.service.IFlightInFormationService;
+import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.service.IFlightService;
 import com.cgtravelokaservice.service.implement.SeatService;
 import com.cgtravelokaservice.util.implement.ConvertUtil;
@@ -27,14 +27,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class FlightInformationController {
-    private final IFlightInFormationService flightInformationService;
+    private final IFlightInformationService flightInformationService;
     private final SeatService seatService;
 
     private final ConvertUtil convertUtil;
 
     private final IFlightService flightService;
     @Autowired
-    public FlightInformationController(IFlightInFormationService flightInformationService, SeatService seatService, ConvertUtil convertUtil, IFlightService flightService) {
+    public FlightInformationController(IFlightInformationService flightInformationService, SeatService seatService, ConvertUtil convertUtil, IFlightService flightService) {
         this.flightInformationService = flightInformationService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;

@@ -7,7 +7,6 @@ import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.repo.FlightInformationRepo;
 import com.cgtravelokaservice.repo.SeatInformationRepo;
-import com.cgtravelokaservice.service.IFlightInFormationService;
 import com.cgtravelokaservice.service.IFlightService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
