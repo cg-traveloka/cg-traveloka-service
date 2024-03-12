@@ -37,7 +37,5 @@ public class FlightInformation {
     @JoinColumn(name = "air_plant_brand_id", referencedColumnName = "id")
     private AirPlantBrand airPlantBrand;
 
-    @OneToMany(mappedBy = "flightInformation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<SeatInformation> seatInformationSet;
+
 }

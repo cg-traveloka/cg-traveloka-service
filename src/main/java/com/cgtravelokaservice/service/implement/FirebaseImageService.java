@@ -40,6 +40,7 @@ public class FirebaseImageService implements IImageService {
                     new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream())).setStorageBucket(properties.getBucketName()).build();
 
 
+
             FirebaseApp.initializeApp(options);
             firebaseInitialized=true;
 

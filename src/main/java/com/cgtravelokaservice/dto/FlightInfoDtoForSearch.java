@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class FlightInfoDtoForSearch {
     private Integer flightInfoId;
     private Integer seatInfoId;
-    private String airPlaneBrandName;
+    private AirPlaneSearchDto airPlaneBrand;
     private String fromAirportLocation;
     private String toAirportLocation;
     private LocalDateTime startTime;

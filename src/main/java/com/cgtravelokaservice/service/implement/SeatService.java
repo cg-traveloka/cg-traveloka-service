@@ -10,6 +10,8 @@ import com.cgtravelokaservice.service.ISeatService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,5 +66,28 @@ public class SeatService implements ISeatService {
         seatInformation.setQuantity(quantity);
         seatInformation.setUnitPrice(price);
         return seatInformation;
+    }
+
+    public SeatInformation getCheapestSeat(List<FlightInformation> flightInfos) {
+        return flightInfos.stream()  // Stream over the flightInfos
+                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream()) // Convert each flightInfo to a list of seatInfos and flatten the lists
+                .min(Comparator.comparingInt(SeatInformation::getUnitPrice)) // Find the minimum unit price
+                .orElse(null); // Return null if the list is empty
+    }
+
+    public SeatInformation getFastestSeat(List<FlightInformation> flightInfos) {
+        return flightInfos.stream()
+                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream())
+                .min(Comparator.comparingLong(this::calculateFlightDuration))
+                .orElse(null);
+    }
+
+    private long calculateFlightDuration(SeatInformation seatInfo) {
+        FlightInformation flightInfo = seatInfo.getFlightInformation();
+        return Duration.between(flightInfo.getStartTime(), flightInfo.getEndTime()).toMinutes();
+    }
+
+    public List<SeatInformation> convertFlightInfosToSeatInfo(FlightInformation flightInfo) {
+        return seatInformationRepo.findAllByFlightInformation(flightInfo);
     }
 }

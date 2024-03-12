@@ -59,28 +59,35 @@ public class FlightInformationController {
     public ResponseEntity<?> searchFlight(@Validated @RequestBody SearchFlightRequest request,
                                           BindingResult bindingResult,
                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                          @RequestParam(value = "size", defaultValue = "10") int size,
-                                          @RequestParam(value = "sortBy", defaultValue =
-                                                  "start_time") String sortType,
-                                          @RequestParam(value = "order", defaultValue = "asc") String order) {
+                                          @RequestParam(value = "size", defaultValue = "10") int size)  {
+        System.out.println(request);
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         try {
-            Pageable pageable;
-            if (order.equalsIgnoreCase("asc")) {
-                pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc(sortType)));
-            } else {
-                pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortType)));
-            }
+            Pageable pageable = PageRequest.of(page, size);
             Slice<FlightInfoDtoForSearch> data = flightInformationService.search(request, pageable);
-
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Fail to search flights");
         }
 
+    }
+
+    @GetMapping("/api/flights/search1")
+    public ResponseEntity<?> firstSearch(@Validated @RequestBody SearchFlightRequest request,
+                                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Invalid request");
+        }
+        try {
+            return ResponseEntity.ok(flightInformationService.createFirstSearchResponse(request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Fail to search flights");
+        }
     }
 
 }
