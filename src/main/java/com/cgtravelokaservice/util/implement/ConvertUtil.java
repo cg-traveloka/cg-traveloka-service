@@ -4,8 +4,10 @@ import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.repo.AirplaneBrandRepo;
@@ -14,6 +16,7 @@ import com.cgtravelokaservice.repo.BedTypeRepo;
 import com.cgtravelokaservice.repo.CityRepo;
 import com.cgtravelokaservice.repo.HotelImgRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.repo.RoomTypeRepo;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.implement.AirplaneBrandService;
@@ -44,6 +47,8 @@ public class ConvertUtil implements IConvertUtil {
             airportLocationRepo;
     @Autowired
     private AirplaneBrandRepo airplaneBrandRepo;
+    @Autowired
+    private RoomRepo roomRepo;
 
     @Override
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
@@ -90,5 +95,19 @@ public class ConvertUtil implements IConvertUtil {
         flightInformation.setToAirPortLocation(airportLocationRepo.getReferenceById(flightInformationDto.getToAirportLocationId()));
         flightInformation.setAirPlantBrand(airplaneBrandRepo.getReferenceById(flightInformationDto.getAirplaneBrandId()));
         return flightInformation;
+    }
+
+    public RoomContract roomContractFormDTOToRoomContract(RoomContractRegisterFormDTO roomContractRegisterFormDTO) {
+        RoomContract roomContract =
+                new RoomContract();
+        roomContract.setRoom(roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()));
+        roomContract.setRoomQuantity(roomContractRegisterFormDTO.getRoomQuantity());
+        roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate());
+        roomContract.setEndDate(roomContractRegisterFormDTO.getEndDate());
+//        Tính tiền phòng
+        Integer totalMoney =
+                roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
+        roomContract.setTotalMoney(totalMoney);
+        return roomContract;
     }
 }
