@@ -3,6 +3,7 @@ package com.cgtravelokaservice.service.implement;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.entity.room.RoomImg;
 import com.cgtravelokaservice.repo.RoomImgRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.IRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class RoomService implements IRoomService {
     private IImageService imageService;
     @Autowired
     private RoomImgRepo roomImgRepo;
+    @Autowired
+    private RoomRepo roomRepo;
 
     public boolean setImgForRoom(Room room, List <MultipartFile> files) {
         try {

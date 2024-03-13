@@ -1,9 +1,11 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.entity.room.RoomRoomUtility;
 import com.cgtravelokaservice.entity.room.RoomUtility;
+import com.cgtravelokaservice.repo.HotelRepo;
 import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.repo.RoomRoomUtilityRepo;
 import com.cgtravelokaservice.repo.RoomUtilityRepo;
@@ -31,6 +33,8 @@ public class RoomController {
             roomRoomUtilityRepo;
     @Autowired
     private IRoomService roomService;
+    @Autowired
+    private HotelRepo hotelRepo;
 
 
     @PostMapping(value = "/api/rooms", consumes = "multipart/form-data")
@@ -39,6 +43,22 @@ public class RoomController {
         Room room =
                 convertUtil.roomRegisterFormToRoom(roomRegisterFormDTO);
         room = roomRepo.save(room);
+
+//        Set min price of room cho Hotel
+        Integer min = room.getUnitPriceSell();
+        Hotel hotel = room.getHotel();
+        hotel.setMinOriginPrice(room.getUnitPriceOrigin());
+        hotel.setMinSellPrice(room.getUnitPriceSell());
+        List <Room> rooms =
+                roomRepo.findAllByHotel(room.getHotel());
+        for (Room room1 : rooms) {
+            if (room1.getUnitPriceSell() < min) {
+                hotel.setMinSellPrice(room1.getUnitPriceSell());
+                hotel.setMinOriginPrice(room1.getUnitPriceOrigin());
+            }
+        }
+        hotelRepo.save(hotel);
+
 //      Set utility cho room
         List <RoomRoomUtility> roomRoomUtilities =
                 new ArrayList <>();
