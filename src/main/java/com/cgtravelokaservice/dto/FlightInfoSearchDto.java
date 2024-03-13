@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FlightInfoDtoForSearch {
+public class FlightInfoSearchDto {
     private Integer flightInfoId;
     private Integer seatInfoId;
     private AirPlaneSearchDto airPlaneBrand;

@@ -26,7 +26,8 @@ public class SeatService implements ISeatService {
     }
 
     @Override
-    public List<SeatInformation> createSeatsForNewFlight(FlightInformationDto flightInformationDto, FlightInformation flightInformation) {
+    public List<SeatInformation> createSeatsForNewFlight(FlightInformationDto flightInformationDto,
+                                                         FlightInformation flightInformation) {
         List<SeatInformation> seatsInformation = new ArrayList<>();
         List<SeatType> seatTypes = new ArrayList<>();
 
@@ -45,21 +46,28 @@ public class SeatService implements ISeatService {
         return seatsInformation;
     }
 
-    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation, FlightInformationDto flightInformationDto) {
+    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation,
+                                              FlightInformationDto flightInformationDto) {
         return switch (seatType.getId()) {
             case 1 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getNormalSeatQuantity(), flightInformationDto.getNormalSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationDto.getNormalSeatQuantity(),
+                            flightInformationDto.getNormalSeatPrice());
             case 2 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getSpecialNormalSeatQuantity(), flightInformationDto.getSpecialNormalSeatPrice());
+                    createSeatInformation(seatType, flightInformation,
+                            flightInformationDto.getSpecialNormalSeatQuantity(),
+                            flightInformationDto.getSpecialNormalSeatPrice());
             case 3 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getBusinessSeatQuantity(), flightInformationDto.getBusinessSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationDto.getBusinessSeatQuantity()
+                            , flightInformationDto.getBusinessSeatPrice());
             case 4 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getVipSeatQuantity(), flightInformationDto.getVipSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationDto.getVipSeatQuantity(),
+                            flightInformationDto.getVipSeatPrice());
             default -> null;
         };
     }
 
-    private SeatInformation createSeatInformation(SeatType seatType, FlightInformation flightInformation, int quantity, int price) {
+    private SeatInformation createSeatInformation(SeatType seatType, FlightInformation flightInformation,
+                                                  int quantity, int price) {
         SeatInformation seatInformation = new SeatInformation();
         seatInformation.setFlightInformation(flightInformation);
         seatInformation.setSeatType(seatType);
@@ -68,18 +76,19 @@ public class SeatService implements ISeatService {
         return seatInformation;
     }
 
-    public SeatInformation getCheapestSeat(List<FlightInformation> flightInfos) {
+    public Optional<SeatInformation> getCheapestSeat(List<FlightInformation> flightInfos) {
         return flightInfos.stream()  // Stream over the flightInfos
-                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream()) // Convert each flightInfo to a list of seatInfos and flatten the lists
+                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream())// Convert each flightInfo
+                // to a list of seatInfos and flatten the lists
                 .min(Comparator.comparingInt(SeatInformation::getUnitPrice)) // Find the minimum unit price
-                .orElse(null); // Return null if the list is empty
+                ; // Return null if the list is empty
     }
 
-    public SeatInformation getFastestSeat(List<FlightInformation> flightInfos) {
+    public Optional<SeatInformation> getFastestSeat(List<FlightInformation> flightInfos) {
         return flightInfos.stream()
                 .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream())
-                .min(Comparator.comparingLong(this::calculateFlightDuration))
-                .orElse(null);
+                .min(Comparator.comparingLong(this::calculateFlightDuration));
+
     }
 
     private long calculateFlightDuration(SeatInformation seatInfo) {

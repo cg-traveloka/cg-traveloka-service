@@ -36,9 +36,9 @@ public class SearchFlightRequest {
     private String sortBy;
     @Nullable
     private String order;
-    private Integer durationFrom = 0;
+    private Integer durationFrom ;
     private Integer durationTo ;
-    private Integer priceFrom = 0 ;
+    private Integer priceFrom ;
     private Integer priceTo;
 
 }

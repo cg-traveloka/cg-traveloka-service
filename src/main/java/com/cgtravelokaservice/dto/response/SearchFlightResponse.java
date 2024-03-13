@@ -1,8 +1,8 @@
 package com.cgtravelokaservice.dto.response;
 
 import com.cgtravelokaservice.dto.AirPlaneSearchDto;
-import com.cgtravelokaservice.dto.FlightInFoShortDescription;
-import com.cgtravelokaservice.dto.FlightInfoDtoForSearch;
+import com.cgtravelokaservice.dto.FlightInfoShortDescription;
+import com.cgtravelokaservice.dto.FlightInfoSearchDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,6 @@ import java.util.List;
 @Builder
 public class SearchFlightResponse {
     List<AirPlaneSearchDto> airPlaneSearchDtos;
-    Slice<FlightInfoDtoForSearch> flightInfoDtoForSearches;
-    List<FlightInFoShortDescription> flightInFoShortDescriptions;
+    Slice<FlightInfoSearchDto> flightInfoDtoForSearches;
+    List<FlightInfoShortDescription> flightInfoShortDescriptions;
 }

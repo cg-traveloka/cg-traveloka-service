@@ -4,23 +4,30 @@ import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.dto.TicketAirplaneDto;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.entity.booking.RoomContract;
+import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.repo.AirportLocationRepo;
 import com.cgtravelokaservice.repo.BedTypeRepo;
 import com.cgtravelokaservice.repo.CityRepo;
+import com.cgtravelokaservice.repo.FlightInformationRepo;
 import com.cgtravelokaservice.repo.HotelImgRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
 import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.repo.RoomTypeRepo;
+import com.cgtravelokaservice.repo.SeatInformationRepo;
+import com.cgtravelokaservice.repo.SeatTypeRepo;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.implement.AirplaneBrandService;
 import com.cgtravelokaservice.util.IConvertUtil;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,6 +56,15 @@ public class ConvertUtil implements IConvertUtil {
     private AirplaneBrandRepo airplaneBrandRepo;
     @Autowired
     private RoomRepo roomRepo;
+
+    @Autowired
+    private SeatTypeRepo seatTypeRepo;
+
+    @Autowired
+    private FlightInformationRepo flightInformationRepo;
+
+    @Autowired
+    private SeatInformationRepo seatInformationRepo;
 
     @Override
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
@@ -109,5 +125,17 @@ public class ConvertUtil implements IConvertUtil {
                 roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
         roomContract.setTotalMoney(totalMoney);
         return roomContract;
+    }
+
+    public TicketAirPlant ticketAirPlantDtoToTicketAirPlant(TicketAirplaneDto ticketAirplaneDto) {
+        TicketAirPlant ticketAirPlant = new TicketAirPlant();
+        ticketAirPlant.setQuantity(ticketAirplaneDto.getQuantity());
+        SeatInformation seatInformation =
+                seatInformationRepo.getReferenceById(ticketAirplaneDto.getSeatInfoId());
+        ticketAirPlant.setSeatType(seatInformation.getSeatType());
+        ticketAirPlant.setFlightInformation(seatInformation.getFlightInformation());
+        Integer totalPrice = seatInformation.getUnitPrice() * ticketAirplaneDto.getQuantity();
+        ticketAirPlant.setTotalMoney(totalPrice);
+        return ticketAirPlant;
     }
 }

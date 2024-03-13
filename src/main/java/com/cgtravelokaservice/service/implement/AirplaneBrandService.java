@@ -1,7 +1,9 @@
 package com.cgtravelokaservice.service.implement;
 
+
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
 import com.cgtravelokaservice.service.IImageService;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,9 @@ public class AirplaneBrandService implements IAirplaneBrandService {
     private final IImageService imageService;
 
 
-
     public AirplaneBrandService(IImageService imageService) {
         this.imageService = imageService;
+
     }
 
     @Override
@@ -45,4 +47,6 @@ public class AirplaneBrandService implements IAirplaneBrandService {
 
         return result;
     }
+
+
 }

@@ -1,16 +1,17 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.FlightInformationDto;
-import com.cgtravelokaservice.dto.FlightInfoDtoForSearch;
+import com.cgtravelokaservice.dto.FlightInfoSearchDto;
+import com.cgtravelokaservice.dto.TicketAirplaneDto;
 import com.cgtravelokaservice.dto.request.SearchFlightRequest;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.service.implement.FlightInformationService;
 import com.cgtravelokaservice.service.implement.SeatService;
+import com.cgtravelokaservice.service.implement.TicketAirplaneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,11 +30,15 @@ public class FlightInformationController {
 
     private final ConvertUtil convertUtil;
 
+    private final TicketAirplaneService ticketAirplaneService;
+
     @Autowired
     public FlightInformationController(FlightInformationService flightInformationService, SeatService seatService,
+                                       TicketAirplaneService ticketAirplaneService,
                                        ConvertUtil convertUtil) {
         this.flightInformationService = flightInformationService;
         this.seatService = seatService;
+        this.ticketAirplaneService = ticketAirplaneService;
         this.convertUtil = convertUtil;
     }
 
@@ -60,13 +65,13 @@ public class FlightInformationController {
                                           BindingResult bindingResult,
                                           @RequestParam(value = "page", defaultValue = "0") int page,
                                           @RequestParam(value = "size", defaultValue = "10") int size)  {
-        System.out.println(request);
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         try {
             Pageable pageable = PageRequest.of(page, size);
-            Slice<FlightInfoDtoForSearch> data = flightInformationService.search(request, pageable);
+            Slice<FlightInfoSearchDto> data = flightInformationService.search(request, pageable);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,6 +92,21 @@ public class FlightInformationController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Fail to search flights");
+        }
+    }
+
+    @PostMapping("/api/flights/booking")
+    public ResponseEntity<?> booking(@Validated @RequestBody TicketAirplaneDto ticketAirplaneDto,
+                                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Invalid request");
+        }
+        try {
+            ticketAirplaneService.add(ticketAirplaneDto);
+            return ResponseEntity.ok().body("Booking airplane ticket success");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Fail to book airplane ticket");
         }
     }
 

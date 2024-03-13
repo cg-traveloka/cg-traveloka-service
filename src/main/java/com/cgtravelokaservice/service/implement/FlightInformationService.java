@@ -1,7 +1,7 @@
 package com.cgtravelokaservice.service.implement;
 
-import com.cgtravelokaservice.dto.FlightInFoShortDescription;
-import com.cgtravelokaservice.dto.FlightInfoDtoForSearch;
+import com.cgtravelokaservice.dto.FlightInfoShortDescription;
+import com.cgtravelokaservice.dto.FlightInfoSearchDto;
 import com.cgtravelokaservice.dto.request.SearchFlightRequest;
 import com.cgtravelokaservice.dto.AirPlaneSearchDto;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
@@ -60,19 +60,19 @@ public class FlightInformationService implements IFlightInformationService {
     }
 
 
-    public Slice<FlightInfoDtoForSearch> search(SearchFlightRequest request, Pageable pageable) {
+    public Slice<FlightInfoSearchDto> search(SearchFlightRequest request, Pageable pageable) {
         Slice<FlightInformation> flightInformation = flightInformationRepo.search(request.getFromLocationId(),
                 request.getToLocationId(), request.getStartTime(), request.getSeatQuantity(), request.getSeatTypeId()
-                , request.getAirplaneId(),request.getSortBy(), request.getOrder(), request.getDurationFrom(),
+                , request.getAirplaneId(), request.getSortBy(), request.getOrder(), request.getDurationFrom(),
                 request.getDurationTo(), request.getPriceFrom(), request.getPriceTo(),
                 pageable);
         return flightInformation.map(flightInfo -> convertToDTO(flightInfo, request.getSeatTypeId()));
     }
 
-    private FlightInfoDtoForSearch convertToDTO(FlightInformation flightInfo, Integer seatTypeId) {
+    private FlightInfoSearchDto convertToDTO(FlightInformation flightInfo, Integer seatTypeId) {
         Optional<SeatInformation> seatInformation =
                 seatInformationRepo.findByFlightInformation_IdAndSeatType_Id(flightInfo.getId(), seatTypeId);
-        return seatInformation.map(information -> FlightInfoDtoForSearch.builder().flightInfoId(flightInfo.getId())
+        return seatInformation.map(information -> FlightInfoSearchDto.builder().flightInfoId(flightInfo.getId())
                 .seatInfoId(seatInformation.get().getId())
                 .airPlaneBrand(modelMapper.map(flightInfo.getAirPlantBrand(), AirPlaneSearchDto.class))
                 .fromAirportLocation(flightInfo.getFromAirPortLocation().getName())
@@ -93,22 +93,17 @@ public class FlightInformationService implements IFlightInformationService {
     public SearchFlightResponse createFirstSearchResponse(SearchFlightRequest request) {
         Pageable pageable = PageRequest.of(0, 10);
         request.setSortBy("start_time");
-        Slice<FlightInfoDtoForSearch> flightInformation = search(request, pageable);
+        Slice<FlightInfoSearchDto> flightInformation = search(request, pageable);
         List<FlightInformation> list = search(request);
         List<AirPlantBrand> airPlantBrands = airplaneBrandService.findByFlightInfos(list);
         Type listType = new TypeToken<List<AirPlaneSearchDto>>() {}.getType();
-        List<AirPlaneSearchDto> airPlaneSearchDtos =
-                modelMapper.map(airPlantBrands, listType);
-        String value1 = seatService.getCheapestSeat(list).getUnitPrice().toString();
-        String value2 = seatService.getFastestSeat(list).getUnitPrice().toString();
-        FlightInFoShortDescription des1 =
-                FlightInFoShortDescription.builder().name("Gía thấp nhất").value(value1).build();
-        FlightInFoShortDescription des2 =
-                FlightInFoShortDescription.builder().name("Thời gian bay ngắn nhất").value(value2).build();
-        List<FlightInFoShortDescription> descriptions = new ArrayList<>();
-        descriptions.add(des1);
-        descriptions.add(des2);
-        return new SearchFlightResponse(airPlaneSearchDtos, flightInformation,descriptions);
+        List<AirPlaneSearchDto> airPlaneSearchDtos = modelMapper.map(airPlantBrands, listType);
+        List<FlightInfoShortDescription> descriptions = new ArrayList<>();
+        seatService.getCheapestSeat(list).ifPresent(seat -> descriptions.add(new FlightInfoShortDescription(
+                "Gía thấp nhất", seat.getUnitPrice().toString())));
+        seatService.getFastestSeat(list).ifPresent(seat -> descriptions.add(new FlightInfoShortDescription(
+                "Thời gian bay ngắn nhất", seat.getUnitPrice().toString())));
+        return new SearchFlightResponse(airPlaneSearchDtos, flightInformation, descriptions);
     }
 
 
