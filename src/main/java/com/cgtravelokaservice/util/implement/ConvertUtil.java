@@ -7,6 +7,7 @@ import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
 import com.cgtravelokaservice.dto.SeatDetailsDto;
+import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
@@ -171,5 +172,14 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setStartDate(hotelSearchDTO.getStartDate());
         roomContract.setEndDate(hotelSearchDTO.getEndDate());
         return roomContract;
+    }
+
+    public TicketAirPlant convertToTicketAirPlant(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
+        TicketAirPlant ticket = new TicketAirPlant();
+        ticket.setFlightInformation(seatInformation.getFlightInformation());
+        ticket.setSeatType(seatInformation.getSeatType());
+        ticket.setQuantity(ticketDTO.getQuantity());
+        ticket.setTotalMoney(seatInformation.getUnitPrice() * ticketDTO.getQuantity());
+        return ticket;
     }
 }
