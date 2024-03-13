@@ -1,7 +1,7 @@
 package com.cgtravelokaservice.controller;
 
-import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
 import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
+import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
 import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;

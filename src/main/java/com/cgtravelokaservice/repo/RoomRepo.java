@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface RoomRepo extends JpaRepository <Room, Integer> {
     List <Room> findAllByHotel(Hotel hotel);
+
+    List<Room> findAllByHotelId(Integer id);
 }
