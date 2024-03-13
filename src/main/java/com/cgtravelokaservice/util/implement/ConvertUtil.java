@@ -69,6 +69,7 @@ public class ConvertUtil implements IConvertUtil {
         hotel.setHotelStar(hotelRegisterForm.getHotelStar());
         hotel.setAddress(hotelRegisterForm.getAddress());
         hotel.setHotelBookedNumbers(0);
+        hotel.setAveragePoint(0.0);
         hotel.setCity(cityRepo.getReferenceById(hotelRegisterForm.getCityId()));
         return hotel;
     }

@@ -58,6 +58,9 @@ public class HotelService implements IHotelService {
                 return false;
             }
         }
+        if (hotel.getDefaultImg() == null) {
+            hotel.setDefaultImg(hotelImgs.get(0).getUrl());
+        }
         hotelImgRepo.saveAllAndFlush(hotelImgs);
         return true;
     }
@@ -76,7 +79,25 @@ public class HotelService implements IHotelService {
         Integer quantity =
                 hotelSearchDTO.getQuantity();
         Sort sort =
-                Sort.by(hotelSearchDTO.getSort()).descending();
+                Sort.by("hotel" + ".hotelBookedNumbers").descending();
+        switch (hotelSearchDTO.getSort()) {
+            case "booked":
+                break;
+            case "point":
+                sort =
+                        Sort.by("hotel" + ".averagePoint").descending();
+                break;
+            case "minPrice":
+                sort =
+                        Sort.by("hotel" + ".minSellPrice").ascending();
+                break;
+            case "maxPrice":
+                sort =
+                        Sort.by("hotel" + ".minSellPrice").descending();
+                break;
+            default:
+                break;
+        }
         Pageable pageable =
                 PageRequest.of(hotelSearchDTO.getPageNumber(), 5, sort);
         Slice <Hotel> hotels =
