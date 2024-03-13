@@ -1,22 +1,19 @@
 package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.AirPlantSearchDTO;
-import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 import com.cgtravelokaservice.dto.FlightInForShortDescription;
+import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.repo.FlightInformationRepo;
-
-import com.cgtravelokaservice.repo.SeatInformationRepo;
+import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.util.IConvertUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-
-import com.cgtravelokaservice.service.IFlightInformationService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,19 +25,23 @@ import java.util.stream.Collectors;
 public class FlightInformationService implements IFlightInformationService {
 
     private final FlightInformationRepo flightInformationRepo;
+
     private final ModelMapper modelMapper = new ModelMapper();
+
     private final AirplaneBrandService airplaneBrandService;
 
     private final SeatService seatService;
     private final IConvertUtil convertUtil;
-    private final SeatInformationRepo seatInformationRepo;
 
-    public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, IConvertUtil convertUtil, SeatInformationRepo seatInformationRepo) {
+
+
+    public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, IConvertUtil convertUtil) {
+
         this.flightInformationRepo = flightInformationRepo;
         this.airplaneBrandService = airplaneBrandService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
-        this.seatInformationRepo = seatInformationRepo;
+
 
     }
 
