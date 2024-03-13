@@ -1,10 +1,16 @@
 package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
+import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
 import com.cgtravelokaservice.service.IImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AirplaneBrandService implements IAirplaneBrandService {
@@ -24,5 +30,19 @@ public class AirplaneBrandService implements IAirplaneBrandService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<AirPlantBrand> findByFlightInfos(List<FlightInformation> flightInfos) {
+        List<AirPlantBrand> result = new ArrayList<>();
+
+        flightInfos.forEach(flightInfo -> {
+            AirPlantBrand airPlantBrand = flightInfo.getAirPlantBrand();
+            if (result.isEmpty() || result.stream().noneMatch(brand -> Objects.equals(brand.getId(), airPlantBrand.getId()))) {
+                result.add(airPlantBrand);
+            }
+        });
+
+        return result;
     }
 }

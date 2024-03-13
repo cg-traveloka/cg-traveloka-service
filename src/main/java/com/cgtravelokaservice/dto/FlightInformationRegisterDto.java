@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlightInformationDto implements Serializable {
+public class FlightInformationRegisterDto implements Serializable {
     @NotNull
     private Integer airplaneBrandId;
     @NotNull
