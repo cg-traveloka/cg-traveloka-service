@@ -1,28 +1,30 @@
 package com.cgtravelokaservice.service.implement;
 
+import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
+import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelImg;
 import com.cgtravelokaservice.entity.hotel.HotelReview;
-import com.cgtravelokaservice.repo.CityRepo;
+import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.repo.HotelImgRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
 import com.cgtravelokaservice.repo.HotelReviewRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class HotelService implements IHotelService {
-    @Autowired
-    private CityRepo cityRepo;
     @Autowired
     private IImageService imageService;
     @Autowired
@@ -31,6 +33,10 @@ public class HotelService implements IHotelService {
     private HotelRepo hotelRepo;
     @Autowired
     private HotelReviewRepo hotelReviewRepo;
+    @Autowired
+    private RoomRepo roomRepo;
+    @Autowired
+    private RoomContractService roomContractService;
 
 //    public Hotel convertToNewHotel(HotelRegisterForm hotelRegisterForm) {
 //        Hotel hotel = new Hotel();
@@ -80,6 +86,42 @@ public class HotelService implements IHotelService {
 
     @Override
     public Slice<Hotel> getHotels(Pageable pageable) {
-        return hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
+        Slice<Hotel> allHotels = hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
+        List<Hotel> availableHotels = new ArrayList<>();
+
+        for (Hotel hotel : allHotels) {
+            List<Room> rooms = roomRepo.findByHotelId(hotel.getId());
+
+            for (Room room : rooms) {
+                RoomContract roomContract = new RoomContract();
+                roomContract.setRoom(room);
+                roomContract.setStartDate(LocalDate.now());
+                roomContract.setEndDate(LocalDate.now().plusDays(1));
+                roomContract.setRoomQuantity(1);
+                if (roomContractService.isContractValid(roomContract)) {
+                    availableHotels.add(hotel);
+                    break;
+                }
+            }
+        }
+        return new SliceImpl<>(availableHotels, pageable, allHotels.hasNext());
+    }
+
+    public Room findSuitableRoom(RoomContractRegisterFormDTO roomRegister) {
+        Room room = roomRepo.findById(roomRegister.getRoomId()).orElse(null);
+
+        if (room != null) {
+            RoomContract roomContract = new RoomContract();
+            roomContract.setRoom(room);
+            roomContract.setStartDate(roomRegister.getStartDate());
+            roomContract.setEndDate(roomRegister.getEndDate());
+
+            if (roomContractService.isContractValid(roomContract)) {
+                return room;
+            }
+        }
+
+        // Nếu không có phòng trống, ném ra ngoại lệ
+        return null;
     }
 }

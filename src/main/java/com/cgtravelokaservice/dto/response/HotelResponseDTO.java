@@ -21,6 +21,4 @@ public class HotelResponseDTO implements Serializable {
     private double averageRatingPoints;
 
     private String address;
-
-
 }
