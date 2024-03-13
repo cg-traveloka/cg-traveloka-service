@@ -1,17 +1,17 @@
 package com.cgtravelokaservice.repo;
 
-import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface SeatInformationRepo extends JpaRepository<SeatInformation, Integer> {
-    Optional<SeatInformation> findByFlightInformation_IdAndSeatType_Id(Integer flightInfoId,
-                                                                               Integer seatTypeId);
+    List<SeatInformation> findByFlightInformationId(Integer flightInformationId);
 
-    List<SeatInformation> findAllByFlightInformation(FlightInformation flightInformation);
+    Optional<SeatInformation> findByFlightInformationIdAndSeatTypeId(Integer flightInformationId, Integer seatTypeId);
+
+    List<SeatInformation> findByFlightInformation_Id(Integer flightInformationId);
+
 }

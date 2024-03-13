@@ -1,6 +1,6 @@
 package com.cgtravelokaservice.service.implement;
 
-import com.cgtravelokaservice.dto.FlightInformationDto;
+import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.entity.airplant.SeatType;
@@ -9,10 +9,11 @@ import com.cgtravelokaservice.repo.SeatTypeRepo;
 import com.cgtravelokaservice.service.ISeatService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -26,8 +27,9 @@ public class SeatService implements ISeatService {
     }
 
     @Override
-    public List<SeatInformation> createSeatsForNewFlight(FlightInformationDto flightInformationDto,
-                                                         FlightInformation flightInformation) {
+
+    public List<SeatInformation> createSeatsForNewFlight(FlightInformationRegisterDto flightInformationRegisterDto, FlightInformation flightInformation) {
+
         List<SeatInformation> seatsInformation = new ArrayList<>();
         List<SeatType> seatTypes = new ArrayList<>();
 
@@ -37,7 +39,7 @@ public class SeatService implements ISeatService {
         }
 
         for (SeatType seatType : seatTypes) {
-            SeatInformation seatInformation = createSeatForType(seatType, flightInformation, flightInformationDto);
+            SeatInformation seatInformation = createSeatForType(seatType, flightInformation, flightInformationRegisterDto);
             if (seatInformation != null) {
                 seatsInformation.add(seatInformation);
                 seatInformationRepo.save(seatInformation);
@@ -46,22 +48,18 @@ public class SeatService implements ISeatService {
         return seatsInformation;
     }
 
-    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation,
-                                              FlightInformationDto flightInformationDto) {
+
+    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation, FlightInformationRegisterDto flightInformationRegisterDto) {
         return switch (seatType.getId()) {
             case 1 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getNormalSeatQuantity(),
-                            flightInformationDto.getNormalSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getNormalSeatQuantity(), flightInformationRegisterDto.getNormalSeatPrice());
             case 2 ->
-                    createSeatInformation(seatType, flightInformation,
-                            flightInformationDto.getSpecialNormalSeatQuantity(),
-                            flightInformationDto.getSpecialNormalSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getSpecialNormalSeatQuantity(), flightInformationRegisterDto.getSpecialNormalSeatPrice());
             case 3 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getBusinessSeatQuantity()
-                            , flightInformationDto.getBusinessSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getBusinessSeatQuantity(), flightInformationRegisterDto.getBusinessSeatPrice());
             case 4 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationDto.getVipSeatQuantity(),
-                            flightInformationDto.getVipSeatPrice());
+                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getVipSeatQuantity(), flightInformationRegisterDto.getVipSeatPrice());
+
             default -> null;
         };
     }
@@ -76,27 +74,21 @@ public class SeatService implements ISeatService {
         return seatInformation;
     }
 
-    public Optional<SeatInformation> getCheapestSeat(List<FlightInformation> flightInfos) {
-        return flightInfos.stream()  // Stream over the flightInfos
-                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream())// Convert each flightInfo
-                // to a list of seatInfos and flatten the lists
-                .min(Comparator.comparingInt(SeatInformation::getUnitPrice)) // Find the minimum unit price
-                ; // Return null if the list is empty
+
+
+    public SeatInformation getLowestPriceSeat(List<FlightInformation> flightInformations) {
+
+        return flightInformations.stream()
+                .flatMap(flight -> seatInformationRepo.findByFlightInformation_Id(flight.getId()).stream())
+                .min(Comparator.comparing(SeatInformation::getUnitPrice))
+                .orElseThrow(NoSuchElementException::new);
     }
 
-    public Optional<SeatInformation> getFastestSeat(List<FlightInformation> flightInfos) {
-        return flightInfos.stream()
-                .flatMap(flightInfo -> convertFlightInfosToSeatInfo(flightInfo).stream())
-                .min(Comparator.comparingLong(this::calculateFlightDuration));
 
-    }
-
-    private long calculateFlightDuration(SeatInformation seatInfo) {
-        FlightInformation flightInfo = seatInfo.getFlightInformation();
-        return Duration.between(flightInfo.getStartTime(), flightInfo.getEndTime()).toMinutes();
-    }
-
-    public List<SeatInformation> convertFlightInfosToSeatInfo(FlightInformation flightInfo) {
-        return seatInformationRepo.findAllByFlightInformation(flightInfo);
+    public SeatInformation getShortestFlight(List<FlightInformation> seatInformationList) {
+        return seatInformationList.stream()
+                .flatMap(flightInformation -> seatInformationRepo.findByFlightInformation_Id(flightInformation.getId()).stream())
+                .min(Comparator.comparing(seat -> Duration.between(seat.getFlightInformation().getStartTime(), seat.getFlightInformation().getEndTime()).toMinutes()))
+                .orElseThrow(NoSuchElementException::new);
     }
 }

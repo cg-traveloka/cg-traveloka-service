@@ -106,8 +106,6 @@ public class UserService implements UserDetailsService, IUserService {
         }
     }
 
-
-
     @Override
     public boolean updateUserPass(String username, String newPass) {
         try {

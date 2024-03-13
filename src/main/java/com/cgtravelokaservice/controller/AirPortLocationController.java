@@ -16,8 +16,10 @@ import java.util.List;
 @RestController
 public class AirPortLocationController {
 
+
     @Autowired
     private IAirPortLocationService airPortLocationService;
+
 
     @GetMapping("/api/airport/location/{city_name}")
     public ResponseEntity<?> getAirPortLocationByCity_Name(@Validated @PathVariable("city_name") String city_name, BindingResult bindingResult){

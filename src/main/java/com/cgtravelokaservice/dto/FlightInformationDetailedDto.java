@@ -2,32 +2,31 @@ package com.cgtravelokaservice.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class FlightInfoSearchDTO {
-    private Integer id;
+public class FlightInformationDetailedDto {
+    @NotNull
+    private Integer flightId;
     @NotNull
     private AirPlantSearchDTO airPlant;
     @NotNull
-    private Integer fromAirportLocationId;
+    private String fromAirportLocationName;
     @NotNull
-    private Integer toAirportLocationId;
+    private String toAirportLocationName;
     @NotNull
     private LocalDateTime startTime;
-    @NotNull LocalDateTime endTime;
     @NotNull
-    private Integer seatQuantity;
+    private LocalDateTime endTime;
     @NotNull
-    private String seatTypeName;
+    private Duration flightDuration;
     @NotNull
-    private Long timeInterval;
-    @NotNull
-    private Integer unitPrice;
+    private List<SeatDetailsDto> seatDetails;
 }
