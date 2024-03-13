@@ -4,6 +4,7 @@ import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.dto.FlightInformationDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
@@ -21,4 +22,6 @@ public interface IConvertUtil {
     FlightInformation convertToNewFlightInformation(FlightInformationDto flightInformationDto);
 
     RoomContract roomContractFormDTOToRoomContract(RoomContractRegisterFormDTO roomContractRegisterFormDTO);
+
+    RoomContract convertToRoomContract(Room room, HotelSearchDTO hotelSearchDTO);
 }
