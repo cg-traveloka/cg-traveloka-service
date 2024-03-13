@@ -1,16 +1,16 @@
 package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.AirPlantSearchDTO;
-import com.cgtravelokaservice.dto.FlightDetailsDTO;
+import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 import com.cgtravelokaservice.dto.FlightInForShortDescription;
-import com.cgtravelokaservice.dto.request.FlightDetailsRequestDTO;
+import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
-import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.repo.FlightInformationRepo;
 
 import com.cgtravelokaservice.repo.SeatInformationRepo;
+import com.cgtravelokaservice.util.IConvertUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +19,8 @@ import org.springframework.data.domain.Slice;
 import com.cgtravelokaservice.service.IFlightInformationService;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,12 +32,14 @@ public class FlightInformationService implements IFlightInformationService {
     private final AirplaneBrandService airplaneBrandService;
 
     private final SeatService seatService;
+    private final IConvertUtil convertUtil;
     private final SeatInformationRepo seatInformationRepo;
 
-    public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, SeatInformationRepo seatInformationRepo) {
+    public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, IConvertUtil convertUtil, SeatInformationRepo seatInformationRepo) {
         this.flightInformationRepo = flightInformationRepo;
         this.airplaneBrandService = airplaneBrandService;
         this.seatService = seatService;
+        this.convertUtil = convertUtil;
         this.seatInformationRepo = seatInformationRepo;
 
     }
@@ -52,7 +52,7 @@ public class FlightInformationService implements IFlightInformationService {
 
 
     @Override
-    public Slice<FlightDetailsDTO> searchFlights(FlightDetailsRequestDTO request, Pageable pageable) {
+    public Slice<FlightInfoSearchDTO> searchFlights(SearchFlightDetailsRequestDTO request, Pageable pageable) {
         Slice<FlightInformation> flightInformation = flightInformationRepo.search(
                 request.getFromAirportLocationId(),
                 request.getToAirportLocationId(),
@@ -68,12 +68,12 @@ public class FlightInformationService implements IFlightInformationService {
                 request.getPriceTo(),
                 pageable);
 
-        return flightInformation.map(flightInfo -> convertToDTO(flightInfo, request.getSeatTypeId()));
+        return flightInformation.map(flightInfo -> convertUtil.convertToFlightDetailsDTO(flightInfo, request.getSeatTypeId()));
     }
 
 
     @Override
-    public List<FlightInformation> searchList(FlightDetailsRequestDTO request) {
+    public List<FlightInformation> searchList(SearchFlightDetailsRequestDTO request) {
 
         return flightInformationRepo.searchForList(
                 request.getFromAirportLocationId(),
@@ -87,10 +87,10 @@ public class FlightInformationService implements IFlightInformationService {
     }
 
     @Override
-    public SearchFlightResponse loadSearchFlightResponse(FlightDetailsRequestDTO request) {
+    public SearchFlightResponse loadSearchFlightResponse(SearchFlightDetailsRequestDTO request) {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Slice<FlightDetailsDTO> flightDetailsDTO = searchFlights(request, pageable);
+        Slice<FlightInfoSearchDTO> flightDetailsDTO = searchFlights(request, pageable);
         List<FlightInformation> flightInformationList = searchList(request);
         List<AirPlantBrand> airPlantBrands = airplaneBrandService.findByFlightInfos(flightInformationList);
 
@@ -108,19 +108,6 @@ public class FlightInformationService implements IFlightInformationService {
         descriptions.add(description2);
         return new SearchFlightResponse(flightDetailsDTO, airPlantSearchDTO, descriptions);
     }
-    private FlightDetailsDTO convertToDTO(FlightInformation flightInfo, Integer seatTypeId) {
-        FlightDetailsDTO dto = modelMapper.map(flightInfo, FlightDetailsDTO.class);
-        Optional<SeatInformation> optionalSeatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
 
-        if (optionalSeatInfo.isPresent()) {
-            SeatInformation seatInfo = optionalSeatInfo.get();
-            dto.setSeatQuantity(seatInfo.getQuantity());
-            dto.setSeatTypeName(seatInfo.getSeatType().getName());
-            dto.setUnitPrice(seatInfo.getUnitPrice());
-            dto.setTimeInterval(Duration.between(flightInfo.getStartTime(), flightInfo.getEndTime()).toMinutes());
-        }
-
-        return dto;
-    }
 
     }

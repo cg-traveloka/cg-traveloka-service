@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class FlightDetailsRequestDTO {
+public class SearchFlightDetailsRequestDTO {
     @NotNull
     private Integer fromAirportLocationId;
     @NotNull
@@ -21,7 +21,7 @@ public class FlightDetailsRequestDTO {
     @NotNull
     private LocalDateTime startTime;
     @Nullable
-    private Integer AirPlantBrandId;
+    private Integer airPlantBrandId;
     @NotNull
     private Integer seatTypeId;
 

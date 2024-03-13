@@ -1,13 +1,11 @@
 package com.cgtravelokaservice.dto.response;
 
 import com.cgtravelokaservice.dto.AirPlantSearchDTO;
-import com.cgtravelokaservice.dto.FlightDetailsDTO;
+import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 import com.cgtravelokaservice.dto.FlightInForShortDescription;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.List;
 
 public class SearchFlightResponse {
 
-    Slice<FlightDetailsDTO> flightDetailsDTO;
+    Slice<FlightInfoSearchDTO> flightDetailsDTO;
     List<AirPlantSearchDTO> airPlantSearchDTO;
     List<FlightInForShortDescription> flightInForShortDescriptions;
 }

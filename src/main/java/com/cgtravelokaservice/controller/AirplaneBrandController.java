@@ -1,7 +1,7 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.AirplaneBrandDto;
-import com.cgtravelokaservice.dto.request.FlightDetailsRequestDTO;
+import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.repo.AirplaneBrandRepo;
@@ -51,10 +51,10 @@ public class AirplaneBrandController {
 
 
     @GetMapping("/api/airplane-brands/search")
-    public ResponseEntity<?> searchFlights(@RequestBody FlightDetailsRequestDTO flightDetailsRequestDTO){
+    public ResponseEntity<?> searchFlights(@RequestBody SearchFlightDetailsRequestDTO searchFlightDetailsRequestDTO){
         try {
             List<FlightInformation> flightInformation = flightInFormationService.searchList(
-                   flightDetailsRequestDTO
+                    searchFlightDetailsRequestDTO
             );
 
             List<AirPlantBrand> airPlantBrands = airplaneBrandService.findByFlightInfos(flightInformation);

@@ -2,6 +2,7 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
 import com.cgtravelokaservice.service.IImageService;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class AirplaneBrandService implements IAirplaneBrandService {
         return true;
     }
 
-
+    @Override
     public List<AirPlantBrand> findByFlightInfos(List<FlightInformation> flightInfos) {
         List<AirPlantBrand> result = new ArrayList<>();
 

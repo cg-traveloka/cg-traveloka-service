@@ -30,8 +30,8 @@ public interface FlightInformationRepo extends JpaRepository<FlightInformation, 
             "AND si.unit_price <=  COALESCE(:priceTo,10000000000)" +
             "ORDER BY CASE WHEN :sortBy = 'duration' THEN (fi.end_time - fi.start_time) END, " +
             "CASE WHEN :sortBy = 'unitPrice' THEN si.unit_price END ,"+
-            "CASE WHEN :sortBy = 'startTime'  AND :order ='desc' THEN fi.start_time END DESC,"+
-            "CASE WHEN :sortBy = 'endTime'  AND :order = 'desc' THEN fi.end_time END DESC",
+            "CASE WHEN :sortBy = 'start_time'  AND :order ='desc' THEN fi.start_time END DESC,"+
+            "CASE WHEN :sortBy = 'end_time'  AND :order = 'desc' THEN fi.end_time END DESC",
             nativeQuery = true)
     Slice<FlightInformation> search(@Param("fromAirportLocationId") Integer fromAirportLocationId,
                                     @Param("toAirportLocationId") Integer toAirportLocationId,
