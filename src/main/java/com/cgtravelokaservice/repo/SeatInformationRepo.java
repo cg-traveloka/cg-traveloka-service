@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface SeatInformationRepo extends JpaRepository<SeatInformation, Integer> {
     Optional<SeatInformation> findByFlightInformation_IdAndSeatType_Id(Integer flightInfoId,
                                                                                Integer seatTypeId);
-//
-//    Page<SeatInformation> findByFlightInformation_StartTimeAndSeatType_Id(LocalDateTime startTime,
-//                                                                          Integer seatTypeId);
+
     List<SeatInformation> findAllByFlightInformation(FlightInformation flightInformation);
 }

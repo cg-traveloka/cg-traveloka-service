@@ -27,18 +27,13 @@ import com.cgtravelokaservice.util.implement.ConvertUtil;
 public class FlightInformationController {
     private final FlightInformationService flightInformationService;
     private final SeatService seatService;
-
     private final ConvertUtil convertUtil;
-
-    private final TicketAirplaneService ticketAirplaneService;
 
     @Autowired
     public FlightInformationController(FlightInformationService flightInformationService, SeatService seatService,
-                                       TicketAirplaneService ticketAirplaneService,
                                        ConvertUtil convertUtil) {
         this.flightInformationService = flightInformationService;
         this.seatService = seatService;
-        this.ticketAirplaneService = ticketAirplaneService;
         this.convertUtil = convertUtil;
     }
 
@@ -64,7 +59,7 @@ public class FlightInformationController {
     public ResponseEntity<?> searchFlight(@Validated @RequestBody SearchFlightRequest request,
                                           BindingResult bindingResult,
                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                          @RequestParam(value = "size", defaultValue = "10") int size)  {
+                                          @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Invalid request");
@@ -88,6 +83,7 @@ public class FlightInformationController {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         try {
+            request.setAirplaneId(null);
             return ResponseEntity.ok(flightInformationService.createFirstSearchResponse(request));
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,19 +91,5 @@ public class FlightInformationController {
         }
     }
 
-    @PostMapping("/api/flights/booking")
-    public ResponseEntity<?> booking(@Validated @RequestBody TicketAirplaneDto ticketAirplaneDto,
-                                         BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Invalid request");
-        }
-        try {
-            ticketAirplaneService.add(ticketAirplaneDto);
-            return ResponseEntity.ok().body("Booking airplane ticket success");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Fail to book airplane ticket");
-        }
-    }
 
 }

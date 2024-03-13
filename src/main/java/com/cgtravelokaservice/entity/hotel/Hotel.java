@@ -30,6 +30,8 @@ public class Hotel implements Serializable {
     private double hotelStar;
     private Integer hotelBookedNumbers;
     private String address;
+    private Integer minOriginPrice;
+    private Integer minSellPrice;
     @ManyToOne
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;
