@@ -2,7 +2,7 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
-import com.cgtravelokaservice.dto.response.HotelsResponeDTO;
+import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelImg;
@@ -128,7 +128,7 @@ public class HotelService implements IHotelService {
     }
 
 
-    public HotelsResponeDTO search(HotelSearchDTO hotelSearchDTO) {
+    public HotelsResponseDTO search(HotelSearchDTO hotelSearchDTO) {
         Integer cityId =
                 hotelSearchDTO.getCityId();
         List<Integer> hotelStars =
@@ -169,10 +169,10 @@ public class HotelService implements IHotelService {
                 j--;
             }
         }
-        HotelsResponeDTO hotelsResponeDTO =
-                new HotelsResponeDTO();
-        hotelsResponeDTO.setHotels(hotelList);
-        hotelsResponeDTO.setPageNumber(hotelSearchDTO.getPageNumber());
-        return hotelsResponeDTO;
+        HotelsResponseDTO hotelsResponseDTO =
+                new HotelsResponseDTO();
+        hotelsResponseDTO.setHotels(hotelList);
+        hotelsResponseDTO.setPageNumber(hotelSearchDTO.getPageNumber());
+        return hotelsResponseDTO;
     }
 }

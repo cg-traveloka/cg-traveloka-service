@@ -1,7 +1,7 @@
 package com.cgtravelokaservice.service;
 
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
-import com.cgtravelokaservice.dto.response.HotelsResponeDTO;
+import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -20,5 +20,5 @@ public interface IHotelService {
 
     Slice<Hotel> getHotels(Pageable pageable);
 
-    HotelsResponeDTO search(HotelSearchDTO hotelSearchDTO);
+    HotelsResponseDTO search(HotelSearchDTO hotelSearchDTO);
 }

@@ -1,10 +1,8 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
-import com.cgtravelokaservice.dto.response.HotelResponseDTO;
-import com.cgtravelokaservice.dto.response.ListHotelResponseAndPageNumberDTO;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
-import com.cgtravelokaservice.dto.response.HotelsResponeDTO;
+import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelHotelUtility;
 import com.cgtravelokaservice.repo.HotelHotelUtilityRepo;
@@ -13,7 +11,6 @@ import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IHotelUtilityService;
 import com.cgtravelokaservice.service.implement.BookingService;
 import com.cgtravelokaservice.util.IConvertUtil;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,16 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RestController
 public class HotelController {
@@ -47,8 +38,6 @@ public class HotelController {
     private IConvertUtil convertUtility;
     @Autowired
     private BookingService bookingService;
-
-    private final ModelMapper modelMapper = new ModelMapper();
 
     @PostMapping(value = "/api/hotels", consumes = "multipart/form-data")
     public ResponseEntity<?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
@@ -68,13 +57,6 @@ public class HotelController {
         return ResponseEntity.ok().body(hotel);
     }
 
-    @GetMapping("/hotels")
-    public ListHotelResponseAndPageNumberDTO getHotels(Pageable pageable) {
-        Slice<Hotel> hotelPage = hotelService.getHotels(pageable);
-        List<HotelResponseDTO> hotelResponseDTOList = convertToDTO(hotelPage.getContent());
-        return new ListHotelResponseAndPageNumberDTO(hotelResponseDTOList, hotelPage.getNumber());
-    }
-
 //    Cách bình thuường
 
 //    private List<HotelResponseDTO> convertToDTO(List<Hotel> hotels) {
@@ -90,11 +72,10 @@ public class HotelController {
 //        }).collect(Collectors.toList());
 //    }
 
-    //    Dùng ModelMapper để convert từ entity sang DTO
-    private List<HotelResponseDTO> convertToDTO(List<Hotel> hotels) {
-        return hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelResponseDTO.class))
-                .collect(Collectors.toList());
+    @GetMapping("/api/hotels")
+    public HotelsResponseDTO getHotels(Pageable pageable) {
+        Slice<Hotel> hotels = hotelService.getHotels(pageable);
+        return new HotelsResponseDTO(hotels.getContent(), hotels.getNumber());
     }
 
     @PostMapping("/hotels/{hotelId}/book")
@@ -116,10 +97,10 @@ public class HotelController {
     public Double calculateAverageRatingPoints(@PathVariable Integer hotelId) {
         return hotelService.calculateAverageRatingPoints(hotelId);
     }
+
     @GetMapping("/api/search/hotels")
-    public ResponseEntity <?> search(@RequestBody HotelSearchDTO hotelSearchDTO) {
-        HotelsResponeDTO hotelsResponeDTO =
-                hotelService.search(hotelSearchDTO);
-        return ResponseEntity.ok().body(hotelsResponeDTO);
+    public ResponseEntity<?> search(@RequestBody HotelSearchDTO hotelSearchDTO) {
+        HotelsResponseDTO hotelsResponseDTO = hotelService.search(hotelSearchDTO);
+        return ResponseEntity.ok().body(hotelsResponseDTO);
     }
 }

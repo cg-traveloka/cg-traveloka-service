@@ -10,7 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotelsResponeDTO {
-    private List <Hotel> hotels;
+public class HotelsResponseDTO {
+    private List<Hotel> hotels;
+
     private Integer pageNumber;
 }
