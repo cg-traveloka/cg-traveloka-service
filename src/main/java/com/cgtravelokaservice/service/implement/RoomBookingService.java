@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomBookingService {
@@ -32,22 +30,28 @@ public class RoomBookingService {
 
     @Autowired
     private IRoomContractService roomContractService;
-    public RoomBookingResponseDTO bookRoom(RoomBookingRequestDTO request) {
+    public RoomBookingResponseDTO bookRoom(RoomBookingRequestDTO bookingRequest) {
 
-        List<Room> allRooms = roomRepo.findAllByHotelId(request.getHotelId());
         List<Room> availableRooms = new ArrayList<>();
-        for (Room room : allRooms) {
-            RoomContract tempContract = new RoomContract();
-            tempContract.setRoom(room);
-            tempContract.setStartDate(request.getStartDate().toLocalDate());
-            tempContract.setEndDate(request.getEndDate().toLocalDate());
-            tempContract.setRoomQuantity(request.getRoomQuantity());
-            if (roomContractService.isContractValid(tempContract)) {
+        List<Room> rooms = roomRepo.findByHotelId(bookingRequest.getHotelId());
+
+        for (Room room : rooms) {
+            if (room.getQuantity() < bookingRequest.getRoomQuantity()) {
+                throw new RuntimeException("Không còn phòng khả dụng");
+            }
+            RoomContract roomContract = new RoomContract();
+            roomContract.setStartDate(bookingRequest.getStartDate());
+            roomContract.setEndDate(bookingRequest.getEndDate());
+            roomContract.setRoomQuantity(bookingRequest.getRoomQuantity());
+            roomContract.setRoom(room);
+            System.out.println(roomContract);
+            if (roomContractService.isContractValid(roomContract)) {
                 availableRooms.add(room);
+                System.out.println(availableRooms);
             }
         }
-        Hotel hotel = hotelRepo.findById(request.getHotelId()).orElse(null);
-        return new RoomBookingResponseDTO(availableRooms, hotel);
+        Hotel hotel = hotelRepo.getReferenceById(bookingRequest.getHotelId());
+        return new RoomBookingResponseDTO(availableRooms,hotel);
     }
 
 }

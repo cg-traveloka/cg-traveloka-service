@@ -11,5 +11,4 @@ import java.util.List;
 public interface RoomRepo extends JpaRepository <Room, Integer> {
     List <Room> findAllByHotel(Hotel hotel);
 
-    List<Room> findAllByHotelId(Integer id);
-}
+    List<Room> findByHotelId(Integer hotelId);}

@@ -67,6 +67,7 @@ public class ConvertUtil implements IConvertUtil {
     private SeatInformationRepo seatInformationRepo;
     @Autowired
     private SeatService seatService;
+    @Autowired
     private RoomRepo roomRepo;
 
     private final ModelMapper modelMapper = new ModelMapper();
@@ -122,6 +123,7 @@ public class ConvertUtil implements IConvertUtil {
     public RoomContract roomContractFormDTOToRoomContract(RoomContractRegisterFormDTO roomContractRegisterFormDTO) {
         RoomContract roomContract =
                 new RoomContract();
+        System.out.println(roomContractRegisterFormDTO.getRoomId());
         roomContract.setRoom(roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()));
         roomContract.setRoomQuantity(roomContractRegisterFormDTO.getRoomQuantity());
         roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate());

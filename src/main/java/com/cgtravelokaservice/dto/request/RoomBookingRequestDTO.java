@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,9 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RoomBookingRequestDTO {
     @NotNull
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @NotNull
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @NotNull
     private Integer personQuantity;
     @NotNull
