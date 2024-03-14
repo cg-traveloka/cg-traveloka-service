@@ -16,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import com.cgtravelokaservice.service.IFlightInformationService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -83,8 +84,8 @@ public class FlightInformationService implements IFlightInformationService {
                 request.getStartTime(),
                 request.getAirPlantBrandId(),
                 request.getSeatTypeId(),
-                request.getSeatQuantity()
-        );
+                request.getSeatQuantity());
+
     }
 
     @Override
@@ -99,9 +100,8 @@ public class FlightInformationService implements IFlightInformationService {
                 .map(brand -> new AirPlantSearchDTO(brand.getId(), brand.getName(), brand.getLogoUrl()))
                 .collect(Collectors.toList());
 
-        String value1 = seatService.getLowestPriceSeat(flightInformationList).getUnitPrice().toString();
-        String value2 = seatService.getShortestFlight(flightInformationList).getUnitPrice().toString();
-
+        String value1 = seatService.getLowestPriceSeat(flightInformationList, request.getSeatTypeId()).getUnitPrice().toString();
+        String value2 = seatService.getShortestFlight(flightInformationList, request.getSeatTypeId()).getUnitPrice().toString();
         FlightInForShortDescription description =
                 FlightInForShortDescription.builder().name("Gía thấp nhất").unitPrice(value1).build();
         FlightInForShortDescription description2 = FlightInForShortDescription.builder().name("Thời gian bay ngắn " +

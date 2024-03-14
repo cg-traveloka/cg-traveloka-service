@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 public class FlightInformationController {
@@ -105,6 +106,7 @@ public class FlightInformationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
                     "bay.");
         }
+
     }
 
 
@@ -118,6 +120,8 @@ public class FlightInformationController {
             requestDTO.setAirPlantBrandId(null);
             SearchFlightResponse response = flightInformationService.loadSearchFlightResponse(requestDTO);
             return ResponseEntity.ok(response);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Không có chuyến bay phù hợp.");
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
                     "bay.");

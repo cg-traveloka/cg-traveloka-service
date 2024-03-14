@@ -84,19 +84,23 @@ public class SeatService implements ISeatService {
     }
 
 
-    public SeatInformation getLowestPriceSeat(List<FlightInformation> flightInformations) {
-        return flightInformations.stream()
-                .flatMap(flight -> seatInformationRepo.findByFlightInformation_Id(flight.getId()).stream())
-                .min(Comparator.comparing(SeatInformation::getUnitPrice))
+    public SeatInformation getLowestPriceSeat(List<FlightInformation> flightInformations, Integer seatTypeId) {
+       return flightInformations.stream()
+                .map(flight -> seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flight.getId(), seatTypeId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .min(Comparator.comparingInt(SeatInformation::getUnitPrice))
                 .orElseThrow(NoSuchElementException::new);
     }
 
 
-    public SeatInformation getShortestFlight(List<FlightInformation> seatInformationList) {
-        return seatInformationList.stream()
-                .flatMap(flightInformation -> seatInformationRepo.findByFlightInformation_Id(flightInformation.getId()).stream())
+    public SeatInformation getShortestFlight(List<FlightInformation> flightInformations, Integer seatTypeId) {
+        return flightInformations.stream()
+                .map(flight -> seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flight.getId(), seatTypeId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .min(Comparator.comparing(seat -> Duration.between(seat.getFlightInformation().getStartTime(),
-                        seat.getFlightInformation().getEndTime()).toMinutes()))
+                        seat.getFlightInformation().getEndTime())))
                 .orElseThrow(NoSuchElementException::new);
     }
 
@@ -104,13 +108,15 @@ public class SeatService implements ISeatService {
     public List<SeatInformation> getAllAvailableSeatsByFlight(GetAvailableSeatsRequest request) {
         List<SeatInformation> result = new ArrayList<>();
         seatTypeRepo.findAll().forEach(seatType -> {
-            Optional<SeatInformation> seatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(request.getFlightId(),
-                    seatType.getId());
+            Optional<SeatInformation> seatInfo =
+                    seatInformationRepo.findByFlightInformationIdAndSeatTypeId(request.getFlightId(),
+                            seatType.getId());
             if (seatInfo.isPresent()) {
                 if (seatInfo.get().getQuantity() >= request.getSeatQuantity()) {
                     result.add(seatInfo.get());
                 }
-            }});
+            }
+        });
         return result;
     }
 

@@ -43,7 +43,7 @@ public interface FlightInformationRepo extends JpaRepository<FlightInformation, 
                                     @Param("sortBy") @Nullable String sortBy,
                                     @Param("order") @Nullable String order,
                                     @Param("priceFrom") Integer priceFrom,
-                                    @Param("priceTo") Integer priceTo,
+                                    @Param("priceTo") @Nullable Integer priceTo,
                                     Pageable pageable);
 
 
