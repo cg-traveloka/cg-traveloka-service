@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 @EnableScheduling
 public class CgTravelokaServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CgTravelokaServiceApplication.class, args);
     }

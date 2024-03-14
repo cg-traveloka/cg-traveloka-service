@@ -1,16 +1,20 @@
 package com.cgtravelokaservice.dto.response;
 
 import com.cgtravelokaservice.entity.hotel.Hotel;
+import com.cgtravelokaservice.entity.room.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class HotelsResponeDTO {
-    private List <Hotel> hotels;
-    private Integer pageNumber;
+@NoArgsConstructor
+@ToString
+public class RoomBookingResponse {
+
+    private List<Room> availableRooms;
+
 }
