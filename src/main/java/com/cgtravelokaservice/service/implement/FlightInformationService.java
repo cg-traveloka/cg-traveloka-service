@@ -27,18 +27,20 @@ import java.util.stream.Collectors;
 public class FlightInformationService implements IFlightInformationService {
 
     private final FlightInformationRepo flightInformationRepo;
+
     private final AirplaneBrandService airplaneBrandService;
 
     private final SeatService seatService;
     private final IConvertUtil convertUtil;
 
-    public FlightInformationService(FlightInformationRepo flightInformationRepo,
-                                    AirplaneBrandService airplaneBrandService, SeatService seatService,
-                                    IConvertUtil convertUtil) {
+
+    public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, IConvertUtil convertUtil) {
+
         this.flightInformationRepo = flightInformationRepo;
         this.airplaneBrandService = airplaneBrandService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
+
 
     }
 
@@ -75,7 +77,6 @@ public class FlightInformationService implements IFlightInformationService {
 
     @Override
     public List<FlightInformation> searchList(SearchFlightDetailsRequestDTO request) {
-
         return flightInformationRepo.searchForList(
                 request.getFromAirportLocationId(),
                 request.getToAirportLocationId(),
@@ -83,7 +84,6 @@ public class FlightInformationService implements IFlightInformationService {
                 request.getAirPlantBrandId(),
                 request.getSeatTypeId(),
                 request.getSeatQuantity()
-
         );
     }
 

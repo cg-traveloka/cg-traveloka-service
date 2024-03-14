@@ -9,7 +9,9 @@ import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
+
 public interface IFlightInformationService {
+
     void saveFlightInformation (FlightInformation flightInformation);
     List<FlightInfoSearchDTO> searchFlights (SearchFlightDetailsRequestDTO request, Pageable pageable);
 
@@ -17,3 +19,5 @@ public interface IFlightInformationService {
 
     SearchFlightResponse loadSearchFlightResponse(SearchFlightDetailsRequestDTO request);
 }
+
+
