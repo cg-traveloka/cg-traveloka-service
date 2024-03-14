@@ -19,6 +19,7 @@ public class FlightService implements IFlightService {
 
     private IConvertUtil convertUtil;
 
+
     @Autowired
     public FlightService(FlightInformationRepo flightInformationRepository,
                          IConvertUtil convertUtil) {
@@ -32,10 +33,6 @@ public class FlightService implements IFlightService {
         Slice<FlightInformation> allFlights = flightInformationRepository.findAllByOrderByStartTimeAsc(pageable);
         return allFlights.map(convertUtil::convertToDetailedDto);
     }
-
-
-
-
 
 
 }

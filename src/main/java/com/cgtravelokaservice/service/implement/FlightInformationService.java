@@ -10,6 +10,7 @@ import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.repo.FlightInformationRepo;
 import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.util.IConvertUtil;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -24,16 +25,23 @@ import java.util.stream.Collectors;
 public class FlightInformationService implements IFlightInformationService {
 
     private final FlightInformationRepo flightInformationRepo;
+
+    private final ModelMapper modelMapper = new ModelMapper();
+
     private final AirplaneBrandService airplaneBrandService;
 
     private final SeatService seatService;
     private final IConvertUtil convertUtil;
 
+
+
     public FlightInformationService(FlightInformationRepo flightInformationRepo, AirplaneBrandService airplaneBrandService, SeatService seatService, IConvertUtil convertUtil) {
+
         this.flightInformationRepo = flightInformationRepo;
         this.airplaneBrandService = airplaneBrandService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
+
 
     }
 
