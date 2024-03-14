@@ -1,6 +1,7 @@
 package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
+import com.cgtravelokaservice.dto.request.GetAvailableSeatsRequest;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.entity.airplant.SeatType;
@@ -21,6 +22,7 @@ public class SeatService implements ISeatService {
     private final SeatInformationRepo seatInformationRepo;
     private final SeatTypeRepo seatTypeRepo;
 
+
     public SeatService(SeatInformationRepo seatInformationRepo, SeatTypeRepo seatTypeRepo) {
         this.seatInformationRepo = seatInformationRepo;
         this.seatTypeRepo = seatTypeRepo;
@@ -28,7 +30,8 @@ public class SeatService implements ISeatService {
 
     @Override
 
-    public List<SeatInformation> createSeatsForNewFlight(FlightInformationRegisterDto flightInformationRegisterDto, FlightInformation flightInformation) {
+    public List<SeatInformation> createSeatsForNewFlight(FlightInformationRegisterDto flightInformationRegisterDto,
+                                                         FlightInformation flightInformation) {
 
         List<SeatInformation> seatsInformation = new ArrayList<>();
         List<SeatType> seatTypes = new ArrayList<>();
@@ -39,7 +42,8 @@ public class SeatService implements ISeatService {
         }
 
         for (SeatType seatType : seatTypes) {
-            SeatInformation seatInformation = createSeatForType(seatType, flightInformation, flightInformationRegisterDto);
+            SeatInformation seatInformation = createSeatForType(seatType, flightInformation,
+                    flightInformationRegisterDto);
             if (seatInformation != null) {
                 seatsInformation.add(seatInformation);
                 seatInformationRepo.save(seatInformation);
@@ -49,16 +53,21 @@ public class SeatService implements ISeatService {
     }
 
 
-    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation, FlightInformationRegisterDto flightInformationRegisterDto) {
+    private SeatInformation createSeatForType(SeatType seatType, FlightInformation flightInformation,
+                                              FlightInformationRegisterDto flightInformationRegisterDto) {
         return switch (seatType.getId()) {
-            case 1 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getNormalSeatQuantity(), flightInformationRegisterDto.getNormalSeatPrice());
-            case 2 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getSpecialNormalSeatQuantity(), flightInformationRegisterDto.getSpecialNormalSeatPrice());
-            case 3 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getBusinessSeatQuantity(), flightInformationRegisterDto.getBusinessSeatPrice());
-            case 4 ->
-                    createSeatInformation(seatType, flightInformation, flightInformationRegisterDto.getVipSeatQuantity(), flightInformationRegisterDto.getVipSeatPrice());
+            case 1 -> createSeatInformation(seatType, flightInformation,
+                    flightInformationRegisterDto.getNormalSeatQuantity(),
+                    flightInformationRegisterDto.getNormalSeatPrice());
+            case 2 -> createSeatInformation(seatType, flightInformation,
+                    flightInformationRegisterDto.getSpecialNormalSeatQuantity(),
+                    flightInformationRegisterDto.getSpecialNormalSeatPrice());
+            case 3 -> createSeatInformation(seatType, flightInformation,
+                    flightInformationRegisterDto.getBusinessSeatQuantity(),
+                    flightInformationRegisterDto.getBusinessSeatPrice());
+            case 4 -> createSeatInformation(seatType, flightInformation,
+                    flightInformationRegisterDto.getVipSeatQuantity(),
+                    flightInformationRegisterDto.getVipSeatPrice());
 
             default -> null;
         };
@@ -75,9 +84,7 @@ public class SeatService implements ISeatService {
     }
 
 
-
     public SeatInformation getLowestPriceSeat(List<FlightInformation> flightInformations) {
-
         return flightInformations.stream()
                 .flatMap(flight -> seatInformationRepo.findByFlightInformation_Id(flight.getId()).stream())
                 .min(Comparator.comparing(SeatInformation::getUnitPrice))
@@ -88,7 +95,28 @@ public class SeatService implements ISeatService {
     public SeatInformation getShortestFlight(List<FlightInformation> seatInformationList) {
         return seatInformationList.stream()
                 .flatMap(flightInformation -> seatInformationRepo.findByFlightInformation_Id(flightInformation.getId()).stream())
-                .min(Comparator.comparing(seat -> Duration.between(seat.getFlightInformation().getStartTime(), seat.getFlightInformation().getEndTime()).toMinutes()))
+                .min(Comparator.comparing(seat -> Duration.between(seat.getFlightInformation().getStartTime(),
+                        seat.getFlightInformation().getEndTime()).toMinutes()))
                 .orElseThrow(NoSuchElementException::new);
     }
+
+
+    public List<SeatInformation> getAllAvailableSeatsByFlight(GetAvailableSeatsRequest request) {
+        List<SeatInformation> result = new ArrayList<>();
+        seatTypeRepo.findAll().forEach(seatType -> {
+            Optional<SeatInformation> seatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(request.getFlightId(),
+                    seatType.getId());
+            if (seatInfo.isPresent()) {
+                if (seatInfo.get().getQuantity() >= request.getSeatQuantity()) {
+                    result.add(seatInfo.get());
+                }
+            }});
+        return result;
+    }
+
+
 }
+
+
+
+

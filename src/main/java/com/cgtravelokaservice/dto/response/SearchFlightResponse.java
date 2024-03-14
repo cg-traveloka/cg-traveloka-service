@@ -19,8 +19,7 @@ import java.util.List;
 
 
 public class SearchFlightResponse {
-
-    Slice<FlightInfoSearchDTO> flightDetailsDTO;
+    List<FlightInfoSearchDTO> flightDetailsDTO;
     List<AirPlantSearchDTO> airPlantSearchDTO;
     List<FlightInForShortDescription> flightInForShortDescriptions;
 }

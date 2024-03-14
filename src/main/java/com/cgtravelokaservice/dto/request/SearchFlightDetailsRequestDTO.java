@@ -1,6 +1,7 @@
 package com.cgtravelokaservice.dto.request;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,6 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class SearchFlightDetailsRequestDTO {
@@ -19,6 +19,7 @@ public class SearchFlightDetailsRequestDTO {
     @NotNull
     private Integer toAirportLocationId;
     @NotNull
+//    @FutureOrPresent
     private LocalDateTime startTime;
     @Nullable
     private Integer airPlantBrandId;
@@ -26,19 +27,24 @@ public class SearchFlightDetailsRequestDTO {
     private Integer seatTypeId;
     @NotNull
     private Integer seatQuantity;
-
     @Nullable
     private String sortBy;
     @Nullable
     private String order;
-
     @Nullable
-    private Integer durationFrom=0;
+    private Integer durationFrom;
     @Nullable
     private Integer durationTo;
     @Nullable
-    private Integer priceFrom=0;
+    private Integer priceFrom;
     @Nullable
     private Integer priceTo;
+
+    public SearchFlightDetailsRequestDTO() {
+        this.sortBy = "startTime";
+        this.order = "asc";
+        this.priceFrom = 0;
+        this.durationFrom=0;
+    }
 
 }

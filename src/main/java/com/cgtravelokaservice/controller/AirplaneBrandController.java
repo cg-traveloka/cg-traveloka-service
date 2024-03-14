@@ -61,8 +61,7 @@ public class AirplaneBrandController {
 
             return new ResponseEntity<>(airPlantBrands, HttpStatus.OK);
         } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>("An error occurred while searching for flights.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Đã xảy ra lỗi khi tìm kiếm hãng bay.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

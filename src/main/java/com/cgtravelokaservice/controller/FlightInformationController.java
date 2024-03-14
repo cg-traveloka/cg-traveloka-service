@@ -5,7 +5,6 @@ import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
 import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 
 import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
-import com.cgtravelokaservice.dto.request.SearchFlightRequest;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
 
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
@@ -29,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 public class FlightInformationController {
@@ -79,7 +80,6 @@ public class FlightInformationController {
         }
         try {
             // Kiểm tra lỗi truyền tham số
-            Pageable pageable = PageRequest.of(page, size);
             Slice<FlightInformationDetailedDto> flights = flightService.getAllFlightsSortedByStartDate(page, size);
             return new ResponseEntity<>(flights, HttpStatus.OK);
         } catch (Exception e) {
@@ -93,36 +93,32 @@ public class FlightInformationController {
     public ResponseEntity<?> searchFlights(@Validated @RequestBody SearchFlightDetailsRequestDTO request,
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(value = "sortBy", defaultValue = "start_time") String sortBy,
-                                           @RequestParam(value = "order", defaultValue = "asc") String order,
                                            BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Your request is not valid. Check again your username or password");
+            return ResponseEntity.badRequest().body("Request không hợp lệ.");
         }
         try {
             Pageable pageable = PageRequest.of(page, size);
-            request.setSortBy(sortBy);
-            request.setOrder(order);
-            Slice<FlightInfoSearchDTO> flights = flightInformationService.searchFlights(request, pageable);
+            List<FlightInfoSearchDTO> flights = flightInformationService.searchFlights(request, pageable);
             return new ResponseEntity<>(flights, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving flights", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
+                    "bay.");
         }
     }
+
 
     @GetMapping("/api/flights/search2")
     public ResponseEntity<?> searchGeneral(@Validated @RequestBody SearchFlightDetailsRequestDTO requestDTO,
                                            BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Your request is not valid. Check again your username or password");
+            return ResponseEntity.badRequest().body("Request không hợp lệ.");
         }
         try {
             requestDTO.setAirPlantBrandId(null);
             SearchFlightResponse response = flightInformationService.loadSearchFlightResponse(requestDTO);
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
                     "bay.");
 

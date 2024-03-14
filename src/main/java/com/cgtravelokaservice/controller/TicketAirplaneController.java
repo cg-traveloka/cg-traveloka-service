@@ -1,7 +1,7 @@
 package com.cgtravelokaservice.controller;
 
-import com.cgtravelokaservice.dto.TicketAirplaneDto;
-import com.cgtravelokaservice.service.implement.TicketAirplaneService;
+import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
+import com.cgtravelokaservice.service.implement.TicketAirPlaneService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,19 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TicketAirplaneController {
 
-    private final TicketAirplaneService ticketAirplaneService;
+    private final TicketAirPlaneService ticketAirplaneService;
 
-    public TicketAirplaneController(TicketAirplaneService ticketAirplaneService) {this.ticketAirplaneService = ticketAirplaneService;}
+    public TicketAirplaneController(TicketAirPlaneService ticketAirplaneService) {this.ticketAirplaneService = ticketAirplaneService;}
 
     @PostMapping("/api/airplane-tickets/booking")
-    public ResponseEntity<?> booking(@Validated @RequestBody TicketAirplaneDto ticketAirplaneDto,
+    public ResponseEntity<?> booking(@Validated @RequestBody TicketAirPlaneDTO ticketAirplaneDto,
                                      BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         try {
-            if (ticketAirplaneService.add(ticketAirplaneDto)) {
+            if (ticketAirplaneService.bookFlight(ticketAirplaneDto)) {
                 return ResponseEntity.ok().body("Booking airplane ticket success");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Not enough seat");
