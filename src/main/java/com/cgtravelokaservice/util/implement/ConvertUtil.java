@@ -1,17 +1,9 @@
 package com.cgtravelokaservice.util.implement;
 
-import com.cgtravelokaservice.dto.AirplaneBrandDto;
-import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
-import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
-import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
-import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
-import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
-import com.cgtravelokaservice.dto.SeatDetailsDto;
-
-import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
-
+import com.cgtravelokaservice.dto.*;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -19,15 +11,8 @@ import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
-import com.cgtravelokaservice.repo.AirplaneBrandRepo;
-import com.cgtravelokaservice.repo.AirportLocationRepo;
-import com.cgtravelokaservice.repo.BedTypeRepo;
-import com.cgtravelokaservice.repo.CityRepo;
-import com.cgtravelokaservice.repo.HotelImgRepo;
-import com.cgtravelokaservice.repo.HotelRepo;
-import com.cgtravelokaservice.repo.RoomRepo;
-import com.cgtravelokaservice.repo.RoomTypeRepo;
-import com.cgtravelokaservice.repo.SeatInformationRepo;
+import com.cgtravelokaservice.entity.user.Customer;
+import com.cgtravelokaservice.repo.*;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.implement.AirplaneBrandService;
 import com.cgtravelokaservice.service.implement.SeatService;
@@ -38,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,7 +55,10 @@ public class ConvertUtil implements IConvertUtil {
     private SeatInformationRepo seatInformationRepo;
     @Autowired
     private SeatService seatService;
+    @Autowired
     private RoomRepo roomRepo;
+    @Autowired
+    private CustomerRepo customerRepo;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
@@ -135,7 +124,7 @@ public class ConvertUtil implements IConvertUtil {
         return roomContract;
     }
 
-@Override
+    @Override
     public FlightInfoSearchDTO convertToFlightDetailsDTO(FlightInformation flightInfo, Integer seatTypeId) {
         FlightInfoSearchDTO dto = modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
         Optional<SeatInformation> optionalSeatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
@@ -150,6 +139,7 @@ public class ConvertUtil implements IConvertUtil {
 
         return dto;
     }
+
     @Override
     public FlightInformationDetailedDto convertToDetailedDto(FlightInformation flightInformation) {
         FlightInformationDetailedDto detailedDto = modelMapper.map(flightInformation, FlightInformationDetailedDto.class);
@@ -183,5 +173,14 @@ public class ConvertUtil implements IConvertUtil {
         ticket.setQuantity(ticketDTO.getQuantity());
         ticket.setTotalMoney(seatInformation.getUnitPrice() * ticketDTO.getQuantity());
         return ticket;
+    }
+
+    public Customer convertDTOToCustomer(UpdateProfileCustomerRequestDTO requestDTO) {
+        Customer customer = customerRepo.getReferenceById(requestDTO.getCustomerId());
+        customer.setName(requestDTO.getName());
+        customer.setGender(requestDTO.getGender());
+        LocalDate dateOfBirth = LocalDate.of(requestDTO.getYear(), requestDTO.getMonth(), requestDTO.getDate());
+        customer.setDateOfBirth(dateOfBirth);
+        return customer;
     }
 }

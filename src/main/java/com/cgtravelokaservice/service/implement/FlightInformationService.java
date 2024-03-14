@@ -75,7 +75,6 @@ public class FlightInformationService implements IFlightInformationService {
 
     @Override
     public List<FlightInformation> searchList(SearchFlightDetailsRequestDTO request) {
-
         return flightInformationRepo.searchForList(
                 request.getFromAirportLocationId(),
                 request.getToAirportLocationId(),
@@ -83,7 +82,6 @@ public class FlightInformationService implements IFlightInformationService {
                 request.getAirPlantBrandId(),
                 request.getSeatTypeId(),
                 request.getSeatQuantity()
-
         );
     }
 
