@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class RoomBookingResponse {
-    private Hotel hotel;
 
     private List<Room> availableRooms;
+
 }
