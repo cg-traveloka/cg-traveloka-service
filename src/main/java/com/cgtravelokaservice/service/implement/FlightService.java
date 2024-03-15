@@ -16,15 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlightService implements IFlightService {
     private FlightInformationRepo flightInformationRepository;
-
     private IConvertUtil convertUtil;
 
 
     @Autowired
-    public FlightService(FlightInformationRepo flightInformationRepository,
-                         IConvertUtil convertUtil) {
+    public FlightService(FlightInformationRepo flightInformationRepository, AirplaneBrandRepo airplaneBrandDto, IConvertUtil convertUtil) {
         this.flightInformationRepository = flightInformationRepository;
-
         this.convertUtil = convertUtil;
     }
     @Override

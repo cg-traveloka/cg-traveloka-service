@@ -1,5 +1,6 @@
 package com.cgtravelokaservice.entity.airplant;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class SeatInformation {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "flight_id", referencedColumnName = "id")
+    @JsonBackReference
     private FlightInformation flightInformation;
     @ManyToOne
     @JoinColumn(name = "seat_type_id", referencedColumnName = "id")

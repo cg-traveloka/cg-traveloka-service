@@ -1,5 +1,6 @@
 package com.cgtravelokaservice.service.implement;
 
+
 import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.entity.booking.TicketAirPlant;
@@ -22,6 +23,7 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
 
     @Autowired
     private TicketAirPlaneRepo ticketAirPlantRepo;
+
     @Override
     public boolean bookFlight(TicketAirPlaneDTO ticketDTO) {
         SeatInformation seatInformation = getSeatInformationById(ticketDTO.getSeatInfoId());

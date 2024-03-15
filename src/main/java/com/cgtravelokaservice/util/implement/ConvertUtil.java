@@ -1,6 +1,17 @@
 package com.cgtravelokaservice.util.implement;
 
-import com.cgtravelokaservice.dto.*;
+
+import com.cgtravelokaservice.dto.AirplaneBrandDto;
+import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
+import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
+import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
+import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
+import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+
+import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
+import com.cgtravelokaservice.dto.SeatDetailsDto;
+
+
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
@@ -60,7 +71,9 @@ public class ConvertUtil implements IConvertUtil {
     @Autowired
     private CustomerRepo customerRepo;
 
+
     private final ModelMapper modelMapper = new ModelMapper();
+
 
     @Override
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
@@ -125,10 +138,27 @@ public class ConvertUtil implements IConvertUtil {
         return roomContract;
     }
 
+
+
+    public TicketAirPlant ticketAirPlantDtoToTicketAirPlant(TicketAirPlaneDTO ticketAirplaneDto) {
+        TicketAirPlant ticketAirPlant = new TicketAirPlant();
+        ticketAirPlant.setQuantity(ticketAirplaneDto.getQuantity());
+        SeatInformation seatInformation =
+                seatInformationRepo.getReferenceById(ticketAirplaneDto.getSeatInfoId());
+        ticketAirPlant.setSeatType(seatInformation.getSeatType());
+        ticketAirPlant.setFlightInformation(seatInformation.getFlightInformation());
+        Integer totalPrice = seatInformation.getUnitPrice() * ticketAirplaneDto.getQuantity();
+        ticketAirPlant.setTotalMoney(totalPrice);
+        return ticketAirPlant;
+    }
+
+
     @Override
+
     public FlightInfoSearchDTO convertToFlightDetailsDTO(FlightInformation flightInfo, Integer seatTypeId) {
         FlightInfoSearchDTO dto = modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
-        Optional<SeatInformation> optionalSeatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
+        Optional<SeatInformation> optionalSeatInfo =
+                seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
 
         if (optionalSeatInfo.isPresent()) {
             SeatInformation seatInfo = optionalSeatInfo.get();
@@ -143,8 +173,10 @@ public class ConvertUtil implements IConvertUtil {
 
     @Override
     public FlightInformationDetailedDto convertToDetailedDto(FlightInformation flightInformation) {
-        FlightInformationDetailedDto detailedDto = modelMapper.map(flightInformation, FlightInformationDetailedDto.class);
-        detailedDto.setFlightDuration(Duration.between(flightInformation.getStartTime(), flightInformation.getEndTime()));
+        FlightInformationDetailedDto detailedDto = modelMapper.map(flightInformation,
+                FlightInformationDetailedDto.class);
+        detailedDto.setFlightDuration(Duration.between(flightInformation.getStartTime(),
+                flightInformation.getEndTime()));
         detailedDto.setSeatDetails(convertSeatInformationToDto(flightInformation.getId()));
         return detailedDto;
     }
@@ -165,8 +197,10 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setStartDate(hotelSearchDTO.getStartDate());
         roomContract.setEndDate(hotelSearchDTO.getEndDate());
         return roomContract;
+
     }
 
+    @Override
     public TicketAirPlant convertToTicketAirPlant(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
         TicketAirPlant ticket = new TicketAirPlant();
         ticket.setFlightInformation(seatInformation.getFlightInformation());
