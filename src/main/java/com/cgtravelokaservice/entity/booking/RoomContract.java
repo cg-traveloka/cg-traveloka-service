@@ -34,4 +34,5 @@ public class RoomContract {
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer totalMoney;
+    private String status;
 }

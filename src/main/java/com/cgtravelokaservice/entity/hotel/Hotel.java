@@ -32,6 +32,8 @@ public class Hotel implements Serializable {
     private String address;
     private Integer minOriginPrice;
     private Integer minSellPrice;
+    private Double averagePoint;
+    private String defaultImg;
     @ManyToOne
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;

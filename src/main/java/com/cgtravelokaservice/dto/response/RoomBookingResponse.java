@@ -1,6 +1,5 @@
 package com.cgtravelokaservice.dto.response;
 
-import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class RoomBookingResponse {
-
-    private List<Room> availableRooms;
-
+    private List <Room> availableRooms;
 }

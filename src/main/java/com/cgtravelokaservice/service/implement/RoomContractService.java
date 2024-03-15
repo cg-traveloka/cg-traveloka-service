@@ -27,19 +27,17 @@ public class RoomContractService implements IRoomContractService {
         List <RoomContract> roomsNotAvailable =
                 new ArrayList <>();
         for (RoomContract roomContract1 : roomContracts) {
-            LocalDate startDate1 =
-                    roomContract1.getStartDate();
-            LocalDate endDate1 =
-                    roomContract1.getEndDate();
-            if (startDate1.equals(startDate) || endDate1.equals(endDate) || startDate1.isBefore(startDate) && endDate1.isAfter(startDate) || startDate1.isBefore(endDate) && endDate1.isAfter(endDate) || startDate1.isAfter(startDate) && endDate1.isBefore(endDate) || startDate1.isBefore(startDate) && endDate1.isAfter(endDate)) {
-                roomsNotAvailable.add(roomContract1);
+            if (roomContract1.getStatus().equals("sucess")) {
+                LocalDate startDate1 =
+                        roomContract1.getStartDate();
+                LocalDate endDate1 =
+                        roomContract1.getEndDate();
+                if (startDate1.equals(startDate) || endDate1.equals(endDate) || startDate1.isBefore(startDate) && endDate1.isAfter(startDate) || startDate1.isBefore(endDate) && endDate1.isAfter(endDate) || startDate1.isAfter(startDate) && endDate1.isBefore(endDate) || startDate1.isBefore(startDate) && endDate1.isAfter(endDate)) {
+                    roomsNotAvailable.add(roomContract1);
+                }
             }
         }
-        if (roomContract.getRoomQuantity() > room.getQuantity() - roomsNotAvailable.size()) {
-            return false;
-        } else {
-            return true;
-        }
+        return roomContract.getRoomQuantity() <= room.getQuantity() - roomsNotAvailable.size();
 
     }
 }
