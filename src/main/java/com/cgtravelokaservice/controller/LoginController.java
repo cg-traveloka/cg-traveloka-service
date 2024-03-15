@@ -40,7 +40,7 @@ public class LoginController {
     @PostMapping("/account")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Your request is not valid. Check again your username or password");
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -56,17 +56,16 @@ public class LoginController {
                     return ResponseEntity.ok(new JwtResponse(jwt,
                             userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
                 } else {
-                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill " +
-                            "full " +
-                            "register steps to login");
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Người dùng chưa active. Vui lòng " +
+                            "hoàn thành đủ các bước đăng ký.");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill full " +
-                        "register steps to login");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Người dùng chưa active. Vui lòng " +
+                        "hoàn thành đủ các bước đăng ký.");
             }
 
         } catch (Exception e) {
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login fail");
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Đăng nhập thất bại");
         }
     }
 
@@ -76,13 +75,12 @@ public class LoginController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             CustomOAuth2User userInfo = (CustomOAuth2User) authentication.getPrincipal();
             String jwt = jwtService.generateTokenLogin(authentication);
-            System.out.println("jwt " + jwt);
             return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getEmail(), userInfo.getName(),
                     userInfo.getAuthorities()));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login with oauth fail");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Đăng nhập bằng OAuth thất bại");
         }
     }
 

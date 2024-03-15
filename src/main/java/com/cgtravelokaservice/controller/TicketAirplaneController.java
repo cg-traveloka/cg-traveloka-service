@@ -22,18 +22,19 @@ public class TicketAirplaneController {
                                      BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Invalid request");
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         try {
             if (ticketAirplaneService.bookFlight(ticketAirplaneDto)) {
-                return ResponseEntity.ok().body("Booking airplane ticket success");
+                return ResponseEntity.ok().body("Đặt vé máy bay thành công");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Not enough seat");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Máy bay hiện không đủ số lượng ghế " +
+                        "ngồi.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Fail to book airplane ticket");
+            return ResponseEntity.internalServerError().body("Đặt vé máy bay thất bại");
         }
     }
 }

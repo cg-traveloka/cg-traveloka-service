@@ -265,7 +265,7 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public boolean checkUserExisted(String accountName) {
-        return checkInValidUser(accountName) && checkValidUser(accountName);
+        return checkInValidUser(accountName) || checkValidUser(accountName);
     }
 
 }

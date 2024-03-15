@@ -57,39 +57,39 @@ public class ForgetPassController {
                 tokenService.add(token);
                 Context context = new Context();
                 context.setVariable("message", code);
-                emailService.sendMail("Traveloka - Code for reset password", user.getEmail(), context, "email" +
+                emailService.sendMail("Traveloka - Mã để reset mật khẩu", user.getEmail(), context, "email" +
                         "-template");
-                return ResponseEntity.ok("Sent code for reset pass success. Code: " + code);
+                return ResponseEntity.ok("Đã gửi mã để reset mật khẩu. Mã: " + code);
 
             } else {
-                return ResponseEntity.status(404).body("User not existed");
+                return ResponseEntity.status(404).body("Người dùng không tồn tại");
             }
 
         }
-        return ResponseEntity.badRequest().body("Email not sign in");
+        return ResponseEntity.badRequest().body("Email chưa đăng ký");
     }
 
     @PostMapping("/validateCode")
     public ResponseEntity<?> validateCode(@RequestBody @Validated ValidateCodeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Invalid request. Check regex or field name" + bindingResult.getFieldError());
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         if (tokenService.isTokenValid(request.getEmail(), request.getCode())) {
-            return ResponseEntity.ok("Validate code success");
+            return ResponseEntity.ok("Xác thực mã thành công");
         } else {
-            return ResponseEntity.badRequest().body("Validate code fail");
+            return ResponseEntity.badRequest().body("Xác thực mã thất bại");
         }
     }
 
     @PostMapping("/resetPass")
     public ResponseEntity<?> resetPass(@RequestBody @Validated ResetPassRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Invalid request. Check regex or field name " + bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         if (userService.updateUserPass(request.getEmail(), request.getNewPass())) {
-            return ResponseEntity.ok("Reset pass success");
+            return ResponseEntity.ok("Reset mật khẩu thành công");
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during update user");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Reset mật khẩu thất bại");
         }
     }
 

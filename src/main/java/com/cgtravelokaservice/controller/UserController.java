@@ -57,7 +57,7 @@ public class UserController {
     @RequestMapping(value = "/users/{email}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteUserById(@PathVariable String email) {
         userService.delete(email);
-        return new ResponseEntity<>("Deleted!", HttpStatus.OK);
+        return new ResponseEntity<>("Đã xoá user!", HttpStatus.OK);
     }
 
 
@@ -68,17 +68,17 @@ public class UserController {
             Set<UserRole> userRoles = user.get().getUserRoles();
             for (UserRole userRole : userRoles) {
                 if (userRole.getRole().getName().equals(request.getNewRole().toUpperCase())) {
-                    return ResponseEntity.badRequest().body("User already have this role");
+                    return ResponseEntity.badRequest().body("User hiện đã có phân quyền này");
                 }
             }
             try {
                 UserRole userRole =
                         UserRole.builder().user(user.get()).role(roleRepo.findByName(request.getNewRole().toUpperCase()).get()).build();
                 userRoleRepo.save(userRole);
-                return ResponseEntity.ok("Update role success " + roleRepo.findByName(request.getNewRole().toUpperCase()));
+                return ResponseEntity.ok("Cập nhật phân quyền thành công");
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.internalServerError().body("Error during saving user_role");
+                return ResponseEntity.internalServerError().body("Cập nhật phân quyền thất bại");
             }
 
         } else {

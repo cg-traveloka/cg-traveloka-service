@@ -58,6 +58,8 @@ public class FlightInformationService implements IFlightInformationService {
         if (request.getSortBy().equalsIgnoreCase("duration")) {
             return searchFlightsSortByDuration(request, pageable);
         }
+
+
         Slice<FlightInformation> flightInformationSlice = flightInformationRepo.search(
                 request.getFromAirportLocationId(),
                 request.getToAirportLocationId(),
@@ -123,7 +125,6 @@ public class FlightInformationService implements IFlightInformationService {
         return result.stream()
                 .map(flight -> convertUtil.convertToFlightDetailsDTO(flight, request.getSeatTypeId()))
                 .toList();
-
     }
 
 }

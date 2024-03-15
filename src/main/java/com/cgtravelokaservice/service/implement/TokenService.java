@@ -59,7 +59,6 @@ public class TokenService implements com.cgtravelokaservice.service.ITokenServic
         tokenRepo.findAll().forEach(token -> {
             if (token.getExpiredTime().getTime() <= System.currentTimeMillis()) {
                 token.setStatus(false);
-
             }
         });
     }
