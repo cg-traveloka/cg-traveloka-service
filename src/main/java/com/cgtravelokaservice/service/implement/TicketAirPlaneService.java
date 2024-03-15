@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TicketAirPlaneService implements ITicketAirPlaneService {
     @Autowired
-    private SeatInformationRepo seatInformationRepo;
+    private SeatInformationRepo
+            seatInformationRepo;
 
 
     @Autowired
@@ -26,7 +27,8 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
 
     @Override
     public boolean bookFlight(TicketAirPlaneDTO ticketDTO) {
-        SeatInformation seatInformation = getSeatInformationById(ticketDTO.getSeatInfoId());
+        SeatInformation seatInformation =
+                getSeatInformationById(ticketDTO.getSeatInfoId());
 
         if (isSeatAvailable(seatInformation, ticketDTO.getQuantity())) {
             updateSeatInformation(seatInformation, ticketDTO.getQuantity());
@@ -51,7 +53,9 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
     }
 
     private void saveTicketAndSeatInformation(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
-        TicketAirPlant ticket = convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
+        TicketAirPlant ticket =
+                convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
+        ticket.setStatus("pending");
         ticketAirPlantRepo.save(ticket);
     }
 

@@ -16,6 +16,7 @@ import com.cgtravelokaservice.service.implement.RoomBookingService;
 import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +45,7 @@ public class RoomController {
 
 
     @PostMapping(value = "/api/rooms", consumes = "multipart/form-data")
-    public ResponseEntity<?> registerRoom(@ModelAttribute RoomRegisterFormDTO roomRegisterFormDTO) {
+    public ResponseEntity <?> registerRoom(@ModelAttribute RoomRegisterFormDTO roomRegisterFormDTO) {
 //        Tạo room entity
         Room room =
                 convertUtil.roomRegisterFormToRoom(roomRegisterFormDTO);
@@ -55,7 +56,7 @@ public class RoomController {
         Hotel hotel = room.getHotel();
         hotel.setMinOriginPrice(room.getUnitPriceOrigin());
         hotel.setMinSellPrice(room.getUnitPriceSell());
-        List<Room> rooms =
+        List <Room> rooms =
                 roomRepo.findAllByHotel(room.getHotel());
         for (Room room1 : rooms) {
             if (room1.getUnitPriceSell() < min) {
@@ -66,9 +67,9 @@ public class RoomController {
         hotelRepo.save(hotel);
 
 //      Set utility cho room
-        List<RoomRoomUtility> roomRoomUtilities =
-                new ArrayList<>();
-        List<Integer> roomUtilities =
+        List <RoomRoomUtility> roomRoomUtilities =
+                new ArrayList <>();
+        List <Integer> roomUtilities =
                 roomRegisterFormDTO.getRoomUtilityId();
         for (Integer utilityId : roomUtilities) {
             RoomUtility roomUtility =
@@ -92,13 +93,15 @@ public class RoomController {
 //        return ResponseEntity.ok().body(roomBookingResponse);
 //    }
 
-    @PostMapping(value = "/api/rooms/book")
-    public ResponseEntity<?> bookRoom(@RequestBody RoomBookingRequestDTO request) {
+    @GetMapping(value = "/api/rooms")
+    public ResponseEntity <?> getRooms(@RequestBody RoomBookingRequestDTO request) {
         try {
             if (request.getPersonQuantity() < request.getRoomQuantity()) {
                 return ResponseEntity.badRequest().body("Số lượng người phải lớn hơn hoặc bằng số phòng");
             }
-            RoomBookingResponse roomBookingResponse = roomBookingService.displayListRoom(request);
+            RoomBookingResponse
+                    roomBookingResponse =
+                    roomBookingService.displayListRoom(request);
             return ResponseEntity.ok().body(roomBookingResponse);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

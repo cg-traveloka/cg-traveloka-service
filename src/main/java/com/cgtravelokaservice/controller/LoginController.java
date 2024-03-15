@@ -1,8 +1,8 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.UserDTO;
-import com.cgtravelokaservice.entity.user.CustomOAuth2User;
 import com.cgtravelokaservice.dto.request.LoginRequest;
+import com.cgtravelokaservice.entity.user.CustomOAuth2User;
 import com.cgtravelokaservice.jwt.service.JwtResponse;
 import com.cgtravelokaservice.jwt.service.JwtService;
 import com.cgtravelokaservice.service.IUserService;
@@ -29,7 +29,8 @@ import java.util.Optional;
 public class LoginController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private AuthenticationManager
+            authenticationManager;
 
     @Autowired
     private JwtService jwtService;
@@ -38,46 +39,48 @@ public class LoginController {
     private IUserService userService;
 
     @PostMapping("/account")
-    public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
+    public ResponseEntity <?> login(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Your request is not valid. Check again your username or password");
         }
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            Authentication authentication =
+                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtService.generateTokenLogin(authentication);
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Optional<UserDTO> userInfoOp = userService.findValidUserDTOByAccountName(loginRequest.getUsername());
+            String jwt =
+                    jwtService.generateTokenLogin(authentication);
+            UserDetails userDetails =
+                    (UserDetails) authentication.getPrincipal();
+            Optional <UserDTO> userInfoOp =
+                    userService.findValidUserDTOByAccountName(loginRequest.getUsername());
             if (userInfoOp.isPresent()) {
-                UserDTO userInfo = userInfoOp.get();
+                UserDTO userInfo =
+                        userInfoOp.get();
                 if (userInfo.isActive()) {
-                    return ResponseEntity.ok(new JwtResponse(jwt,
-                            userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
+                    return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
                 } else {
-                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill " +
-                            "full " +
-                            "register steps to login");
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill " + "full " + "register steps to login");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill full " +
-                        "register steps to login");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill full " + "register steps to login");
             }
 
         } catch (Exception e) {
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login fail");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login fail");
         }
     }
 
     @GetMapping("/o2auth/success")
-    public ResponseEntity<?> o2auth() {
+    public ResponseEntity <?> o2auth() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomOAuth2User userInfo = (CustomOAuth2User) authentication.getPrincipal();
-            String jwt = jwtService.generateTokenLogin(authentication);
-            return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getEmail(), userInfo.getName(),
-                    userInfo.getAuthorities()));
+            Authentication authentication =
+                    SecurityContextHolder.getContext().getAuthentication();
+            CustomOAuth2User userInfo =
+                    (CustomOAuth2User) authentication.getPrincipal();
+            String jwt =
+                    jwtService.generateTokenLogin(authentication);
+            return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getEmail(), userInfo.getName(), userInfo.getAuthorities()));
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login with oauth fail");
