@@ -76,8 +76,10 @@ public class LoginController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             CustomOAuth2User userInfo = (CustomOAuth2User) authentication.getPrincipal();
             String jwt = jwtService.generateTokenLogin(authentication);
+            System.out.println("jwt " + jwt);
             return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getEmail(), userInfo.getName(),
                     userInfo.getAuthorities()));
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login with oauth fail");

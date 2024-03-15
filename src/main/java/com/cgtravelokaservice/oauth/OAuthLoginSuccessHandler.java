@@ -45,7 +45,7 @@ public class OAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
         if (userService.loadUserByUsername(username) != null) {
             if (userService.checkValidUser(username)) {
                 System.out.println("login by oauth2 success");
-                response.sendRedirect("/api/o2auth/success");
+                response.sendRedirect("/login/o2auth/success");
             } else {
                 User user = userService.findByEmail(username).get();
                 user.setActive(true);
@@ -54,11 +54,11 @@ public class OAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
                 Optional<Provider> providerOptional = providerRepo.findByName(oauth2ClientName.toUpperCase());
                 UserProvider userProvider = UserProvider.builder().user(user).provider(providerOptional.get()).build();
                 userProviderRepo.save(userProvider);
-                response.sendRedirect("/api/o2auth/success");
+                response.sendRedirect("/login/o2auth/success");
             }
         } else {
             if (userService.addO2AuthAccount(username, oauth2ClientName)) {
-                response.sendRedirect("/api/o2auth/success");
+                response.sendRedirect("/login/o2auth/success");
             } else {
                 System.out.println("error oauth2");
                 response.sendRedirect("/login?error");
