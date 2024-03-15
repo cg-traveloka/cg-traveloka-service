@@ -34,4 +34,5 @@ public class TicketAirPlant {
     private SeatType seatType;
     private Integer quantity;
     private Integer totalMoney;
+    private String status;
 }

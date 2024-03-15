@@ -19,7 +19,7 @@ public class HotelRegisterFormDTO implements Serializable {
     @NotBlank
     private String description;
     @NotNull
-    private double hotelStar;
+    private Integer hotelStar;
     @NotBlank
     private String address;
     @NotNull
