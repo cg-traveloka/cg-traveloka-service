@@ -5,5 +5,5 @@ import com.cgtravelokaservice.entity.airplant.AirPortLocation;
 import java.util.List;
 
 public interface IAirPortLocationService {
-    List<AirPortLocation> getAirPortLocationByCity_Name(String city_name);
+    List <AirPortLocation> getAirPortLocationByCityId(Integer cityId);
 }

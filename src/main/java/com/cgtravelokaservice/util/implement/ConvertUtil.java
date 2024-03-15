@@ -2,16 +2,13 @@ package com.cgtravelokaservice.util.implement;
 
 
 import com.cgtravelokaservice.dto.AirplaneBrandDto;
-import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
 import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
+import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
 import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
-
-import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
 import com.cgtravelokaservice.dto.SeatDetailsDto;
-
-
+import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
@@ -23,7 +20,16 @@ import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.entity.user.Customer;
-import com.cgtravelokaservice.repo.*;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
+import com.cgtravelokaservice.repo.AirportLocationRepo;
+import com.cgtravelokaservice.repo.BedTypeRepo;
+import com.cgtravelokaservice.repo.CityRepo;
+import com.cgtravelokaservice.repo.CustomerRepo;
+import com.cgtravelokaservice.repo.HotelImgRepo;
+import com.cgtravelokaservice.repo.HotelRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
+import com.cgtravelokaservice.repo.RoomTypeRepo;
+import com.cgtravelokaservice.repo.SeatInformationRepo;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.implement.AirplaneBrandService;
 import com.cgtravelokaservice.service.implement.SeatService;
@@ -63,7 +69,8 @@ public class ConvertUtil implements IConvertUtil {
     private AirplaneBrandRepo airplaneBrandRepo;
 
     @Autowired
-    private SeatInformationRepo seatInformationRepo;
+    private SeatInformationRepo
+            seatInformationRepo;
     @Autowired
     private SeatService seatService;
     @Autowired
@@ -72,7 +79,8 @@ public class ConvertUtil implements IConvertUtil {
     private CustomerRepo customerRepo;
 
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper =
+            new ModelMapper();
 
 
     @Override
@@ -80,7 +88,7 @@ public class ConvertUtil implements IConvertUtil {
         AirPlantBrand brand = new AirPlantBrand();
         brand.setName(airplaneBrandDto.getName());
         MultipartFile logoUrl =
-                airplaneBrandDto.getLogoUrl();
+                airplaneBrandDto.getLogoImg();
         airplaneBrandService.setLogoUrl(brand, logoUrl);
         return brand;
     }
@@ -131,6 +139,7 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setRoomQuantity(roomContractRegisterFormDTO.getRoomQuantity());
         roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate());
         roomContract.setEndDate(roomContractRegisterFormDTO.getEndDate());
+        roomContract.setStatus("pending");
 //        Tính tiền phòng
         Integer totalMoney =
                 roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
@@ -139,15 +148,16 @@ public class ConvertUtil implements IConvertUtil {
     }
 
 
-
     public TicketAirPlant ticketAirPlantDtoToTicketAirPlant(TicketAirPlaneDTO ticketAirplaneDto) {
-        TicketAirPlant ticketAirPlant = new TicketAirPlant();
+        TicketAirPlant ticketAirPlant =
+                new TicketAirPlant();
         ticketAirPlant.setQuantity(ticketAirplaneDto.getQuantity());
         SeatInformation seatInformation =
                 seatInformationRepo.getReferenceById(ticketAirplaneDto.getSeatInfoId());
         ticketAirPlant.setSeatType(seatInformation.getSeatType());
         ticketAirPlant.setFlightInformation(seatInformation.getFlightInformation());
-        Integer totalPrice = seatInformation.getUnitPrice() * ticketAirplaneDto.getQuantity();
+        Integer totalPrice =
+                seatInformation.getUnitPrice() * ticketAirplaneDto.getQuantity();
         ticketAirPlant.setTotalMoney(totalPrice);
         return ticketAirPlant;
     }
@@ -156,12 +166,15 @@ public class ConvertUtil implements IConvertUtil {
     @Override
 
     public FlightInfoSearchDTO convertToFlightDetailsDTO(FlightInformation flightInfo, Integer seatTypeId) {
-        FlightInfoSearchDTO dto = modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
-        Optional<SeatInformation> optionalSeatInfo =
+        FlightInfoSearchDTO dto =
+                modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
+        Optional <SeatInformation>
+                optionalSeatInfo =
                 seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
 
         if (optionalSeatInfo.isPresent()) {
-            SeatInformation seatInfo = optionalSeatInfo.get();
+            SeatInformation seatInfo =
+                    optionalSeatInfo.get();
             dto.setSeatQuantity(seatInfo.getQuantity());
             dto.setSeatTypeName(seatInfo.getSeatType().getName());
             dto.setUnitPrice(seatInfo.getUnitPrice());
@@ -173,19 +186,18 @@ public class ConvertUtil implements IConvertUtil {
 
     @Override
     public FlightInformationDetailedDto convertToDetailedDto(FlightInformation flightInformation) {
-        FlightInformationDetailedDto detailedDto = modelMapper.map(flightInformation,
-                FlightInformationDetailedDto.class);
-        detailedDto.setFlightDuration(Duration.between(flightInformation.getStartTime(),
-                flightInformation.getEndTime()));
+        FlightInformationDetailedDto detailedDto =
+                modelMapper.map(flightInformation, FlightInformationDetailedDto.class);
+        detailedDto.setFlightDuration(Duration.between(flightInformation.getStartTime(), flightInformation.getEndTime()));
         detailedDto.setSeatDetails(convertSeatInformationToDto(flightInformation.getId()));
         return detailedDto;
     }
 
-    public List<SeatDetailsDto> convertSeatInformationToDto(Integer flightId) {
-        List<SeatInformation> seatInformationList = seatInformationRepo.findByFlightInformationId(flightId);
-        return seatInformationList.stream()
-                .map(seatInformation -> modelMapper.map(seatInformation, SeatDetailsDto.class))
-                .collect(Collectors.toList());
+    public List <SeatDetailsDto> convertSeatInformationToDto(Integer flightId) {
+        List <SeatInformation>
+                seatInformationList =
+                seatInformationRepo.findByFlightInformationId(flightId);
+        return seatInformationList.stream().map(seatInformation -> modelMapper.map(seatInformation, SeatDetailsDto.class)).collect(Collectors.toList());
     }
 
 
@@ -202,7 +214,8 @@ public class ConvertUtil implements IConvertUtil {
 
     @Override
     public TicketAirPlant convertToTicketAirPlant(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
-        TicketAirPlant ticket = new TicketAirPlant();
+        TicketAirPlant ticket =
+                new TicketAirPlant();
         ticket.setFlightInformation(seatInformation.getFlightInformation());
         ticket.setSeatType(seatInformation.getSeatType());
         ticket.setQuantity(ticketDTO.getQuantity());
@@ -211,10 +224,12 @@ public class ConvertUtil implements IConvertUtil {
     }
 
     public Customer convertDTOToCustomer(UpdateProfileCustomerRequestDTO requestDTO) {
-        Customer customer = customerRepo.getReferenceById(requestDTO.getCustomerId());
+        Customer customer =
+                customerRepo.getReferenceById(requestDTO.getCustomerId());
         customer.setName(requestDTO.getName());
         customer.setGender(requestDTO.getGender());
-        LocalDate dateOfBirth = LocalDate.of(requestDTO.getYear(), requestDTO.getMonth(), requestDTO.getDate());
+        LocalDate dateOfBirth =
+                LocalDate.of(requestDTO.getYear(), requestDTO.getMonth(), requestDTO.getDate());
         customer.setDateOfBirth(dateOfBirth);
         return customer;
     }
