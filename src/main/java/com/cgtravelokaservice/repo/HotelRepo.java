@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+
 public interface HotelRepo extends JpaRepository<Hotel, Integer> {
     Slice<Hotel> findAllByOrderByHotelBookedNumbersDesc(Pageable pageable);
 
     @Query("SELECT DISTINCT r.hotel FROM Room " + "r" + " " + "WHERE " + "r.hotel" + ".city.id =" + " :cityId AND " + "r" + ".hotel.hotelStar IN :hotelStars " + "AND r.maxPerson >= :personQuantity" + " " + "AND r.unitPriceSell >= :minPrice " + "AND " + "r.unitPriceSell <= :maxPrice AND " + "r.quantity >= :quantity")
     Slice<Hotel> search(Integer cityId, List<Integer> hotelStars, Integer personQuantity, Integer minPrice, Integer maxPrice, Integer quantity, Pageable pageable);
+
 }

@@ -44,8 +44,10 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private PartnerRepo partnerRepo;
+
     @Autowired
     private CustomerRepo customerRepo;
+
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -103,6 +105,7 @@ public class UserService implements UserDetailsService, IUserService {
             return false;
         }
     }
+
     @Override
     public boolean updateUserPass(String username, String newPass) {
         try {

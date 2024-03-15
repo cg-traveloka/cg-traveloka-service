@@ -48,7 +48,7 @@ public class RegisterController {
     private TokenTypeService tokenTypeService;
 
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add")
     public ResponseEntity<?> register(@Validated @RequestBody User user, BindingResult bindingResult,
                                       @RequestParam(name = "role", defaultValue = "ROLE_CUSTOMER") String role) {
         if (bindingResult.hasErrors()) {

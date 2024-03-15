@@ -11,9 +11,9 @@ import java.util.List;
 
 
 public interface IFlightInformationService {
-    void saveFlightInformation(FlightInformation flightInformation);
 
-    Slice<FlightInfoSearchDTO> searchFlights(SearchFlightDetailsRequestDTO request, Pageable pageable);
+    void saveFlightInformation (FlightInformation flightInformation);
+    List<FlightInfoSearchDTO> searchFlights (SearchFlightDetailsRequestDTO request, Pageable pageable);
 
     List<FlightInformation> searchList(SearchFlightDetailsRequestDTO request);
 
