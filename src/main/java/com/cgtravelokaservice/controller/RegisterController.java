@@ -68,7 +68,7 @@ public class RegisterController {
                 Context context = new Context();
                 context.setVariable("message", code);
                 emailService.sendMail("Traveloka -Account Confirm", user.getEmail(), context, "email-template");
-                return ResponseEntity.ok("Sent code for confirming account" + code);
+                return ResponseEntity.ok("Sent code for confirming account " + code);
             } else {
                 return ResponseEntity.internalServerError().body("Error during saving user");
             }
@@ -94,10 +94,12 @@ public class RegisterController {
 
     @PostMapping("/check/{type}")
     public ResponseEntity<?> check(@RequestBody String username, @PathVariable("type") String type) {
+        System.out.println(username);
         if (!userService.checkUserExisted(type, username)) {
-            return ResponseEntity.ok("Accept username");
+            return ResponseEntity.ok("Tên người dùng có thể sử dụng");
         } else {
-            return ResponseEntity.status(406).body("Username already register");
+            return ResponseEntity.status(406).body("Tên người dùng đã được đăng ký");
         }
     }
+
 }

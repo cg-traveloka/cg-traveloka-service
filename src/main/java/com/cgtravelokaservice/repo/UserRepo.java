@@ -8,12 +8,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User, String> {
-    @Query(value = "SELECT * FROM User where ( username= :username or email = :username or phone = :username) and " +
-            "is_active = false", nativeQuery = true)
+    @Query(value = "SELECT * FROM User WHERE (username = :username OR email = :username OR phone = :username) AND is_active = false", nativeQuery = true)
     Optional<User> loadInvalidUser(@Param("username") String username);
 
-    @Query(value = "SELECT * FROM User where ( username= :username or email = :username or phone = :username ) and " +
-            "is_active = true", nativeQuery = true)
+    @Query(value = "SELECT * FROM User WHERE (username = :username OR email = :username OR phone = :username) AND is_active = true", nativeQuery = true)
     Optional<User> loadValidUser(@Param("username") String username);
 
     @Query(value = "SELECT * FROM User where username= :username or email = :email or phone = :phone and is_active" +

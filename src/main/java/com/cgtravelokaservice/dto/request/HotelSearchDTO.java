@@ -34,7 +34,7 @@ public class HotelSearchDTO {
         }
         this.minPrice = 0;
         this.maxPrice = 2000000000;
-        this.sort = "hotel.hotelBookedNumbers";
+        this.sort = "booked";
         this.pageNumber = 0;
         this.startDate = LocalDate.now();
         this.endDate =

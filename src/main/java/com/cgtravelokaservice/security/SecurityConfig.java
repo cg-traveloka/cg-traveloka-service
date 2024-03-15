@@ -93,13 +93,12 @@ public class SecurityConfig {
                                         .requestMatchers("/logout").permitAll()
                                         .requestMatchers("/register", "/oauth2/**").permitAll()
                                         .requestMatchers("/error/**").permitAll()
-//                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
-//                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
-//                                        .anyRequest().authenticated(
-                                        .anyRequest().permitAll()
+                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
+                                        .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService))
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService)    )
                         .successHandler(oAuthLoginSuccessHandler))
 
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
