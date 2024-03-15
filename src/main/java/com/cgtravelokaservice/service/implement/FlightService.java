@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlightService implements IFlightService {
     private FlightInformationRepo flightInformationRepository;
-
     private IConvertUtil convertUtil;
 
-    @Autowired
-    public FlightService(FlightInformationRepo flightInformationRepository,
-                         IConvertUtil convertUtil) {
-        this.flightInformationRepository = flightInformationRepository;
 
+    @Autowired
+    public FlightService(FlightInformationRepo flightInformationRepository, AirplaneBrandRepo airplaneBrandDto, IConvertUtil convertUtil) {
+        this.flightInformationRepository = flightInformationRepository;
         this.convertUtil = convertUtil;
     }
     @Override
@@ -32,10 +30,6 @@ public class FlightService implements IFlightService {
         Slice<FlightInformation> allFlights = flightInformationRepository.findAllByOrderByStartTimeAsc(pageable);
         return allFlights.map(convertUtil::convertToDetailedDto);
     }
-
-
-
-
 
 
 }

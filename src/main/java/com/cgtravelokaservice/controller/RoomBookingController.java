@@ -1,6 +1,7 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.request.RoomBookingRequestDTO;
+import com.cgtravelokaservice.dto.response.RoomBookingResponse;
 import com.cgtravelokaservice.dto.response.RoomBookingResponseDTO;
 import com.cgtravelokaservice.service.implement.RoomBookingService;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class RoomBookingController {
                 return new ResponseEntity<>("Số người đặt phòng phải lớn hơn hoặc bằng số lượng phòng", HttpStatus.BAD_REQUEST);
             }
 
-            RoomBookingResponseDTO responseDTO = roomBookingService.bookRoom(bookingRequest);
+            RoomBookingResponse responseDTO = roomBookingService.displayListRoom(bookingRequest);
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
         } catch (Exception e) {

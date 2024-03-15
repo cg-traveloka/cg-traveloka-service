@@ -1,13 +1,15 @@
 package com.cgtravelokaservice.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class TicketAirPlaneDTO {
-    private Integer seatInfoId;
-    private Integer quantity;
+@AllArgsConstructor
+@Builder
+public class FlightInfoShortDescription {
+    private String name;
+    private String value;
 }

@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketAirPlaneDTO {
-    private Integer seatInfoId;
-    private Integer quantity;
+public class AirPlaneSearchDto {
+    private Integer id;
+    private String name;
+    private String logoUrl;
 }

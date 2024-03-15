@@ -1,6 +1,8 @@
 package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
+import com.cgtravelokaservice.dto.request.RoomBookingRequestDTO;
+import com.cgtravelokaservice.dto.response.RoomBookingResponse;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.entity.room.RoomRoomUtility;
@@ -10,11 +12,13 @@ import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.repo.RoomRoomUtilityRepo;
 import com.cgtravelokaservice.repo.RoomUtilityRepo;
 import com.cgtravelokaservice.service.IRoomService;
+import com.cgtravelokaservice.service.implement.RoomBookingService;
 import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -35,10 +39,12 @@ public class RoomController {
     private IRoomService roomService;
     @Autowired
     private HotelRepo hotelRepo;
+    @Autowired
+    private RoomBookingService roomBookingService;
 
 
     @PostMapping(value = "/api/rooms", consumes = "multipart/form-data")
-    public ResponseEntity <?> registerRoom(@ModelAttribute RoomRegisterFormDTO roomRegisterFormDTO) {
+    public ResponseEntity<?> registerRoom(@ModelAttribute RoomRegisterFormDTO roomRegisterFormDTO) {
 //        Tạo room entity
         Room room =
                 convertUtil.roomRegisterFormToRoom(roomRegisterFormDTO);
@@ -49,7 +55,7 @@ public class RoomController {
         Hotel hotel = room.getHotel();
         hotel.setMinOriginPrice(room.getUnitPriceOrigin());
         hotel.setMinSellPrice(room.getUnitPriceSell());
-        List <Room> rooms =
+        List<Room> rooms =
                 roomRepo.findAllByHotel(room.getHotel());
         for (Room room1 : rooms) {
             if (room1.getUnitPriceSell() < min) {
@@ -60,9 +66,9 @@ public class RoomController {
         hotelRepo.save(hotel);
 
 //      Set utility cho room
-        List <RoomRoomUtility> roomRoomUtilities =
-                new ArrayList <>();
-        List <Integer> roomUtilities =
+        List<RoomRoomUtility> roomRoomUtilities =
+                new ArrayList<>();
+        List<Integer> roomUtilities =
                 roomRegisterFormDTO.getRoomUtilityId();
         for (Integer utilityId : roomUtilities) {
             RoomUtility roomUtility =
@@ -77,5 +83,25 @@ public class RoomController {
 //        Set img cho room
         roomService.setImgForRoom(room, roomRegisterFormDTO.getImages());
         return ResponseEntity.ok().body(room);
+    }
+
+//    @PostMapping(value = "/api/rooms/book")
+//    public ResponseEntity<?> bookRoom(@ModelAttribute RoomBookingRequestDTO bookingRequest) {
+//        RoomBookingResponse roomBookingResponse =
+//                roomBookingService.bookRoom(bookingRequest);
+//        return ResponseEntity.ok().body(roomBookingResponse);
+//    }
+
+    @PostMapping(value = "/api/rooms/book")
+    public ResponseEntity<?> bookRoom(@RequestBody RoomBookingRequestDTO request) {
+        try {
+            if (request.getPersonQuantity() < request.getRoomQuantity()) {
+                return ResponseEntity.badRequest().body("Số lượng người phải lớn hơn hoặc bằng số phòng");
+            }
+            RoomBookingResponse roomBookingResponse = roomBookingService.displayListRoom(request);
+            return ResponseEntity.ok().body(roomBookingResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

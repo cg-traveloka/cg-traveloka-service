@@ -1,50 +1,44 @@
 package com.cgtravelokaservice.dto.request;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SearchFlightDetailsRequestDTO {
+public class SearchFlightRequest {
     @NotNull
-    private Integer fromAirportLocationId;
+    @Min(1)
+    private Integer fromLocationId;
     @NotNull
-    private Integer toAirportLocationId;
+    @Min(1)
+    private Integer toLocationId;
     @NotNull
-//    @FutureOrPresent
     private LocalDateTime startTime;
-    @Nullable
-    private Integer airPlantBrandId;
     @NotNull
+    @Min(1)
     private Integer seatTypeId;
     @NotNull
+    @Min(1)
     private Integer seatQuantity;
+    @Nullable
+    private Integer airplaneId;
     @Nullable
     private String sortBy;
     @Nullable
     private String order;
-    @Nullable
-    private Integer durationFrom;
-    @Nullable
-    private Integer durationTo;
-    @Nullable
-    private Integer priceFrom;
-    @Nullable
+    private Integer durationFrom ;
+    private Integer durationTo ;
+    private Integer priceFrom ;
     private Integer priceTo;
-
-    public SearchFlightDetailsRequestDTO() {
-        this.sortBy = "startTime";
-        this.order = "asc";
-        this.priceFrom = 0;
-        this.durationFrom=0;
-    }
 
 }
