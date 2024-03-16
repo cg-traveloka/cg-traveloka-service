@@ -1,12 +1,14 @@
 package com.cgtravelokaservice.entity.user;
 
 
+import com.cgtravelokaservice.entity.token.Token;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +47,9 @@ public class User implements Serializable {
     private boolean enable;
 
     private boolean isActive;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Token token;
 
     public User(String username, String password) {
         this.username = username;

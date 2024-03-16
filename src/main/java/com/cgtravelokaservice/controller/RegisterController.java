@@ -8,10 +8,10 @@ import com.cgtravelokaservice.repo.UserRepo;
 import com.cgtravelokaservice.service.IUserService;
 import com.cgtravelokaservice.service.implement.EmailService;
 import com.cgtravelokaservice.service.implement.TokenService;
-import com.cgtravelokaservice.service.implement.TokenTypeService;
 import com.cgtravelokaservice.util.RandomDigitsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -41,9 +41,6 @@ public class RegisterController {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
-    private TokenTypeService tokenTypeService;
-
 
     @PostMapping(value = "/add")
     public ResponseEntity <?> register(@Validated @RequestBody User user, BindingResult bindingResult, @RequestParam(name = "role", defaultValue = "ROLE_CUSTOMER") String role) {
@@ -52,16 +49,11 @@ public class RegisterController {
         }
         if (userRepo.findByUsername(user.getUsername()).isEmpty() && userRepo.findByEmail(user.getEmail()).isEmpty() && userRepo.findByPhone(user.getPhone()).isEmpty()) {
             if (userService.addUser(user, role)) {
-                tokenService.disableTokenByType(user.getEmail(), "CONFIRM_ACCOUNT");
-                String code =
-                        RandomDigitsGenerator.generate(6);
-                Token token =
-                        Token.builder().code(code).user(user).createdTime(new Timestamp(System.currentTimeMillis())).expiredTime(new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000)).type(tokenTypeService.findByName("CONFIRM_ACCOUNT").get()).status(true).build();
-                tokenService.add(token);
+             Token token = tokenService.generateOrRefreshCode(user);
                 Context context = new Context();
-                context.setVariable("message", code);
+                context.setVariable("message", token.getCode());
                 emailService.sendMail("Traveloka -Account Confirm", user.getEmail(), context, "email-template");
-                return ResponseEntity.ok("Sent " + "code for confirming account " + code);
+                return ResponseEntity.ok("Sent " + "code for confirming account " + token.getCode());
             } else {
                 return ResponseEntity.internalServerError().body("Error during saving user");
             }
@@ -70,11 +62,13 @@ public class RegisterController {
     }
 
     @PostMapping("/validateCode")
-    public ResponseEntity <?> validateCode(@RequestBody @Validated ValidateCodeRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> validateCode(@RequestBody @Validated ValidateCodeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Invalid request. Check constraints or field names");
         }
-        if (tokenService.isTokenValid(request.getEmail(), request.getCode())) {
+        System.out.println(request.getCode());
+
+        if (tokenService.isCodeValid(request.getEmail(), request.getCode())) {
             if (userService.activeUser(request.getEmail())) {
                 return ResponseEntity.ok("Register success");
             } else {
@@ -84,6 +78,8 @@ public class RegisterController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid code");
         }
     }
+
+
 
     @PostMapping("/check/{type}")
     public ResponseEntity <?> check(@RequestBody String username, @PathVariable("type") String type) {

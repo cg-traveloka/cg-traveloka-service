@@ -19,4 +19,3 @@ public interface IFlightInformationService {
     SearchFlightResponse loadSearchFlightResponse(SearchFlightDetailsRequestDTO request);
 }
 
-

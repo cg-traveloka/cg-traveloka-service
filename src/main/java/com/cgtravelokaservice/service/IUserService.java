@@ -18,6 +18,7 @@ public interface IUserService {
     Optional<UserDTO> findById(String email);
 
     Optional<UserDTO> findValidUserDTOByAccountName(String accountName);
+    Optional <User> findInValidUserByAccountName(String accountName);
 
     Optional<User> findValidUserByAccountName(String accountName);
 
