@@ -95,11 +95,11 @@ public class SecurityConfig {
                                         .requestMatchers("/error/**").permitAll()
 //                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
 //                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
-//                                        .anyRequest().authenticated(
+//                                        .anyRequest().authenticated()
                                         .anyRequest().permitAll()
                 )
                 .oauth2Login(o -> o
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService))
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService)    )
                         .successHandler(oAuthLoginSuccessHandler))
 
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
