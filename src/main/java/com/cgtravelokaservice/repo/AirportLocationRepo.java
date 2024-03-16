@@ -7,11 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface AirportLocationRepo extends JpaRepository<AirPortLocation, Integer> {
+public interface AirportLocationRepo extends JpaRepository <AirPortLocation, Integer> {
 
-    @Query("SELECT ap from AirPortLocation ap "+
-            "JOIN ap.city ci "+
-            "WHERE ci.name LIKE CONCAT('%', :name, '%')")
-    List<AirPortLocation> getAirPortLocationByCity_Name(@Param("name") String city_name);
+    @Query("SELECT ap from AirPortLocation ap " + "WHERE ap.city.id = :cityId")
+    List <AirPortLocation> getAirPortLocationByCityId(@Param("cityId") Integer cityId);
 
 }

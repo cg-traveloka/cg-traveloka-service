@@ -16,5 +16,5 @@ public class AirplaneBrandDto implements Serializable {
 
     private String name;
 
-    private MultipartFile logoUrl;
+    private MultipartFile logoImg;
 }

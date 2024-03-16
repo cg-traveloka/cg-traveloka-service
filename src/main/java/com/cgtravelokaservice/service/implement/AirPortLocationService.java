@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class AirPortLocationService implements IAirPortLocationService {
     @Autowired
-    private AirportLocationRepo airportLocationRepo;
+    private AirportLocationRepo
+            airportLocationRepo;
 
     @Override
-    public List<AirPortLocation> getAirPortLocationByCity_Name(String city_name) {
-        return airportLocationRepo.getAirPortLocationByCity_Name(city_name);
+    public List <AirPortLocation> getAirPortLocationByCityId(Integer cityId) {
+        return airportLocationRepo.getAirPortLocationByCityId(cityId);
     }
 }

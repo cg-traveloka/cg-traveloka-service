@@ -49,22 +49,25 @@ public class UserService implements UserDetailsService, IUserService {
     private CustomerRepo customerRepo;
 
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+    private final PasswordEncoder
+            passwordEncoder =
+            new BCryptPasswordEncoder(10);
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper =
+            new ModelMapper();
 
     @Override
     public boolean addO2AuthAccount(String username, String providerName) {
         try {
-            User user = User.builder()
-                    .username(username)
-                    .email(username)
-                    .enable(true)
-                    .isActive(true).build();
-            Role role = roleRepo.findByName("ROLE_CUSTOMER").orElse(null);
-            UserRole userRole = UserRole.builder().user(user).role(role).build();
+            User user =
+                    User.builder().username(username).email(username).enable(true).isActive(true).build();
+            Role role =
+                    roleRepo.findByName("ROLE_CUSTOMER").orElse(null);
+            UserRole userRole =
+                    UserRole.builder().user(user).role(role).build();
 
-            Set<UserRole> userRoles = new HashSet<>();
+            Set <UserRole> userRoles =
+                    new HashSet <>();
             userRoles.add(userRole);
             user.setUserRoles(userRoles);
             userRepo.save(user);
@@ -82,7 +85,8 @@ public class UserService implements UserDetailsService, IUserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setActive(false);
             user.setEnable(false);
-            Set<UserRole> userRoles = new HashSet<>();
+            Set <UserRole> userRoles =
+                    new HashSet <>();
             UserRole userRole =
                     UserRole.builder().user(user).role(roleRepo.findByName(role.toUpperCase()).get()).build();
             userRoles.add(userRole);
@@ -94,7 +98,8 @@ public class UserService implements UserDetailsService, IUserService {
                 partnerRepo.save(partner);
             }
             if (role.equalsIgnoreCase("ROLE_CUSTOMER")) {
-                Customer customer = new Customer();
+                Customer customer =
+                        new Customer();
                 customer.setUser(user);
                 customerRepo.save(customer);
             }
@@ -109,7 +114,8 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public boolean updateUserPass(String username, String newPass) {
         try {
-            Optional<User> user = userRepo.loadValidUser(username);
+            Optional <User> user =
+                    userRepo.loadValidUser(username);
             if (user.isPresent()) {
                 user.get().setPassword(passwordEncoder.encode(newPass));
                 userRepo.save(user.get());
@@ -125,9 +131,10 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     @Cacheable(key = "'allUsers'")
-    public List<UserDTO> findAll() {
-        Type targetListType = new TypeToken<List<UserDTO>>() {
-        }.getType();
+    public List <UserDTO> findAll() {
+        Type targetListType =
+                new TypeToken <List <UserDTO>>() {
+                }.getType();
         return modelMapper.map(userRepo.findAll(), targetListType);
 
     }
@@ -135,32 +142,38 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     @Cacheable(key = "#email")
-    public Optional<UserDTO> findById(String email) {
-        Optional<User> userOptional = userRepo.findById(email);
+    public Optional <UserDTO> findById(String email) {
+        Optional <User> userOptional =
+                userRepo.findById(email);
         return userOptional.map(user -> modelMapper.map(user, UserDTO.class));
     }
 
 
     @Override
-    public Optional<UserDTO> findValidUserDTOByAccountName(String accountName) {
-        Optional<User> userOptional = userRepo.loadValidUser(accountName);//true
+    public Optional <UserDTO> findValidUserDTOByAccountName(String accountName) {
+        Optional <User> userOptional =
+                userRepo.loadValidUser(accountName);//true
         return userOptional.map(user -> modelMapper.map(user, UserDTO.class));
     }
 
     @Override
-    public Optional<User> findValidUserByAccountName(String accountName) {
+    public Optional <User> findValidUserByAccountName(String accountName) {
         return userRepo.loadValidUser(accountName);
     }
 
 
     @Override
+    public Optional <User> findInValidUserByAccountName(String accountName) {
+        return userRepo.loadInvalidUser(accountName);
+    }
+
+
+
+    @Override
     public boolean add(UserDTO userDTO) {
-        if (userRepo.findValidUserByUsernameOrEmailOrPhone(userDTO.getUsername(), userDTO.getEmail(),
-                userDTO.getPhone()).isEmpty()) {
-            User user = User.builder().username(userDTO.getUsername())
-                    .password(passwordEncoder.encode(userDTO.getPassword()))
-                    .email(userDTO.getEmail())
-                    .phone(userDTO.getPhone()).build();
+        if (userRepo.findValidUserByUsernameOrEmailOrPhone(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPhone()).isEmpty()) {
+            User user =
+                    User.builder().username(userDTO.getUsername()).password(passwordEncoder.encode(userDTO.getPassword())).email(userDTO.getEmail()).phone(userDTO.getPhone()).build();
             userRepo.save(user);
             return true;
         }
@@ -194,9 +207,9 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<User> userOptional = userRepo.loadValidUser(username).isPresent() ?
-                userRepo.loadValidUser(username) : userRepo.loadInvalidUser(username);
-        return userOptional.map(UserPrinciple::build).orElse(null);
+        Optional <User> userOptional =
+                userRepo.loadValidUser(username).isPresent() ? userRepo.loadValidUser(username) : userRepo.loadInvalidUser(username);
+        return userOptional.map(UserPrinciple :: build).orElse(null);
     }
 
     @Override
@@ -216,22 +229,24 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public boolean checkUserExisted(String type, String username) {
-        Optional<User> user = Optional.empty();
+        Optional <User> user = Optional.empty();
         switch (type.toUpperCase()) {
             case "USERNAME":
                 return checkUserExisted(username);
             case "EMAIL":
-                user = userRepo.findByEmail(username);
+                user =
+                        userRepo.findByEmail(username);
                 break;
             case "PHONE":
-                user = userRepo.findByPhone(username);
+                user =
+                        userRepo.findByPhone(username);
                 break;
         }
         return user.isPresent();
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional <User> findByEmail(String email) {
         return userRepo.findByEmail(email);
     }
 
@@ -244,7 +259,8 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public boolean activeUser(String username) {
         try {
-            Optional<User> user = userRepo.loadInvalidUser(username);
+            Optional <User> user =
+                    userRepo.loadInvalidUser(username);
             if (user.isPresent()) {
                 user.get().setActive(true);
                 userRepo.save(user.get());
