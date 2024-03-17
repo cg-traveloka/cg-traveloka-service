@@ -27,7 +27,7 @@ public class RoomContractService implements IRoomContractService {
         List <RoomContract> roomsNotAvailable =
                 new ArrayList <>();
         for (RoomContract roomContract1 : roomContracts) {
-            if (roomContract1.getStatus().equals("sucess")) {
+            if (roomContract1.getStatus().equals("booked")) {
                 LocalDate startDate1 =
                         roomContract1.getStartDate();
                 LocalDate endDate1 =

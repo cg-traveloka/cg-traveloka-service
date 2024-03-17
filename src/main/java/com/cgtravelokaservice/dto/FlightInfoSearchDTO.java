@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +31,5 @@ public class FlightInfoSearchDTO {
     private Long timeInterval;
     @NotNull
     private Integer unitPrice;
+    private Integer page;
 }

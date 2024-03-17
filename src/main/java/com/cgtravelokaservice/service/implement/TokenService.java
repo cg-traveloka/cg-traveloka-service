@@ -34,7 +34,14 @@ public class TokenService implements com.cgtravelokaservice.service.ITokenServic
     @Override
     public boolean add(Token token) {
         try {
-            tokenRepo.save(token);
+            Optional<Token> tokenOptional = tokenRepo.findByUser(token.getUser());
+            if (tokenOptional.isPresent() & !isTokenValid(token.getUser().getEmail(), token.getCode())) {
+                Token token1 = tokenOptional.get();
+                token1.setCode(token.getCode());
+                tokenRepo.save(token1);
+            } else {
+                tokenRepo.save(token);
+            }
             return true;
         } catch (Exception e) {
             System.out.println("Can not add token" + e.getMessage());

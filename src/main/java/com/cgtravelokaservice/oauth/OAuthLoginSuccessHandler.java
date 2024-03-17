@@ -36,29 +36,35 @@ public class OAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws ServletException, IOException {
-        CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+        CustomOAuth2User oauth2User =
+                (CustomOAuth2User) authentication.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String oauth2ClientName = oauth2User.getOauth2ClientName();
+        String oauth2ClientName =
+                oauth2User.getOauth2ClientName();
         String username = oauth2User.getEmail();
         if (userService.loadUserByUsername(username) != null) {
             if (userService.checkValidUser(username)) {
                 System.out.println("login by oauth2 success");
                 response.sendRedirect("/login/o2auth/success");
             } else {
-                User user = userService.findByEmail(username).get();
+                User user =
+                        userService.findByEmail(username).get();
                 user.setActive(true);
                 user.setEnable(true);
                 userService.save(user);
-                Optional<Provider> providerOptional = providerRepo.findByName(oauth2ClientName.toUpperCase());
-                UserProvider userProvider = UserProvider.builder().user(user).provider(providerOptional.get()).build();
+                Optional <Provider>
+                        providerOptional =
+                        providerRepo.findByName(oauth2ClientName.toUpperCase());
+                UserProvider userProvider =
+                        UserProvider.builder().user(user).provider(providerOptional.get()).build();
                 userProviderRepo.save(userProvider);
-                response.sendRedirect("/login/o2auth/success");
+       response.sendRedirect("/login" + "/o2auth/success");
             }
         } else {
             if (userService.addO2AuthAccount(username, oauth2ClientName)) {
-                response.sendRedirect("/login/o2auth/success");
+                response.sendRedirect("/login" + "/o2auth/success");
+
             } else {
                 System.out.println("error oauth2");
                 response.sendRedirect("/login?error");

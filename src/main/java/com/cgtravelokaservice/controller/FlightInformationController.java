@@ -2,18 +2,15 @@ package com.cgtravelokaservice.controller;
 
 
 import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
-import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
-
+import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.dto.request.SearchFlightDetailsRequestDTO;
+import com.cgtravelokaservice.dto.response.ListFlightInformationsDTO;
 import com.cgtravelokaservice.dto.response.SearchFlightResponse;
-
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.service.IFlightService;
 import com.cgtravelokaservice.service.implement.SeatService;
-import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
 import com.cgtravelokaservice.util.implement.ConvertUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,12 +26,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
 public class FlightInformationController {
-    private final IFlightInformationService flightInformationService;
+    private final IFlightInformationService
+            flightInformationService;
     private final SeatService seatService;
     private final ConvertUtil convertUtil;
 
@@ -42,9 +39,9 @@ public class FlightInformationController {
 
     @Autowired
 
-    public FlightInformationController(IFlightInformationService flightInformationService, SeatService seatService,
-                                       ConvertUtil convertUtil, IFlightService flightService) {
-        this.flightInformationService = flightInformationService;
+    public FlightInformationController(IFlightInformationService flightInformationService, SeatService seatService, ConvertUtil convertUtil, IFlightService flightService) {
+        this.flightInformationService =
+                flightInformationService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
         this.flightService = flightService;
@@ -52,7 +49,7 @@ public class FlightInformationController {
 
     @PostMapping(value = "/api/flights", consumes = "application/json")
 
-    public ResponseEntity<?> createFlightAndSeats(@Validated @RequestBody FlightInformationRegisterDto flightInformationRegisterDto) {
+    public ResponseEntity <?> createFlightAndSeats(@Validated @RequestBody FlightInformationRegisterDto flightInformationRegisterDto) {
         try {
             // Tạo thông tin chuyến bay
             FlightInformation flightInformation =
@@ -70,61 +67,56 @@ public class FlightInformationController {
     }
 
 
-    @GetMapping("/api/flights/list")
-    public ResponseEntity<?> getAllFlightsSortedByStartDate(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @Validated BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Yêu cầu của bạn không hợp lệ. Vui lòng kiểm tra lại tên người " +
-                    "dùng hoặc mật khẩu");
-        }
+    @GetMapping("/api/flights")
+    public ResponseEntity <?> getAllFlightsSortedByStartDate(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         try {
             // Kiểm tra lỗi truyền tham số
-            Slice<FlightInformationDetailedDto> flights = flightService.getAllFlightsSortedByStartDate(page, size);
-            return new ResponseEntity<>(flights, HttpStatus.OK);
+            Slice <FlightInformationDetailedDto>
+                    flights =
+                    flightService.getAllFlightsSortedByStartDate(page, size);
+            return new ResponseEntity <>(flights, HttpStatus.OK);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi truy xuất thông tin chuyến " +
-                    "bay", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi truy xuất thông tin chuyến " + "bay", e);
         }
     }
 
 
     @GetMapping("/api/flights/search")
-    public ResponseEntity<?> searchFlights(@Validated @RequestBody SearchFlightDetailsRequestDTO request,
-                                           @RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           BindingResult bindingResult) {
+    public ResponseEntity <?> searchFlights(@Validated @RequestBody SearchFlightDetailsRequestDTO request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Request không hợp lệ.");
         }
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            List<FlightInfoSearchDTO> flights = flightInformationService.searchFlights(request, pageable);
-            return new ResponseEntity<>(flights, HttpStatus.OK);
+            if (request.getPage() != 0) {
+                page = request.getPage();
+            }
+            Pageable pageable =
+                    PageRequest.of(page, size);
+            ListFlightInformationsDTO list =
+                    new ListFlightInformationsDTO();
+            list.setFlights(flightInformationService.searchFlights(request, pageable));
+            list.setPage(request.getPage());
+            return new ResponseEntity <>(list, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
-                    "bay.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
         }
-
     }
 
 
     @GetMapping("/api/flights/search2")
-    public ResponseEntity<?> searchGeneral(@Validated @RequestBody SearchFlightDetailsRequestDTO requestDTO,
-                                           BindingResult bindingResult) {
+    public ResponseEntity <?> searchGeneral(@Validated @RequestBody SearchFlightDetailsRequestDTO requestDTO, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Request không hợp lệ.");
         }
         try {
             requestDTO.setAirPlantBrandId(null);
-            SearchFlightResponse response = flightInformationService.loadSearchFlightResponse(requestDTO);
+            SearchFlightResponse response =
+                    flightInformationService.loadSearchFlightResponse(requestDTO);
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Không có chuyến bay phù hợp.");
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " +
-                    "bay.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
 
         }
     }
