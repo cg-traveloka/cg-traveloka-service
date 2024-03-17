@@ -32,7 +32,6 @@ public interface IImageService {
                 new ByteArrayOutputStream();
 
         try {
-
             ImageIO.write(bufferedImage, format, baos);
 
             baos.flush();

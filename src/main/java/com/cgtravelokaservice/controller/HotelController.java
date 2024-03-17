@@ -52,14 +52,11 @@ public class HotelController {
         hotel.setHotelBookedNumbers(0);
 
 //        Tạo data bảng tiện ích - hotel
-        List <HotelHotelUtility>
-                hotelHotelUtilities =
-                hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
+        List <HotelHotelUtility> hotelHotelUtilities = hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
         hotelHotelUtilityRepo.saveAll(hotelHotelUtilities);
 
 //        Tạo data bảng image - hotel
-        List <MultipartFile> images =
-                hotelRegisterForm.getImages();
+        List <MultipartFile> images = hotelRegisterForm.getImages();
         hotelService.setImagesForHotel(hotel, images);
 
         return ResponseEntity.ok().body(hotel);
