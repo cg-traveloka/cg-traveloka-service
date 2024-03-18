@@ -31,5 +31,6 @@ public class FlightInfoSearchDTO {
     private Long timeInterval;
     @NotNull
     private Integer unitPrice;
+    private Integer seatId;
     private Integer page;
 }

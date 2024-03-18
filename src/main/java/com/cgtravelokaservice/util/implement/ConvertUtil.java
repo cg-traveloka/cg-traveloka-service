@@ -9,10 +9,13 @@ import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
 import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
 import com.cgtravelokaservice.dto.SeatDetailsDto;
 import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
+import com.cgtravelokaservice.dto.request.ComboHasSeatAndHotelDTO;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.ReviewRequestDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
+import com.cgtravelokaservice.dto.response.ComboResponeDTO;
+import com.cgtravelokaservice.dto.response.UnitComboResponeDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -33,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -126,7 +130,9 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setEndDate(roomContractRegisterFormDTO.getEndDate());
         roomContract.setStatus("pending");
 //        Tính tiền phòng
-        Integer totalMoney = roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
+        int days = (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays();
+        Integer totalMoney = days * roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
+
         roomContract.setTotalMoney(totalMoney);
         return roomContract;
     }
@@ -199,5 +205,30 @@ public class ConvertUtil implements IConvertUtil {
         RoomContract roomContract = roomContractRepo.getReferenceById(reviewRequestDTO.getContractId());
         hotelReview.setRoomContract(roomContract);
         return hotelReview;
+    }
+
+    public RoomContractRegisterFormDTO convertToRoomContractRegisterFormDTO(ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
+        RoomContractRegisterFormDTO roomContractRegisterFormDTO = new RoomContractRegisterFormDTO();
+        roomContractRegisterFormDTO.setRoomId(comboHasSeatAndHotelDTO.getRoomId());
+        roomContractRegisterFormDTO.setRoomQuantity(comboHasSeatAndHotelDTO.getRoomQuantity());
+        roomContractRegisterFormDTO.setStartDate(comboHasSeatAndHotelDTO.getStartDate());
+        roomContractRegisterFormDTO.setEndDate(comboHasSeatAndHotelDTO.getEndDate());
+        return roomContractRegisterFormDTO;
+    }
+
+    public ComboResponeDTO convertToComBoResponeDTO(Integer comboPage, SeatInformation seat, List<Hotel> hotels) {
+        ComboResponeDTO comboResponeDTO = new ComboResponeDTO();
+        List<UnitComboResponeDTO> unitComboResponeDTOs = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            UnitComboResponeDTO unitComboResponDTO = new UnitComboResponeDTO();
+            unitComboResponDTO.setSeat(seat);
+            unitComboResponDTO.setHotel(hotel);
+            unitComboResponDTO.setOriginPrice(seat.getUnitPrice() + hotel.getMinSellPrice());
+            unitComboResponDTO.setComboPrice((int) ((seat.getUnitPrice() + hotel.getMinSellPrice()) * 0.9));
+            unitComboResponeDTOs.add(unitComboResponDTO);
+        }
+        comboResponeDTO.setUnitComboResponDTOs(unitComboResponeDTOs);
+        comboResponeDTO.setPage(comboPage);
+        return comboResponeDTO;
     }
 }
