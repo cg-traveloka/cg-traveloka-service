@@ -2,7 +2,6 @@ package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.request.ReviewRequestDTO;
 import com.cgtravelokaservice.entity.hotel.HotelReview;
-import com.cgtravelokaservice.service.implement.CustomerService;
 import com.cgtravelokaservice.service.implement.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,4 +37,12 @@ public class ReviewController {
 //        }
 //        return ResponseEntity.ok(averageRating);
 //    }
+    @GetMapping("/api/hotel/{hotelId}/averageRating")
+    public ResponseEntity<?> getAverageRating(@PathVariable Integer hotelId) {
+        Double averageRating = reviewService.calculateAverageRatingPoints(hotelId);
+        if (averageRating == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(averageRating);
+    }
 }

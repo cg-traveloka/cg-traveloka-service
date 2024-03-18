@@ -38,7 +38,8 @@ public class ReviewService implements IReviewService {
     private ReviewImageRepo reviewImageRepo;
 
     public HotelReview saveReview(ReviewRequestDTO requestDTO) {
-        RoomContract contract = contractRepo.findById(requestDTO.getContractId()).orElse(null);
+        RoomContract contract = contractRepo.getReferenceById(requestDTO.getContractId());
+
         if (!"booked".equals(contract.getStatus()) && contract.getStartDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("Chưa thể đánh giá phòng này");
         }
@@ -48,9 +49,8 @@ public class ReviewService implements IReviewService {
         HotelReview review = convertUtil.convertDTOToHotelReview(requestDTO);
         review.setCommentTime(LocalDateTime.now());
         review = hotelReviewRepo.saveAndFlush(review);
-
         Double averageRatingPoints = calculateAverageRatingPoints(contract.getId());
-        Hotel hotel = contract.getRoom().getHotel();
+        Hotel hotel = review.getRoomContract().getRoom().getHotel();
         hotel.setAveragePoint(averageRatingPoints);
         return review;
     }

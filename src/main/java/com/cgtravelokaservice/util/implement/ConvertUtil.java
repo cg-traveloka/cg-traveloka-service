@@ -1,6 +1,5 @@
 package com.cgtravelokaservice.util.implement;
 
-
 import com.cgtravelokaservice.dto.AirplaneBrandDto;
 import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
 import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
@@ -129,6 +128,7 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate());
         roomContract.setEndDate(roomContractRegisterFormDTO.getEndDate());
         roomContract.setStatus("pending");
+        roomContract.setEnableReview(false);
 //        Tính tiền phòng
         int days = (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays();
         Integer totalMoney = days * roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
@@ -142,9 +142,9 @@ public class ConvertUtil implements IConvertUtil {
     public FlightInfoSearchDTO convertToFlightDetailsDTO(FlightInformation flightInfo, Integer seatTypeId) {
         FlightInfoSearchDTO dto = modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
         Optional<SeatInformation> optionalSeatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
+
         if (optionalSeatInfo.isPresent()) {
-            SeatInformation seatInfo =
-                    optionalSeatInfo.get();
+            SeatInformation seatInfo = optionalSeatInfo.get();
             dto.setSeatQuantity(seatInfo.getQuantity());
             dto.setSeatTypeName(seatInfo.getSeatType().getName());
             dto.setUnitPrice(seatInfo.getUnitPrice());
