@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -20,11 +23,9 @@ public class HotelReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    @JoinColumn(name = "hotel_id", referencedColumnName = "id")
-    private Hotel hotel;
-    @ManyToOne
     @JoinColumn(name = "contract_id", referencedColumnName = "id")
     private RoomContract roomContract;
-    private Integer ratingPoint;
+    private Double ratingPoint;
     private String comment;
+    private LocalDateTime commentTime;
 }

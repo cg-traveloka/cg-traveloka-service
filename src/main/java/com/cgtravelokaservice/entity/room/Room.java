@@ -1,12 +1,7 @@
 package com.cgtravelokaservice.entity.room;
 
 import com.cgtravelokaservice.entity.hotel.Hotel;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +22,7 @@ public class Room {
     private Integer maxPerson;
     private Integer unitPriceSell;
     private Double size;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     private Hotel hotel;
     @ManyToOne

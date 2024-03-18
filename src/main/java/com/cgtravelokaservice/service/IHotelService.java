@@ -16,8 +16,6 @@ public interface IHotelService {
 
     Slice<Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable);
 
-    Double calculateAverageRatingPoints(Integer hotelId);
-
     Slice<Hotel> getHotels(Pageable pageable);
 
     HotelsResponseDTO search(HotelSearchDTO hotelSearchDTO);

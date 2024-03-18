@@ -35,4 +35,5 @@ public class RoomContract {
     private LocalDate endDate;
     private Integer totalMoney;
     private String status;
+    private boolean enableReview;
 }

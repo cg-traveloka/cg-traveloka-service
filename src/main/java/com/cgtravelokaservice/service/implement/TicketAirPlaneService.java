@@ -53,8 +53,7 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
     }
 
     private void saveTicketAndSeatInformation(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
-        TicketAirPlant ticket =
-                convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
+        TicketAirPlant ticket = convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
         ticket.setStatus("pending");
         ticketAirPlantRepo.save(ticket);
     }

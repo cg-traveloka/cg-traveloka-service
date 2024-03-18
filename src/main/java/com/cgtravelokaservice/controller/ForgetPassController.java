@@ -34,9 +34,6 @@ public class ForgetPassController {
     @Autowired
     private TokenService tokenService;
 
-
-
-
     @PostMapping({"/sendCode", "/sendCodeAgain"})
     public ResponseEntity<?> sendCode(@RequestBody @Validated EmailRequest request) {
         if (userService.checkValidUser(request.getEmail())) {
