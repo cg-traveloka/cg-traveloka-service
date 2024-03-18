@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SeatInfoController {
     private final SeatService seatService;
 
-    public SeatInfoController(SeatService seatService) {this.seatService = seatService;}
+    public SeatInfoController(SeatService seatService) {
+        this.seatService = seatService;
+    }
 
-    @GetMapping("/api/seats/getByFlight")
-    public ResponseEntity<?> getAvailableSeatsByFlight(@Validated @RequestBody GetAvailableSeatsRequest request,
-                                                       BindingResult bindingResult) {
+    @GetMapping("/api/flights/seats")
+    public ResponseEntity <?> getAvailableSeatsByFlight(@Validated @RequestBody GetAvailableSeatsRequest request, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Your request is not valid.");
         }
