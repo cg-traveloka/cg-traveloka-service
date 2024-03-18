@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -38,5 +37,6 @@ public class FlightInformation {
     private AirPlantBrand airPlantBrand;
 
     @OneToMany(mappedBy = "flightInformation", fetch = FetchType.LAZY)
-    private Set<SeatInformation> seatInformations;
+    private Set <SeatInformation>
+            seatInformations;
 }

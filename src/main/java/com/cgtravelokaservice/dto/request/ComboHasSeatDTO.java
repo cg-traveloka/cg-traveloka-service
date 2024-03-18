@@ -5,11 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ComboRequestDTO {
-    private SearchFlightDetailsRequestDTO
-            searchFlightDetailsRequestDTO;
+@AllArgsConstructor
+public class ComboHasSeatDTO {
+    private Integer seatId;
     private HotelSearchDTO hotelSearchDTO;
     private Integer page;
 }
