@@ -53,14 +53,11 @@ public class HotelService implements IHotelService {
     IConvertUtil convertUtil;
 
     public boolean setImagesForHotel(Hotel hotel, List<MultipartFile> files) {
-        List<HotelImg> hotelImgs =
-                new ArrayList<>();
+        List<HotelImg> hotelImgs = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                String imageUrl =
-                        imageService.save(file);
-                HotelImg hotelImg =
-                        new HotelImg();
+                String imageUrl = imageService.save(file);
+                HotelImg hotelImg = new HotelImg();
                 hotelImg.setHotel(hotel);
                 hotelImg.setUrl(imageUrl);
                 hotelImgs.add(hotelImg);
@@ -78,16 +75,6 @@ public class HotelService implements IHotelService {
     @Override
     public Slice<Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable) {
         return hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
-    }
-
-    @Override
-    public Double calculateAverageRatingPoints(Integer hotelId) {
-        List<HotelReview> reviews = hotelReviewRepo.findByHotelId(hotelId);
-        if (reviews.isEmpty()) {
-            return null;
-        }
-        int totalRatingPoints = reviews.stream().mapToInt(HotelReview::getRatingPoint).sum();
-        return (double) totalRatingPoints / reviews.size();
     }
 
     @Override
