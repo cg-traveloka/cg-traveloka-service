@@ -46,20 +46,16 @@ public class HotelController {
     @PostMapping(value = "/api/hotels", consumes = "multipart/form-data")
     public ResponseEntity <?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
 //        Tạo data bảng hotel
-        Hotel hotel =
-                convertUtility.hotelRegisterFormToHotel(hotelRegisterForm);
+        Hotel hotel = convertUtility.hotelRegisterFormToHotel(hotelRegisterForm);
         hotel = hotelRepo.saveAndFlush(hotel);
         hotel.setHotelBookedNumbers(0);
 
 //        Tạo data bảng tiện ích - hotel
-        List <HotelHotelUtility>
-                hotelHotelUtilities =
-                hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
+        List <HotelHotelUtility> hotelHotelUtilities = hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
         hotelHotelUtilityRepo.saveAll(hotelHotelUtilities);
 
 //        Tạo data bảng image - hotel
-        List <MultipartFile> images =
-                hotelRegisterForm.getImages();
+        List <MultipartFile> images = hotelRegisterForm.getImages();
         hotelService.setImagesForHotel(hotel, images);
 
         return ResponseEntity.ok().body(hotel);
