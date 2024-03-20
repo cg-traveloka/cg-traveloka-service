@@ -25,7 +25,7 @@ import java.sql.Timestamp;
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String code;
 
     @Nullable
