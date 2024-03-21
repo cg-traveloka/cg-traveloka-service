@@ -1,16 +1,15 @@
-package com.cgtravelokaservice.dto.request;
+package com.cgtravelokaservice.dto.response;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProfileCustomerRequestDTO {
+@NoArgsConstructor
+public class UpdateProfileCustomerResponseDTO {
     private Integer customerId;
 
     private String name;
