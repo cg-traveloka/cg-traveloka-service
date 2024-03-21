@@ -12,6 +12,7 @@ import com.cgtravelokaservice.dto.request.ComboHasSeatAndHotelDTO;
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.dto.response.ComboResponeDTO;
+import com.cgtravelokaservice.dto.response.UpdateProfileCustomerResponseDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -19,6 +20,7 @@ import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.room.Room;
+import com.cgtravelokaservice.entity.user.Customer;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public interface IConvertUtil {
 
     RoomContract roomContractFormDTOToRoomContract(RoomContractRegisterFormDTO roomContractRegisterFormDTO);
 
-    List <SeatDetailsDto> convertSeatInformationToDto(Integer flightId);
+    List<SeatDetailsDto> convertSeatInformationToDto(Integer flightId);
 
     FlightInformationDetailedDto convertToDetailedDto(FlightInformation flightInformation);
 
@@ -45,5 +47,7 @@ public interface IConvertUtil {
 
     RoomContractRegisterFormDTO convertToRoomContractRegisterFormDTO(ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO);
 
-    ComboResponeDTO convertToComBoResponeDTO(Integer comboPage, SeatInformation seat, List <Hotel> hotels);
+    ComboResponeDTO convertToComBoResponeDTO(Integer comboPage, SeatInformation seat, List<Hotel> hotels);
+
+    UpdateProfileCustomerResponseDTO convertToResponseDTO(Customer customer);
 }
