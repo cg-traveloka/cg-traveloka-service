@@ -2,6 +2,7 @@ package com.cgtravelokaservice.security;
 
 
 import com.cgtravelokaservice.jwt.CustomAccessDeniedHandler;
+import com.cgtravelokaservice.jwt.CustomOAuth2AuthenticationFailureHandler;
 import com.cgtravelokaservice.jwt.JwtAuthenticationTokenFilter;
 import com.cgtravelokaservice.jwt.RestAuthenticationEntryPoint;
 import com.cgtravelokaservice.oauth.OAuthLoginSuccessHandler;
@@ -10,8 +11,10 @@ import com.cgtravelokaservice.service.implement.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -95,13 +98,15 @@ public class SecurityConfig {
                                         .requestMatchers("/error/**").permitAll()
 //                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
 //                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
-//                                        .anyRequest().authenticated()
-                                        .anyRequest().permitAll()
+                                        .anyRequest().authenticated()
+//                                        .anyRequest().permitAll()
                 )
-                .oauth2Login(o -> o
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService)    )
-                        .successHandler(oAuthLoginSuccessHandler))
 
+//                .oauth2Login(o -> o
+//                        .userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService))
+//                        .successHandler(oAuthLoginSuccessHandler)
+//
+//                )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout((logout) ->
                         logout.deleteCookies("remove")
@@ -111,7 +116,9 @@ public class SecurityConfig {
                 .rememberMe((remember) -> remember.userDetailsService(userDetailsService())
                         .tokenRepository(this.persistentTokenRepository())
                         .tokenValiditySeconds(24 * 60 * 60))
-                .userDetailsService(userDetailsService());
+                .userDetailsService(userDetailsService())
+                .httpBasic(basic -> basic.authenticationEntryPoint(restServicesEntryPoint()))
+                .exceptionHandling(Customizer.withDefaults());;
         return http.build();
     }
 

@@ -18,4 +18,9 @@ public class AirPortLocationService implements IAirPortLocationService {
     public List <AirPortLocation> getAirPortLocationByCityId(Integer cityId) {
         return airportLocationRepo.getAirPortLocationByCityId(cityId);
     }
+
+    @Override
+    public List<AirPortLocation> findByCityId(Integer cityId) {
+        return null;
+    }
 }
