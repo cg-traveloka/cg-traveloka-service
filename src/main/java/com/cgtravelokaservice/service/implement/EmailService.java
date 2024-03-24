@@ -10,7 +10,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @Service
-public class    EmailService {
+public class EmailService {
     private final JavaMailSender javaMailSender;
 
     private final TemplateEngine templateEngine;
