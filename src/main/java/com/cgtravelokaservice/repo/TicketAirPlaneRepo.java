@@ -7,6 +7,6 @@ import java.util.List;
 
 
 public interface TicketAirPlaneRepo extends JpaRepository<TicketAirPlant, Integer> {
-    List<TicketAirPlant> findAllByCustomerId(Integer id);
+    List<TicketAirPlant> findAllByCustomerIdAndStatus(Integer id, String status);
 }
 

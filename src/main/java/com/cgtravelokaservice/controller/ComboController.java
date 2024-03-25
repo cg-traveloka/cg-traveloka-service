@@ -5,6 +5,7 @@ import com.cgtravelokaservice.dto.request.ComboHasSeatAndHotelDTO;
 import com.cgtravelokaservice.dto.request.ComboHasSeatDTO;
 import com.cgtravelokaservice.dto.request.ComboRequestDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
+import com.cgtravelokaservice.dto.response.BookingResponseDTO;
 import com.cgtravelokaservice.dto.response.ComboResponeDTO;
 import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -30,11 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -81,7 +80,7 @@ public class ComboController {
             if (seats.isEmpty()) {
                 throw new NoSuchElementException();
             }
-            SeatInformation seat = seats.get(0);
+            SeatInformation seat = seats.getFirst();
             comboRequestDTO.getHotelSearchDTO().setPageNumber(comboPage);
             HotelsResponseDTO hotelsResponseDTO = hotelService.search(comboRequestDTO.getHotelSearchDTO());
             List<Hotel> hotels = hotelsResponseDTO.getHotels();
@@ -153,5 +152,41 @@ public class ComboController {
             return ResponseEntity.ok().body("Đăng ký combo không thành công");
     }
 
+    @GetMapping(value = "/api/comboPending/customer/{customerId}")
+    public ResponseEntity<?> getCombosPendingByCustomer(@PathVariable Integer customerId) {
+        List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "pending");
+        if (!combos.isEmpty()) {
+            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+            for (Combo combo : combos) {
+                BookingResponseDTO bookingResponse = new BookingResponseDTO();
+                bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
+                bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
+                bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
+                bookingResponse.setTotalMoney(combo.getTotalMoney());
+                bookingResponse.setStatus("Đang chờ thanh toán");
+                bookingResponses.add(bookingResponse);
+            }
+            return ResponseEntity.ok().body(bookingResponses);
+        }
+        return ResponseEntity.ok().body("Không tìm thấy combo nào của khách hàng này");
+    }
 
+    @GetMapping(value = "/api/comboBooked/customer/{customerId}")
+    public ResponseEntity<?> getCombosBookedByCustomer(@PathVariable Integer customerId) {
+        List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "booked");
+        if (!combos.isEmpty()) {
+            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+            for (Combo combo : combos) {
+                BookingResponseDTO bookingResponse = new BookingResponseDTO();
+                bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
+                bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
+                bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
+                bookingResponse.setTotalMoney(combo.getTotalMoney());
+                bookingResponse.setStatus("Đã thanh toán");
+                bookingResponses.add(bookingResponse);
+            }
+            return ResponseEntity.ok().body(bookingResponses);
+        }
+        return ResponseEntity.ok().body("Không tìm thấy combo nào của khách hàng này");
+    }
 }

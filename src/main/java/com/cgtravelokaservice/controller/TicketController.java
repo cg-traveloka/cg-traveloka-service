@@ -29,7 +29,6 @@ public class TicketController {
         }
         try {
             boolean isBooked = ticketAirPlaneService.bookFlight(ticketDTO);
-
             if (isBooked) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Ticket booked successfully.");
             } else {
@@ -43,7 +42,7 @@ public class TicketController {
 
     @GetMapping("/api/ticket/customer/{customerId}")
     public ResponseEntity<?> getTicketsByCustomer(@PathVariable Integer customerId) {
-        List<TicketAirPlant> tickets = ticketAirPlaneRepo.findAllByCustomerId(customerId);
+        List<TicketAirPlant> tickets = ticketAirPlaneRepo.findAllByCustomerIdAndStatus(customerId, "pending");
         if (!tickets.isEmpty()) {
             List<BookingResponseDTO> bookingResponses = new ArrayList<>();
             for (TicketAirPlant ticket : tickets) {

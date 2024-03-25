@@ -30,18 +30,15 @@ import java.util.NoSuchElementException;
 
 @RestController
 public class FlightInformationController {
-    private final IFlightInformationService
-            flightInformationService;
+    private final IFlightInformationService flightInformationService;
     private final SeatService seatService;
     private final ConvertUtil convertUtil;
-
     private final IFlightService flightService;
 
     @Autowired
 
     public FlightInformationController(IFlightInformationService flightInformationService, SeatService seatService, ConvertUtil convertUtil, IFlightService flightService) {
-        this.flightInformationService =
-                flightInformationService;
+        this.flightInformationService = flightInformationService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
         this.flightService = flightService;

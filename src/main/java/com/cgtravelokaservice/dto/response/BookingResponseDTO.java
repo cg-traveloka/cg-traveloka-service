@@ -15,4 +15,6 @@ public class BookingResponseDTO {
     private String flightNameToCity;
 
     private String status;
+
+    private Integer totalMoney;
 }
