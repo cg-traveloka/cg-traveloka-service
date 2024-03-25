@@ -1,6 +1,5 @@
 package com.cgtravelokaservice.dto.request;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,29 +16,27 @@ public class HotelSearchDTO {
     private Integer cityId;
     @FutureOrPresent
     private LocalDate startDate;
-    @Future
-    private LocalDate endDate;
-    private Integer quantity;
+    private Integer nights;
+    private Integer roomQuantity;
     private Integer personQuantity;
-    private List <Integer> hotelStars;
-    private Integer minPrice;
-    private Integer maxPrice;
+    private List <Integer> stars;
+    private Integer moneyFrom;
+    private Integer moneyTo;
     private String sort;
     private Integer pageNumber;
 
     public HotelSearchDTO() {
-        this.hotelStars = new ArrayList <>();
+        this.stars = new ArrayList <>();
         for (int i = 1; i <= 5; i++) {
-            this.hotelStars.add(i);
+            this.stars.add(i);
         }
-        this.minPrice = 0;
-        this.maxPrice = 2000000000;
+        this.moneyFrom = 0;
+        this.moneyTo = 2000000000;
         this.sort = "booked";
         this.pageNumber = 0;
         this.startDate = LocalDate.now();
-        this.endDate =
-                LocalDate.now().plusDays(1);
-        this.quantity = 1;
+        this.nights = 1;
+        this.roomQuantity = 1;
         this.personQuantity = 1;
     }
 }
