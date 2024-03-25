@@ -6,6 +6,6 @@ CREATE TABLE token
         token_expired_at TIMESTAMP,
         code_expired_at TIMESTAMP,
         code VARCHAR(255),
-        email VARCHAR(255),
-        foreign key (email) references user (email)
+        user_email VARCHAR(255),
+        foreign key (user_email) references user (email)
 )

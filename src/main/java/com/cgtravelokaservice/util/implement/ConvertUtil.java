@@ -15,6 +15,7 @@ import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
 import com.cgtravelokaservice.dto.response.ComboResponeDTO;
 import com.cgtravelokaservice.dto.response.UnitComboResponeDTO;
+import com.cgtravelokaservice.dto.response.UpdateProfileCustomerResponseDTO;
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
@@ -90,8 +91,7 @@ public class ConvertUtil implements IConvertUtil {
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
         AirPlantBrand brand = new AirPlantBrand();
         brand.setName(airplaneBrandDto.getName());
-        MultipartFile logoUrl =
-                airplaneBrandDto.getLogoImg();
+        MultipartFile logoUrl = airplaneBrandDto.getLogoImg();
         airplaneBrandService.setLogoUrl(brand, logoUrl);
         return brand;
     }
@@ -269,5 +269,16 @@ public class ConvertUtil implements IConvertUtil {
         comboResponeDTO.setUnitComboResponDTOs(unitComboResponeDTOs);
         comboResponeDTO.setPage(comboPage);
         return comboResponeDTO;
+    }
+
+    public UpdateProfileCustomerResponseDTO convertToResponseDTO(Customer customer) {
+        UpdateProfileCustomerResponseDTO responseDTO = new UpdateProfileCustomerResponseDTO();
+        responseDTO.setCustomerId(customer.getId());
+        responseDTO.setName(customer.getName());
+        responseDTO.setGender(customer.getGender());
+        responseDTO.setDate(customer.getDateOfBirth().getDayOfMonth());
+        responseDTO.setMonth(customer.getDateOfBirth().getMonthValue());
+        responseDTO.setYear(customer.getDateOfBirth().getYear());
+        return responseDTO;
     }
 }
