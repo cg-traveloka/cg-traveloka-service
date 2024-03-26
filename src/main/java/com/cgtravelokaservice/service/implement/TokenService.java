@@ -2,31 +2,53 @@ package com.cgtravelokaservice.service.implement;
 
 
 import com.cgtravelokaservice.entity.token.Token;
+import com.cgtravelokaservice.entity.user.User;
 import com.cgtravelokaservice.repo.TokenRepo;
+import com.cgtravelokaservice.service.ITokenService;
+import com.cgtravelokaservice.util.RandomDigitsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
-public class TokenService implements com.cgtravelokaservice.service.ITokenService {
+public class TokenService implements ITokenService {
     @Autowired
     private TokenRepo tokenRepo;
 
 
-    @Override
-    public List<Token> getTokenByUserIdAndTokenType(String email, String tokenType) {
-        return tokenRepo.getByUser_EmailAndType_Name(email, tokenType);
+    public Optional<Token> findByUser(User user) {
+        return tokenRepo.findByUser(user);
     }
 
-    @Override
-    public boolean isTokenValid(String email, String code) {
+    public Token generateOrRefreshCode(User user) {
+        Optional<Token> tokenOptional = findByUser(user);
+        Token token;
+
+        if (tokenOptional.isPresent()) {
+            token = tokenOptional.get();
+            String newCode = RandomDigitsGenerator.generate(6);
+            token.setCode(newCode);
+            token.setCodeExpiredAt(new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000));
+        } else {
+            String code = RandomDigitsGenerator.generate(6);
+            token = Token.builder()
+                    .code(code)
+                    .user(user)
+                    .codeExpiredAt(new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000))
+                    .build();
+        }
+        return tokenRepo.save(token);
+    }
+
+    public boolean isCodeValid(String email, String code) {
         Optional<Token> tokenOptional = tokenRepo.findByCode(code);
         if (tokenOptional.isPresent()) {
             Token token = tokenOptional.get();
-            return token.getUser().getEmail().equals(email) && token.getExpiredTime().getTime() > System.currentTimeMillis() && token.isStatus();
+
+                return token.getCode().equals(code) && token.getCodeExpiredAt().after(new Timestamp(System.currentTimeMillis()));
+
         }
         return false;
     }
@@ -35,7 +57,7 @@ public class TokenService implements com.cgtravelokaservice.service.ITokenServic
     public boolean add(Token token) {
         try {
             Optional<Token> tokenOptional = tokenRepo.findByUser(token.getUser());
-            if (tokenOptional.isPresent() & !isTokenValid(token.getUser().getEmail(), token.getCode())) {
+            if (tokenOptional.isPresent() & !isCodeValid(token.getUser().getEmail(), token.getCode())) {
                 Token token1 = tokenOptional.get();
                 token1.setCode(token.getCode());
                 tokenRepo.save(token1);
@@ -44,29 +66,10 @@ public class TokenService implements com.cgtravelokaservice.service.ITokenServic
             }
             return true;
         } catch (Exception e) {
-            System.out.println("Can not add token" + e.getMessage());
+            System.out.println("Không thể thêm token: " + e.getMessage());
             return false;
         }
     }
 
-    @Override
-    public boolean disableTokenByType(String email, String type) {
-        List<Token> tokens = getTokenByUserIdAndTokenType(email, type);
-        if (!tokens.isEmpty()) {
-            for (Token token : tokens) {
-                token.setStatus(false);
-            }
-        }
-        return true;
-    }
 
-    @Override
-    @Scheduled(fixedRate = 5000)
-    public void clearToken() {
-        tokenRepo.findAll().forEach(token -> {
-            if (token.getExpiredTime().getTime() <= System.currentTimeMillis()) {
-                token.setStatus(false);
-            }
-        });
-    }
 }

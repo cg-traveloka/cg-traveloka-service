@@ -74,4 +74,15 @@ public class AirplaneBrandController {
         }
     }
 
+    @GetMapping("/api/airplane-brands")
+     public ResponseEntity<?> findAll() {
+        return ResponseEntity.ok(airplaneBrandService.findAll());
+    }
+
+    @PostMapping("/api/airplane-brands/name")
+    public ResponseEntity<?> getAllByName(@RequestBody String name) {
+        return ResponseEntity.ok(airplaneBrandService.findAllByNameContainsIgnoreCase(name));
+    }
+
+
 }

@@ -163,6 +163,13 @@ public class UserService implements UserDetailsService, IUserService {
 
 
     @Override
+    public Optional <User> findInValidUserByAccountName(String accountName) {
+        return userRepo.loadInvalidUser(accountName);
+    }
+
+
+
+    @Override
     public boolean add(UserDTO userDTO) {
         if (userRepo.findValidUserByUsernameOrEmailOrPhone(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPhone()).isEmpty()) {
             User user =

@@ -8,8 +8,6 @@ import com.cgtravelokaservice.entity.user.User;
 import com.cgtravelokaservice.service.implement.EmailService;
 import com.cgtravelokaservice.service.IUserService;
 import com.cgtravelokaservice.service.implement.TokenService;
-import com.cgtravelokaservice.service.implement.TokenTypeService;
-import com.cgtravelokaservice.util.RandomDigitsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.context.Context;
 
-import java.sql.Timestamp;
 import java.util.Optional;
 
 
@@ -37,9 +34,6 @@ public class ForgetPassController {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
-    private TokenTypeService tokenTypeService;
-
 
     @PostMapping({"/sendCode", "/sendCodeAgain"})
     public ResponseEntity<?> sendCode(@RequestBody @Validated EmailRequest request) {
@@ -47,19 +41,12 @@ public class ForgetPassController {
             Optional<User> userOptional = userService.findValidUserByAccountName(request.getEmail());
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                tokenService.disableTokenByType(user.getEmail(), "FORGET_PASSWORD");
-                String code = RandomDigitsGenerator.generate(6);
-                Token token =
-                        Token.builder().code(code).user(user).createdTime(new Timestamp(System.currentTimeMillis())).
-                                expiredTime(new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000)).
-                                type(tokenTypeService.findByName("FORGET_PASSWORD").get()).status(true).build();
-
-                tokenService.add(token);
+                Token token = tokenService.generateOrRefreshCode(user);
                 Context context = new Context();
-                context.setVariable("message", code);
-                emailService.sendMail("Traveloka - Mã để reset mật khẩu", user.getEmail(), context, "email" +
+                context.setVariable("message", token.getCode());
+                emailService.sendMail("Traveloka - Code for reset password", user.getEmail(), context, "email" +
                         "-template");
-                return ResponseEntity.ok("Đã gửi mã để reset mật khẩu. Mã: " + code);
+                return ResponseEntity.ok("Sent code for reset pass success. Code: " + token.getCode());
 
             } else {
                 return ResponseEntity.status(404).body("Người dùng không tồn tại");
@@ -70,16 +57,20 @@ public class ForgetPassController {
     }
 
     @PostMapping("/validateCode")
-    public ResponseEntity<?> validateCode(@RequestBody @Validated ValidateCodeRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> validateCode(@RequestBody @Validated ValidateCodeRequest request,
+                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
-        if (tokenService.isTokenValid(request.getEmail(), request.getCode())) {
-            return ResponseEntity.ok("Xác thực mã thành công");
+
+        if (tokenService.isCodeValid(request.getEmail(), request.getCode())) {
+            return ResponseEntity.ok("Validate code success");
+
         } else {
             return ResponseEntity.badRequest().body("Xác thực mã thất bại");
         }
     }
+
 
     @PostMapping("/resetPass")
     public ResponseEntity<?> resetPass(@RequestBody @Validated ResetPassRequest request, BindingResult bindingResult) {
