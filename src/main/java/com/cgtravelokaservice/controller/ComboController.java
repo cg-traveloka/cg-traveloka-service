@@ -155,7 +155,7 @@ public class ComboController {
     @GetMapping(value = "/api/comboPending/customer/{customerId}")
     public ResponseEntity<?> getCombosPendingByCustomer(@PathVariable Integer customerId) {
         List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "pending");
-        if (!combos.isEmpty()) {
+
             List<BookingResponseDTO> bookingResponses = new ArrayList<>();
             for (Combo combo : combos) {
                 BookingResponseDTO bookingResponse = new BookingResponseDTO();
@@ -167,14 +167,12 @@ public class ComboController {
                 bookingResponses.add(bookingResponse);
             }
             return ResponseEntity.ok().body(bookingResponses);
-        }
-        return ResponseEntity.ok().body("Không tìm thấy combo nào của khách hàng này");
     }
 
     @GetMapping(value = "/api/comboBooked/customer/{customerId}")
     public ResponseEntity<?> getCombosBookedByCustomer(@PathVariable Integer customerId) {
         List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "booked");
-        if (!combos.isEmpty()) {
+
             List<BookingResponseDTO> bookingResponses = new ArrayList<>();
             for (Combo combo : combos) {
                 BookingResponseDTO bookingResponse = new BookingResponseDTO();
@@ -186,7 +184,7 @@ public class ComboController {
                 bookingResponses.add(bookingResponse);
             }
             return ResponseEntity.ok().body(bookingResponses);
-        }
-        return ResponseEntity.ok().body("Không tìm thấy combo nào của khách hàng này");
+
     }
+
 }

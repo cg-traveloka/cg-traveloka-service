@@ -40,21 +40,31 @@ public class TicketController {
         }
     }
 
-    @GetMapping("/api/ticket/customer/{customerId}")
-    public ResponseEntity<?> getTicketsByCustomer(@PathVariable Integer customerId) {
+    @GetMapping("/api/ticketPending/customer/{customerId}")
+    public ResponseEntity<?> getTicketPendingByCustomer(@PathVariable Integer customerId) {
         List<TicketAirPlant> tickets = ticketAirPlaneRepo.findAllByCustomerIdAndStatus(customerId, "pending");
-        if (!tickets.isEmpty()) {
-            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
-            for (TicketAirPlant ticket : tickets) {
-                BookingResponseDTO bookingResponse = new BookingResponseDTO();
-                bookingResponse.setFlightNameFromCity(ticket.getFlightInformation().getFromAirPortLocation().getCity().getName());
-                bookingResponse.setFlightNameToCity(ticket.getFlightInformation().getToAirPortLocation().getCity().getName());
-                bookingResponse.setStatus("Đang đợi thanh toán");
-                bookingResponses.add(bookingResponse);
-            }
-            return ResponseEntity.ok().body(bookingResponses);
-        } else {
-            return ResponseEntity.ok().body("Không tìm thấy vé nào của khách hàng này");
+        List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+        for (TicketAirPlant ticket : tickets) {
+            BookingResponseDTO bookingResponse = new BookingResponseDTO();
+            bookingResponse.setFlightNameFromCity(ticket.getFlightInformation().getFromAirPortLocation().getCity().getName());
+            bookingResponse.setFlightNameToCity(ticket.getFlightInformation().getToAirPortLocation().getCity().getName());
+            bookingResponse.setStatus("Đang đợi thanh toán");
+            bookingResponses.add(bookingResponse);
         }
+        return ResponseEntity.ok().body(bookingResponses);
+    }
+
+    @GetMapping("/api/ticketBooked/customer/{customerId}")
+    public ResponseEntity<?> getTicketBookedByCustomer(@PathVariable Integer customerId) {
+        List<TicketAirPlant> tickets = ticketAirPlaneRepo.findAllByCustomerIdAndStatus(customerId, "booked");
+        List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+        for (TicketAirPlant ticket : tickets) {
+            BookingResponseDTO bookingResponse = new BookingResponseDTO();
+            bookingResponse.setFlightNameFromCity(ticket.getFlightInformation().getFromAirPortLocation().getCity().getName());
+            bookingResponse.setFlightNameToCity(ticket.getFlightInformation().getToAirPortLocation().getCity().getName());
+            bookingResponse.setStatus("Đã thanh toán");
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok().body(bookingResponses);
     }
 }

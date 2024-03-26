@@ -39,20 +39,29 @@ public class RoomContractController {
         }
     }
 
-    @GetMapping(value = "/api/contracts/customer/{customerId}")
-    public ResponseEntity<?> getContractsByCustomer(@PathVariable Integer customerId) {
+    @GetMapping(value = "/api/contractPending/customer/{customerId}")
+    public ResponseEntity<?> getContractPendingByCustomer(@PathVariable Integer customerId) {
         List<RoomContract> roomContracts = roomContractRepo.findAllByCustomerIdAndStatus(customerId, "pending");
-        if (!roomContracts.isEmpty()) {
-            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
-            for (RoomContract roomContract : roomContracts) {
-                BookingResponseDTO bookingResponse = new BookingResponseDTO();
-                bookingResponse.setHotelName(roomContract.getRoom().getHotel().getHotelName());
-                bookingResponse.setStatus("Đang chờ thanh toán");
-                bookingResponses.add(bookingResponse);
-            }
-            return ResponseEntity.ok().body(bookingResponses);
-        } else {
-            return ResponseEntity.ok().body("Không tìm thấy hợp đồng nào của khách hàng này");
+        List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+        for (RoomContract roomContract : roomContracts) {
+            BookingResponseDTO bookingResponse = new BookingResponseDTO();
+            bookingResponse.setHotelName(roomContract.getRoom().getHotel().getHotelName());
+            bookingResponse.setStatus("Đang chờ thanh toán");
+            bookingResponses.add(bookingResponse);
         }
+        return ResponseEntity.ok().body(bookingResponses);
+    }
+
+    @GetMapping(value = "/api/contractBooked/customer/{customerId}")
+    public ResponseEntity<?> getContractBookedByCustomer(@PathVariable Integer customerId) {
+        List<RoomContract> roomContracts = roomContractRepo.findAllByCustomerIdAndStatus(customerId, "booked");
+        List<BookingResponseDTO> bookingResponses = new ArrayList<>();
+        for (RoomContract roomContract : roomContracts) {
+            BookingResponseDTO bookingResponse = new BookingResponseDTO();
+            bookingResponse.setHotelName(roomContract.getRoom().getHotel().getHotelName());
+            bookingResponse.setStatus("Đã thanh toán");
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok().body(bookingResponses);
     }
 }
