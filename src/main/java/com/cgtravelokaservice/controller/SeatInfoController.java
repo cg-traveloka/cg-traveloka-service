@@ -20,12 +20,12 @@ public class SeatInfoController {
     @GetMapping("/api/flights/seats")
     public ResponseEntity <?> getAvailableSeatsByFlight(@Validated @RequestBody GetAvailableSeatsRequest request, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Your request is not valid.");
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         try {
             return ResponseEntity.ok(seatService.getAllAvailableSeatsByFlight(request));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("500");
+            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi khi tìm kiếm ghế ngồi theo chuyến bay.");
         }
 
     }

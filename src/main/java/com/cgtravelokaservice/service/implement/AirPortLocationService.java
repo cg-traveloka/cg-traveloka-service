@@ -4,6 +4,7 @@ import com.cgtravelokaservice.entity.airplant.AirPortLocation;
 import com.cgtravelokaservice.repo.AirportLocationRepo;
 import com.cgtravelokaservice.service.IAirPortLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +12,20 @@ import java.util.List;
 @Service
 public class AirPortLocationService implements IAirPortLocationService {
     @Autowired
-    private AirportLocationRepo
-            airportLocationRepo;
+    private AirportLocationRepo airportLocationRepo;
 
     @Override
-    public List <AirPortLocation> getAirPortLocationByCityId(Integer cityId) {
+    public List<AirPortLocation> getAirPortLocationByCityId(Integer cityId) {
         return airportLocationRepo.getAirPortLocationByCityId(cityId);
+    }
+
+    @Override
+    public List<AirPortLocation> getAllAirportLocation() {
+        return airportLocationRepo.findAll(Sort.by("name"));
+    }
+
+    @Override
+    public List<AirPortLocation> getAllByNameContains(String name) {
+        return airportLocationRepo.getAllByNameContains(name, Sort.by("name"));
     }
 }

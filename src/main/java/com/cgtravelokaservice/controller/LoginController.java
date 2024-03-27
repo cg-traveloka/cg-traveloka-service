@@ -41,7 +41,7 @@ public class LoginController {
     @PostMapping("/account")
     public ResponseEntity <?> login(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Your request is not valid. Check again your username or password");
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ. Vui lòng xem lại định dạng.");
         }
         try {
             Authentication authentication =
@@ -60,6 +60,7 @@ public class LoginController {
                 if (userInfo.isActive()) {
                     return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getUsername(), userInfo.getUsername(), userDetails.getAuthorities()));
                 } else {
+
                     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User is not active. Please fill " + "full " + "register steps to login");
                 }
             } else {
@@ -68,12 +69,14 @@ public class LoginController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login fail");
+
         }
     }
 
     @GetMapping("/o2auth/success")
     public ResponseEntity <?> o2auth() {
         try {
+
             Authentication authentication =
                     SecurityContextHolder.getContext().getAuthentication();
             CustomOAuth2User userInfo =
@@ -81,9 +84,10 @@ public class LoginController {
             String jwt =
                     jwtService.generateTokenLogin(authentication);
             return ResponseEntity.ok(new JwtResponse(jwt, userInfo.getEmail(), userInfo.getName(), userInfo.getAuthorities()));
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login with oauth fail");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Đăng nhập bằng OAuth thất bại");
         }
     }
 
