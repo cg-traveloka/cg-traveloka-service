@@ -24,5 +24,6 @@ public class Combo {
     @OneToOne
     @JoinColumn(name = "ticket_air_plant_id", referencedColumnName = "id")
     private TicketAirPlant ticketAirPlant;
+    private String status;
     private Integer totalMoney;
 }

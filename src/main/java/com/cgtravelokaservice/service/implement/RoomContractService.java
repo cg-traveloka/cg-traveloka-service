@@ -38,6 +38,7 @@ public class RoomContractService implements IRoomContractService {
             }
         }
         return roomContract.getRoomQuantity() <= room.getQuantity() - roomsNotAvailable.size();
-
     }
+
+
 }

@@ -81,7 +81,7 @@ public class FlightInformationController {
     }
 
 
-    @GetMapping("/api/flights/search")
+    @GetMapping("/api/flights/search/filter")
     public ResponseEntity <?> searchFlights(@Validated @RequestBody SearchFlightDetailsRequestDTO request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Request không hợp lệ.");
@@ -103,7 +103,7 @@ public class FlightInformationController {
     }
 
 
-    @GetMapping("/api/flights/search2")
+    @GetMapping("/api/flights/search")
     public ResponseEntity <?> searchGeneral(@Validated @RequestBody SearchFlightDetailsRequestDTO requestDTO, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body("Request không hợp lệ.");

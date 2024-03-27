@@ -1,6 +1,5 @@
 package com.cgtravelokaservice.service.implement;
 
-
 import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
 import com.cgtravelokaservice.entity.airplant.SeatInformation;
 import com.cgtravelokaservice.entity.booking.TicketAirPlant;
@@ -39,6 +38,18 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
         }
     }
 
+    public TicketAirPlant bookFlightAndGetTicket(TicketAirPlaneDTO ticketDTO) {
+        SeatInformation seatInformation =
+                getSeatInformationById(ticketDTO.getSeatInfoId());
+
+        if (isSeatAvailable(seatInformation, ticketDTO.getQuantity())) {
+            updateSeatInformation(seatInformation, ticketDTO.getQuantity());
+            return saveTicketAndSeatInformation(ticketDTO, seatInformation);
+        } else {
+            return null;
+        }
+    }
+
     private SeatInformation getSeatInformationById(Integer seatInfoId) {
         return seatInformationRepo.getReferenceById(seatInfoId);
     }
@@ -52,12 +63,11 @@ public class TicketAirPlaneService implements ITicketAirPlaneService {
         seatInformationRepo.save(seatInformation);
     }
 
-    private void saveTicketAndSeatInformation(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
-        TicketAirPlant ticket =
-                convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
+    private TicketAirPlant saveTicketAndSeatInformation(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
+        TicketAirPlant ticket = convertUtil.convertToTicketAirPlant(ticketDTO, seatInformation);
         ticket.setStatus("pending");
-        ticketAirPlantRepo.save(ticket);
+        return ticketAirPlantRepo.save(ticket);
     }
-
-
 }
+
+

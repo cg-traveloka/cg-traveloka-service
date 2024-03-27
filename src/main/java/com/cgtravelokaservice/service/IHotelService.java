@@ -1,10 +1,12 @@
 package com.cgtravelokaservice.service;
 
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
+import com.cgtravelokaservice.dto.response.HotelRegisterResponse;
 import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +18,8 @@ public interface IHotelService {
 
     Slice<Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable);
 
-    Double calculateAverageRatingPoints(Integer hotelId);
-
     Slice<Hotel> getHotels(Pageable pageable);
 
     HotelsResponseDTO search(HotelSearchDTO hotelSearchDTO);
+    List<HotelRegisterResponse> findAllByPartner_Id(Integer partnerId);
 }

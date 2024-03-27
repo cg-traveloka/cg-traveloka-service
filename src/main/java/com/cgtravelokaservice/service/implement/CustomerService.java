@@ -28,4 +28,9 @@ public class CustomerService implements ICustomerService {
             return false;
         }
     }
+
+    @Override
+    public Customer getCustomerProfile(Integer id) {
+        return customerRepo.getReferenceById(id);
+    }
 }
