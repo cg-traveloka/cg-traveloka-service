@@ -1,5 +1,6 @@
 package com.cgtravelokaservice.repo;
 
+import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

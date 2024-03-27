@@ -13,13 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TicketAirPlaneService implements ITicketAirPlaneService {
     @Autowired
-    private SeatInformationRepo
-            seatInformationRepo;
-
+    private SeatInformationRepo seatInformationRepo;
 
     @Autowired
     private IConvertUtil convertUtil;
-
 
     @Autowired
     private TicketAirPlaneRepo ticketAirPlantRepo;
