@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CustomerController {
 
-    private final ICustomerService
-            customerService;
+    private final ICustomerService customerService;
 
     private final ConvertUtil convertUtil;
 
