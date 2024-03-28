@@ -31,7 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,24 +74,29 @@ public class ComboController {
     ComboRepo comboRepo;
 
     @GetMapping(value = "/api/combo/search")
-    public ResponseEntity<?> searchCombo(@Validated @RequestBody ComboRequestDTO comboRequestDTO) {
-        Integer comboPage = comboRequestDTO.getPage();
+    public ResponseEntity <?> searchCombo(@Validated @RequestBody ComboRequestDTO comboRequestDTO) {
+        Integer comboPage =
+                comboRequestDTO.getPage();
         if (comboPage == null) {
             comboPage = 0;
         }
         try {
-            List<SeatInformation> seats = seatService.findAllAvailableSeatByRequest(comboRequestDTO.getSearchFlightDetailsRequestDTO(), comboPage);
+            List <SeatInformation> seats =
+                    seatService.findAllAvailableSeatByRequest(comboRequestDTO.getSearchFlightDetailsRequestDTO(), comboPage);
             if (seats.isEmpty()) {
                 throw new NoSuchElementException();
             }
-            SeatInformation seat = seats.getFirst();
+            SeatInformation seat = seats.get(0);
             comboRequestDTO.getHotelSearchDTO().setPageNumber(comboPage);
-            HotelsResponseDTO hotelsResponseDTO = hotelService.search(comboRequestDTO.getHotelSearchDTO());
-            List<Hotel> hotels = hotelsResponseDTO.getHotels();
+            HotelsResponseDTO hotelsResponseDTO =
+                    hotelService.search(comboRequestDTO.getHotelSearchDTO());
+            List <Hotel> hotels =
+                    hotelsResponseDTO.getHotels();
             if (hotels.isEmpty()) {
                 throw new NoSuchElementException();
             }
-            ComboResponeDTO comboResponeDTO = convertUtil.convertToComBoResponeDTO(comboPage, seat, hotels);
+            ComboResponeDTO comboResponeDTO =
+                    convertUtil.convertToComBoResponeDTO(comboPage, seat, hotels);
             return ResponseEntity.ok().body(comboResponeDTO);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Không có combo phù hợp");
@@ -95,55 +104,74 @@ public class ComboController {
     }
 
     @GetMapping(value = "/api/combo/flight")
-    public ResponseEntity<?> setFlightInCombo(@RequestBody ComboHasSeatDTO comboHasSeatDTO) {
-        Integer comboPage = comboHasSeatDTO.getPage();
+    public ResponseEntity <?> setFlightInCombo(@RequestBody ComboHasSeatDTO comboHasSeatDTO) {
+        Integer comboPage =
+                comboHasSeatDTO.getPage();
         if (comboPage == null) {
             comboPage = 0;
         }
-        SeatInformation seat = seatInformationRepo.getReferenceById(comboHasSeatDTO.getSeatId());
+        SeatInformation seat =
+                seatInformationRepo.getReferenceById(comboHasSeatDTO.getSeatId());
         comboHasSeatDTO.getHotelSearchDTO().setPageNumber(comboPage);
-        HotelsResponseDTO hotelsResponseDTO = hotelService.search(comboHasSeatDTO.getHotelSearchDTO());
-        List<Hotel> hotels = hotelsResponseDTO.getHotels();
-        ComboResponeDTO comboResponeDTO = convertUtil.convertToComBoResponeDTO(comboPage, seat, hotels);
+        HotelsResponseDTO hotelsResponseDTO =
+                hotelService.search(comboHasSeatDTO.getHotelSearchDTO());
+        List <Hotel> hotels =
+                hotelsResponseDTO.getHotels();
+        ComboResponeDTO comboResponeDTO =
+                convertUtil.convertToComBoResponeDTO(comboPage, seat, hotels);
         return ResponseEntity.ok().body(comboResponeDTO);
     }
 
     @GetMapping(value = "/api/combo")
-    public ResponseEntity<?> previewCombo(@RequestBody ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
+    public ResponseEntity <?> previewCombo(@RequestBody ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
         Combo combo = new Combo();
 //        Tạo room contract
-        RoomContractRegisterFormDTO roomContractRegisterFormDTO = convertUtil.convertToRoomContractRegisterFormDTO(comboHasSeatAndHotelDTO);
-        RoomContract roomContract = convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);
+        RoomContractRegisterFormDTO
+                roomContractRegisterFormDTO =
+                convertUtil.convertToRoomContractRegisterFormDTO(comboHasSeatAndHotelDTO);
+        RoomContract roomContract =
+                convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);
         combo.setRoomContract(roomContract);
 //      Tạo ticket máy bay
-        TicketAirPlaneDTO ticketAirPlaneDTO = new TicketAirPlaneDTO();
+        TicketAirPlaneDTO ticketAirPlaneDTO =
+                new TicketAirPlaneDTO();
         ticketAirPlaneDTO.setSeatInfoId(comboHasSeatAndHotelDTO.getSeatId());
         ticketAirPlaneDTO.setQuantity(comboHasSeatAndHotelDTO.getSeatQuantity());
-        TicketAirPlant ticketAirPlant = convertUtil.convertToTicketAirPlant(ticketAirPlaneDTO, seatInformationRepo.getReferenceById(comboHasSeatAndHotelDTO.getSeatId()));
+        TicketAirPlant ticketAirPlant =
+                convertUtil.convertToTicketAirPlant(ticketAirPlaneDTO, seatInformationRepo.getReferenceById(comboHasSeatAndHotelDTO.getSeatId()));
         combo.setTicketAirPlant(ticketAirPlant);
         combo.setTotalMoney((int) ((roomContract.getTotalMoney() + ticketAirPlant.getTotalMoney()) * 0.9));
         return ResponseEntity.ok().body(combo);
     }
 
     @PostMapping(value = "/api/combo")
-    public ResponseEntity<?> createCombo(@RequestBody ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
+    public ResponseEntity <?> createCombo(@RequestBody ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
         Combo combo = new Combo();
 //        Tạo room contract
-        RoomContractRegisterFormDTO roomContractRegisterFormDTO = convertUtil.convertToRoomContractRegisterFormDTO(comboHasSeatAndHotelDTO);
-        RoomContract roomContract = convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);
+        RoomContractRegisterFormDTO
+                roomContractRegisterFormDTO =
+                convertUtil.convertToRoomContractRegisterFormDTO(comboHasSeatAndHotelDTO);
+        RoomContract roomContract =
+                convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);
         combo.setRoomContract(roomContract);
 //      Tạo ticket máy bay
-        TicketAirPlaneDTO ticketAirPlaneDTO = new TicketAirPlaneDTO();
+        TicketAirPlaneDTO ticketAirPlaneDTO =
+                new TicketAirPlaneDTO();
         ticketAirPlaneDTO.setSeatInfoId(comboHasSeatAndHotelDTO.getSeatId());
         ticketAirPlaneDTO.setQuantity(comboHasSeatAndHotelDTO.getSeatQuantity());
-        TicketAirPlant ticketAirPlant = convertUtil.convertToTicketAirPlant(ticketAirPlaneDTO, seatInformationRepo.getReferenceById(comboHasSeatAndHotelDTO.getSeatId()));
+        TicketAirPlant ticketAirPlant =
+                convertUtil.convertToTicketAirPlant(ticketAirPlaneDTO, seatInformationRepo.getReferenceById(comboHasSeatAndHotelDTO.getSeatId()));
         combo.setTicketAirPlant(ticketAirPlant);
         combo.setTotalMoney((int) ((roomContract.getTotalMoney() + ticketAirPlant.getTotalMoney()) * 0.9));
-        boolean condition1 = roomContractService.isContractValid(roomContract);
-        TicketAirPlant ticketAirPlant1 = ticketAirPlaneService.bookFlightAndGetTicket(ticketAirPlaneDTO);
-        boolean condition2 = ticketAirPlant1 != null;
+        boolean condition1 =
+                roomContractService.isContractValid(roomContract);
+        TicketAirPlant ticketAirPlant1 =
+                ticketAirPlaneService.bookFlightAndGetTicket(ticketAirPlaneDTO);
+        boolean condition2 =
+                ticketAirPlant1 != null;
         if (condition1 && condition2) {
-            RoomContract roomContract1 = roomContractRepo.save(roomContract);
+            RoomContract roomContract1 =
+                    roomContractRepo.save(roomContract);
             combo.setTicketAirPlant(ticketAirPlant1);
             combo.setRoomContract(roomContract1);
             combo = comboService.saveCombo(combo);
@@ -153,37 +181,45 @@ public class ComboController {
     }
 
     @GetMapping(value = "/api/comboPending/customer/{customerId}")
-    public ResponseEntity<?> getCombosPendingByCustomer(@PathVariable Integer customerId) {
-        List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "pending");
+    public ResponseEntity <?> getCombosPendingByCustomer(@PathVariable Integer customerId) {
+        List <Combo> combos =
+                comboRepo.findAllByCustomerIdAndStatus(customerId, "pending");
 
-            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
-            for (Combo combo : combos) {
-                BookingResponseDTO bookingResponse = new BookingResponseDTO();
-                bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
-                bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
-                bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
-                bookingResponse.setTotalMoney(combo.getTotalMoney());
-                bookingResponse.setStatus("Đang chờ thanh toán");
-                bookingResponses.add(bookingResponse);
-            }
-            return ResponseEntity.ok().body(bookingResponses);
+        List <BookingResponseDTO>
+                bookingResponses =
+                new ArrayList <>();
+        for (Combo combo : combos) {
+            BookingResponseDTO bookingResponse =
+                    new BookingResponseDTO();
+            bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
+            bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
+            bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
+            bookingResponse.setTotalMoney(combo.getTotalMoney());
+            bookingResponse.setStatus("Đang chờ thanh toán");
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok().body(bookingResponses);
     }
 
     @GetMapping(value = "/api/comboBooked/customer/{customerId}")
-    public ResponseEntity<?> getCombosBookedByCustomer(@PathVariable Integer customerId) {
-        List<Combo> combos = comboRepo.findAllByCustomerIdAndStatus(customerId, "booked");
+    public ResponseEntity <?> getCombosBookedByCustomer(@PathVariable Integer customerId) {
+        List <Combo> combos =
+                comboRepo.findAllByCustomerIdAndStatus(customerId, "booked");
 
-            List<BookingResponseDTO> bookingResponses = new ArrayList<>();
-            for (Combo combo : combos) {
-                BookingResponseDTO bookingResponse = new BookingResponseDTO();
-                bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
-                bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
-                bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
-                bookingResponse.setTotalMoney(combo.getTotalMoney());
-                bookingResponse.setStatus("Đã thanh toán");
-                bookingResponses.add(bookingResponse);
-            }
-            return ResponseEntity.ok().body(bookingResponses);
+        List <BookingResponseDTO>
+                bookingResponses =
+                new ArrayList <>();
+        for (Combo combo : combos) {
+            BookingResponseDTO bookingResponse =
+                    new BookingResponseDTO();
+            bookingResponse.setHotelName(combo.getRoomContract().getRoom().getHotel().getHotelName());
+            bookingResponse.setFlightNameFromCity(combo.getTicketAirPlant().getFlightInformation().getFromAirPortLocation().getCity().getName());
+            bookingResponse.setFlightNameToCity(combo.getTicketAirPlant().getFlightInformation().getToAirPortLocation().getCity().getName());
+            bookingResponse.setTotalMoney(combo.getTotalMoney());
+            bookingResponse.setStatus("Đã thanh toán");
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok().body(bookingResponses);
 
     }
 
