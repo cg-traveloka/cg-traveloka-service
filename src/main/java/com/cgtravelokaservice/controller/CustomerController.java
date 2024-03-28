@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CustomerController {
 
-    private final ICustomerService
-            customerService;
+    private final ICustomerService customerService;
 
     private final ConvertUtil convertUtil;
 
@@ -22,7 +21,8 @@ public class CustomerController {
     }
 
     @PutMapping("/api/customers/{id}")
-    public ResponseEntity<?> updateProfileCustomer(@RequestBody UpdateProfileCustomerRequestDTO requestDTO) {
+    public ResponseEntity<?> updateProfileCustomer(@RequestBody UpdateProfileCustomerRequestDTO requestDTO,
+                                                   @PathVariable Integer id) {
         if (customerService.updateCustomer(requestDTO)) {
             return ResponseEntity.ok("Cập nhật thông tin khách hàng thành công");
         } else {

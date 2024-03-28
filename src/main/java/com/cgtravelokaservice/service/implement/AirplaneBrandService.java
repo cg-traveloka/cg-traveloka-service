@@ -3,8 +3,10 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.entity.airplant.AirPlantBrand;
 import com.cgtravelokaservice.entity.airplant.FlightInformation;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
 import com.cgtravelokaservice.service.IAirplaneBrandService;
 import com.cgtravelokaservice.service.IImageService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +18,12 @@ import java.util.Objects;
 public class AirplaneBrandService implements IAirplaneBrandService {
     private final IImageService imageService;
 
+    private final AirplaneBrandRepo airplaneBrandRepo;
 
-    public AirplaneBrandService(IImageService imageService) {
+
+    public AirplaneBrandService(IImageService imageService, AirplaneBrandRepo airplaneBrandRepo) {
         this.imageService = imageService;
+        this.airplaneBrandRepo = airplaneBrandRepo;
 
     }
 
@@ -46,6 +51,15 @@ public class AirplaneBrandService implements IAirplaneBrandService {
         });
 
         return result;
+    }
+
+    @Override
+    public List<AirPlantBrand> findAllByNameContainsIgnoreCase(String name) {
+        return airplaneBrandRepo.findAllByNameContainsIgnoreCase(name, Sort.by("name"));
+    }
+
+    public List<AirPlantBrand> findAll() {
+        return airplaneBrandRepo.findAll(Sort.by("name"));
     }
 
 }

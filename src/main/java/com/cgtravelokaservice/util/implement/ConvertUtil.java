@@ -1,18 +1,7 @@
 package com.cgtravelokaservice.util.implement;
 
-import com.cgtravelokaservice.dto.AirplaneBrandDto;
-import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
-import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
-import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
-import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
-import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
-import com.cgtravelokaservice.dto.SeatDetailsDto;
-import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
-import com.cgtravelokaservice.dto.request.ComboHasSeatAndHotelDTO;
-import com.cgtravelokaservice.dto.request.HotelSearchDTO;
-import com.cgtravelokaservice.dto.request.ReviewRequestDTO;
-import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
-import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
+import com.cgtravelokaservice.dto.*;
+import com.cgtravelokaservice.dto.request.*;
 import com.cgtravelokaservice.dto.response.ComboResponeDTO;
 import com.cgtravelokaservice.dto.response.UnitComboResponeDTO;
 import com.cgtravelokaservice.dto.response.UpdateProfileCustomerResponseDTO;
@@ -137,8 +126,7 @@ public class ConvertUtil implements IConvertUtil {
 
 
     public RoomContract roomContractFormDTOToRoomContract(RoomContractRegisterFormDTO roomContractRegisterFormDTO) {
-        RoomContract roomContract =
-                new RoomContract();
+        RoomContract roomContract = new RoomContract();
         System.out.println(roomContractRegisterFormDTO.getRoomId());
         roomContract.setRoom(roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()));
         roomContract.setRoomQuantity(roomContractRegisterFormDTO.getRoomQuantity());

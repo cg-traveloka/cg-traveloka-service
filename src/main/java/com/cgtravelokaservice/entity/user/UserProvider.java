@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class UserProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "provider_id", referencedColumnName = "id")
     private Provider provider;

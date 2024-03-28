@@ -2,6 +2,7 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
+import com.cgtravelokaservice.dto.response.HotelRegisterResponse;
 import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
@@ -202,5 +203,10 @@ public class HotelService implements IHotelService {
         hotelsResponseDTO.setHotels(hotelList);
         hotelsResponseDTO.setPageNumber(hotelSearchDTO.getPageNumber());
         return hotelsResponseDTO;
+    }
+
+    @Override
+    public List<HotelRegisterResponse> findAllByPartner_Id(Integer partnerId) {
+        return hotelRepo.findAllByPartner_Id(partnerId, Sort.by("hotelName"));
     }
 }
