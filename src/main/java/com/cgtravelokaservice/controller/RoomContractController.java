@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +32,9 @@ public class RoomContractController {
     @Autowired
     private RoomContractRepo roomContractRepo;
     @Autowired
-    private CustomerRepo customerRepo;
-    @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private CustomerRepo customerRepo;
 
     @PostMapping(value = "/api/contracts")
     public ResponseEntity <?> makeContract(@RequestBody RoomContractRegisterFormDTO roomContractRegisterFormDTO, @AuthenticationPrincipal UserDetails userDetails) {
@@ -59,10 +58,15 @@ public class RoomContractController {
         }
     }
 
-    @GetMapping(value = "/api/contractPending/customer/{customerId}")
-    public ResponseEntity <?> getContractPendingByCustomer(@PathVariable Integer customerId) {
+
+    @GetMapping(value = "/api/contractPending")
+    public ResponseEntity <?> getContractPendingByCustomer(@AuthenticationPrincipal UserDetails userDetails) {
+        String username =
+                userDetails.getUsername();
+        Customer customer =
+                customerRepo.findByUser(userRepo.findByUsername(username).orElse(null));
         List <RoomContract> roomContracts =
-                roomContractRepo.findAllByCustomerIdAndStatus(customerId, "pending");
+                roomContractRepo.findAllByCustomerIdAndStatus(customer.getId(), "pending");
         List <BookingResponseDTO>
                 bookingResponses =
                 new ArrayList <>();
@@ -76,10 +80,15 @@ public class RoomContractController {
         return ResponseEntity.ok().body(bookingResponses);
     }
 
-    @GetMapping(value = "/api/contractBooked/customer/{customerId}")
-    public ResponseEntity <?> getContractBookedByCustomer(@PathVariable Integer customerId) {
+
+    @GetMapping(value = "/api/contractBooked")
+    public ResponseEntity <?> getContractBookedByCustomer(@AuthenticationPrincipal UserDetails userDetails) {
+        String username =
+                userDetails.getUsername();
+        Customer customer =
+                customerRepo.findByUser(userRepo.findByUsername(username).orElse(null));
         List <RoomContract> roomContracts =
-                roomContractRepo.findAllByCustomerIdAndStatus(customerId, "booked");
+                roomContractRepo.findAllByCustomerIdAndStatus(customer.getId(), "booked");
         List <BookingResponseDTO>
                 bookingResponses =
                 new ArrayList <>();
@@ -88,6 +97,7 @@ public class RoomContractController {
                     new BookingResponseDTO();
             bookingResponse.setHotelName(roomContract.getRoom().getHotel().getHotelName());
             bookingResponse.setStatus("Đã thanh toán");
+            bookingResponse.setContractId(roomContract.getId());
             bookingResponses.add(bookingResponse);
         }
         return ResponseEntity.ok().body(bookingResponses);

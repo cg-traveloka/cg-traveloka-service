@@ -13,12 +13,15 @@ import com.cgtravelokaservice.entity.booking.Combo;
 import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.booking.TicketAirPlant;
 import com.cgtravelokaservice.entity.hotel.Hotel;
+import com.cgtravelokaservice.entity.user.Customer;
 import com.cgtravelokaservice.repo.ComboRepo;
+import com.cgtravelokaservice.repo.CustomerRepo;
 import com.cgtravelokaservice.repo.FlightInformationRepo;
 import com.cgtravelokaservice.repo.RoomContractRepo;
 import com.cgtravelokaservice.repo.RoomRepo;
 import com.cgtravelokaservice.repo.SeatInformationRepo;
 import com.cgtravelokaservice.repo.TicketAirPlaneRepo;
+import com.cgtravelokaservice.repo.UserRepo;
 import com.cgtravelokaservice.service.IComboService;
 import com.cgtravelokaservice.service.IFlightInformationService;
 import com.cgtravelokaservice.service.IFlightService;
@@ -30,9 +33,10 @@ import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,6 +76,10 @@ public class ComboController {
     TicketAirPlaneService ticketAirPlaneService;
     @Autowired
     ComboRepo comboRepo;
+    @Autowired
+    private CustomerRepo customerRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @GetMapping(value = "/api/combo/search")
     public ResponseEntity <?> searchCombo(@Validated @RequestBody ComboRequestDTO comboRequestDTO) {
@@ -180,11 +188,14 @@ public class ComboController {
             return ResponseEntity.ok().body("Đăng ký combo không thành công");
     }
 
-    @GetMapping(value = "/api/comboPending/customer/{customerId}")
-    public ResponseEntity <?> getCombosPendingByCustomer(@PathVariable Integer customerId) {
+    @GetMapping(value = "/api/comboPending")
+    public ResponseEntity <?> getCombosPendingByCustomer(@AuthenticationPrincipal UserDetails userDetails) {
+        String username =
+                userDetails.getUsername();
+        Customer customer =
+                customerRepo.findByUser(userRepo.findByUsername(username).orElse(null));
         List <Combo> combos =
-                comboRepo.findAllByCustomerIdAndStatus(customerId, "pending");
-
+                comboRepo.findAllByCustomerIdAndStatus(customer.getId(), "pending");
         List <BookingResponseDTO>
                 bookingResponses =
                 new ArrayList <>();
@@ -201,11 +212,14 @@ public class ComboController {
         return ResponseEntity.ok().body(bookingResponses);
     }
 
-    @GetMapping(value = "/api/comboBooked/customer/{customerId}")
-    public ResponseEntity <?> getCombosBookedByCustomer(@PathVariable Integer customerId) {
+    @GetMapping(value = "/api/comboBooked")
+    public ResponseEntity <?> getCombosBookedByCustomer(@AuthenticationPrincipal UserDetails userDetails) {
+        String username =
+                userDetails.getUsername();
+        Customer customer =
+                customerRepo.findByUser(userRepo.findByUsername(username).orElse(null));
         List <Combo> combos =
-                comboRepo.findAllByCustomerIdAndStatus(customerId, "booked");
-
+                comboRepo.findAllByCustomerIdAndStatus(customer.getId(), "booked");
         List <BookingResponseDTO>
                 bookingResponses =
                 new ArrayList <>();
@@ -220,7 +234,5 @@ public class ComboController {
             bookingResponses.add(bookingResponse);
         }
         return ResponseEntity.ok().body(bookingResponses);
-
     }
-
 }
