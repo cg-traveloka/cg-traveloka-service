@@ -1,5 +1,6 @@
 package com.cgtravelokaservice.controller;
 
+import com.cgtravelokaservice.dto.AirPortLocationDTO;
 import com.cgtravelokaservice.entity.airplant.AirPortLocation;
 import com.cgtravelokaservice.service.IAirPortLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,17 @@ public class AirPortLocationController {
             return new ResponseEntity <>(locations, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity <>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/api/airport-locations")
+    public ResponseEntity<?> getAllAirPortLocations() {
+        try {
+            List<AirPortLocationDTO> airPortLocations = airPortLocationService.getAllAirPortLocations();
+            return ResponseEntity.ok().body(airPortLocations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
         }
     }
 
