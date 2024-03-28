@@ -24,8 +24,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class User implements Serializable {
-
-
     private String username;
 
     private String password;
