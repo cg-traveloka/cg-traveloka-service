@@ -111,4 +111,11 @@ public class HotelController {
                 hotelService.search(hotelSearchDTO);
         return ResponseEntity.ok().body(hotelsResponseDTO);
     }
+
+    @GetMapping("/api/hotels/partner")
+    public ResponseEntity<?> getHotelByPartner(@RequestParam("partnerId") Integer partnerId) {
+        return ResponseEntity.ok().body(hotelService.findAllByPartner_Id(partnerId));
+
+    }
+
 }

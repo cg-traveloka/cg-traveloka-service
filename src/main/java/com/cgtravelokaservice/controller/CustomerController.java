@@ -32,8 +32,10 @@ public class CustomerController {
         this.userRepo = userRepo;
     }
 
+
     @PutMapping("/api/customers")
     public ResponseEntity<?> updateProfileCustomer(@RequestBody UpdateProfileCustomerRequestDTO requestDTO) {
+
         if (customerService.updateCustomer(requestDTO)) {
             return ResponseEntity.ok("Cập nhật thông tin khách hàng thành công");
         } else {

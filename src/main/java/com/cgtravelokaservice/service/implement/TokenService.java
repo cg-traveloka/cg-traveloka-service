@@ -17,8 +17,6 @@ public class TokenService implements ITokenService {
     @Autowired
     private TokenRepo tokenRepo;
 
-    @Autowired
-    private UserService userService;
 
     public Optional<Token> findByUser(User user) {
         return tokenRepo.findByUser(user);
@@ -58,12 +56,20 @@ public class TokenService implements ITokenService {
     @Override
     public boolean add(Token token) {
         try {
-            tokenRepo.save(token);
+            Optional<Token> tokenOptional = tokenRepo.findByUser(token.getUser());
+            if (tokenOptional.isPresent() & !isCodeValid(token.getUser().getEmail(), token.getCode())) {
+                Token token1 = tokenOptional.get();
+                token1.setCode(token.getCode());
+                tokenRepo.save(token1);
+            } else {
+                tokenRepo.save(token);
+            }
             return true;
         } catch (Exception e) {
             System.out.println("Không thể thêm token: " + e.getMessage());
             return false;
         }
     }
+
 
 }

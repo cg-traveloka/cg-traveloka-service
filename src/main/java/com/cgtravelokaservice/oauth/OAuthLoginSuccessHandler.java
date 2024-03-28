@@ -59,11 +59,12 @@ public class OAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
                 UserProvider userProvider =
                         UserProvider.builder().user(user).provider(providerOptional.get()).build();
                 userProviderRepo.save(userProvider);
-                response.sendRedirect("/login" + "/o2auth/success");
+       response.sendRedirect("/login" + "/o2auth/success");
             }
         } else {
             if (userService.addO2AuthAccount(username, oauth2ClientName)) {
                 response.sendRedirect("/login" + "/o2auth/success");
+
             } else {
                 System.out.println("error oauth2");
                 response.sendRedirect("/login?error");

@@ -62,6 +62,7 @@ public class FlightInformationService implements IFlightInformationService {
         if (request.getSortBy().equalsIgnoreCase("duration")) {
             return searchFlightsSortByDuration(request, pageable);
         }
+
         if (request.getAirPlantBrandId() == null) {
             request.setAirPlantBrandId(airplaneBrandRepo.findAllId());
         }
@@ -113,6 +114,7 @@ public class FlightInformationService implements IFlightInformationService {
         descriptions.add(description2);
         return new SearchFlightResponse(flightDetailsDTO, airPlantSearchDTO, descriptions);
     }
+
 
     private List <FlightInfoSearchDTO> searchFlightsSortByDuration(SearchFlightDetailsRequestDTO request, Pageable pageable) {
         List <FlightInformation> flights =
