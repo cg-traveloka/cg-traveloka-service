@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class RoomBookingRequestDTO {
     private LocalDate startDate;
 
-    private LocalDate endDate;
+    private Integer nights;
 
     private Integer personQuantity;
 

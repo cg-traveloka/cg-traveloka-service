@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class RoomController {
 //    }
 
     @GetMapping(value = "/api/rooms")
-    public ResponseEntity <?> getRooms(@RequestBody RoomBookingRequestDTO request) {
+    public ResponseEntity <?> getRooms(@ModelAttribute RoomBookingRequestDTO request) {
         try {
             if (request.getPersonQuantity() < request.getRoomQuantity()) {
                 return ResponseEntity.badRequest().body("Số lượng người phải lớn hơn hoặc bằng số phòng");
@@ -106,5 +106,12 @@ public class RoomController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping(value = "/api/room/{id}")
+    public ResponseEntity <?> getRoom(@PathVariable("id") Integer id) {
+        Room room =
+                roomRepo.findById(id).orElse(null);
+        return ResponseEntity.ok().body(room);
     }
 }

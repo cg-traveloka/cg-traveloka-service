@@ -80,7 +80,8 @@ public class ConvertUtil implements IConvertUtil {
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
         AirPlantBrand brand = new AirPlantBrand();
         brand.setName(airplaneBrandDto.getName());
-        MultipartFile logoUrl = airplaneBrandDto.getLogoImg();
+        MultipartFile logoUrl =
+                airplaneBrandDto.getLogoImg();
         airplaneBrandService.setLogoUrl(brand, logoUrl);
         return brand;
     }
@@ -129,13 +130,13 @@ public class ConvertUtil implements IConvertUtil {
         System.out.println(roomContractRegisterFormDTO.getRoomId());
         roomContract.setRoom(roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()));
         roomContract.setRoomQuantity(roomContractRegisterFormDTO.getRoomQuantity());
-        roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate());
+        roomContract.setStartDate(roomContractRegisterFormDTO.getStartDate().plusDays(1));
         roomContract.setEndDate(roomContractRegisterFormDTO.getEndDate());
         roomContract.setStatus("pending");
         roomContract.setEnableReview(false);
 //        Tính tiền phòng
         int days =
-                (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays();
+                (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays() - 1;
         Integer totalMoney =
                 days * roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
 
@@ -257,7 +258,9 @@ public class ConvertUtil implements IConvertUtil {
     }
 
     public UpdateProfileCustomerResponseDTO convertToResponseDTO(Customer customer) {
-        UpdateProfileCustomerResponseDTO responseDTO = new UpdateProfileCustomerResponseDTO();
+        UpdateProfileCustomerResponseDTO
+                responseDTO =
+                new UpdateProfileCustomerResponseDTO();
         responseDTO.setCustomerId(customer.getId());
         responseDTO.setName(customer.getName());
         responseDTO.setGender(customer.getGender());

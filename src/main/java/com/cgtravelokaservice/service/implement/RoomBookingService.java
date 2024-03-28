@@ -14,7 +14,8 @@ import java.util.List;
 public class RoomBookingService {
     private final RoomRepo roomRepo;
 
-    private final RoomContractService roomContractService;
+    private final RoomContractService
+            roomContractService;
 
     public RoomBookingService(RoomRepo roomRepo, RoomContractService roomContractService) {
         this.roomRepo = roomRepo;
@@ -23,16 +24,20 @@ public class RoomBookingService {
     }
 
     public RoomBookingResponse displayListRoom(RoomBookingRequestDTO bookingRequest) {
-        List <Room> availableRooms = new ArrayList <>();
-        List <Room> rooms = roomRepo.findByHotelId(bookingRequest.getHotelId());
+        List <Room> availableRooms =
+                new ArrayList <>();
+        List <Room> rooms =
+                roomRepo.findByHotelId(bookingRequest.getHotelId());
 
         for (Room room : rooms) {
-            RoomContract roomContract = new RoomContract();
+            RoomContract roomContract =
+                    new RoomContract();
             roomContract.setStartDate(bookingRequest.getStartDate());
-            roomContract.setEndDate(bookingRequest.getEndDate());
+            roomContract.setEndDate(bookingRequest.getStartDate().plusDays(bookingRequest.getNights()));
             roomContract.setRoomQuantity(bookingRequest.getRoomQuantity());
             roomContract.setRoom(room);
-            int personPerRoom = bookingRequest.getPersonQuantity() / bookingRequest.getRoomQuantity();
+            int personPerRoom =
+                    bookingRequest.getPersonQuantity() / bookingRequest.getRoomQuantity();
             if (roomContractService.isContractValid(roomContract) && personPerRoom <= room.getMaxPerson()) {
                 availableRooms.add(room);
             }
