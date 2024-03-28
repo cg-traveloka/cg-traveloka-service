@@ -17,11 +17,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,18 +40,22 @@ public class HotelController {
     private BookingService bookingService;
 
     @PostMapping(value = "/api/hotels", consumes = "multipart/form-data")
-    public ResponseEntity <?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
+    public ResponseEntity<?> registerHotel(@Validated @ModelAttribute HotelRegisterFormDTO hotelRegisterForm, BindingResult bindingResult) {
 //        Tạo data bảng hotel
-        Hotel hotel = convertUtility.hotelRegisterFormToHotel(hotelRegisterForm);
+        Hotel hotel =
+                convertUtility.hotelRegisterFormToHotel(hotelRegisterForm);
         hotel = hotelRepo.saveAndFlush(hotel);
         hotel.setHotelBookedNumbers(0);
 
 //        Tạo data bảng tiện ích - hotel
-        List <HotelHotelUtility> hotelHotelUtilities = hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
+        List<HotelHotelUtility>
+                hotelHotelUtilities =
+                hotelUtilityService.createUtilitiesForNewHotel(hotel, hotelRegisterForm);
         hotelHotelUtilityRepo.saveAll(hotelHotelUtilities);
 
 //        Tạo data bảng image - hotel
-        List <MultipartFile> images = hotelRegisterForm.getImages();
+        List<MultipartFile> images =
+                hotelRegisterForm.getImages();
         hotelService.setImagesForHotel(hotel, images);
 
         return ResponseEntity.ok().body(hotel);
@@ -77,8 +77,8 @@ public class HotelController {
 //    }
 
     @GetMapping("/api/hotels")
-    public ResponseEntity <?> getHotels(Pageable pageable) {
-        Slice <Hotel> hotels =
+    public ResponseEntity<?> getHotels(Pageable pageable) {
+        Slice<Hotel> hotels =
                 hotelService.getHotels(pageable);
         HotelsResponseDTO hotelsResponseDTO =
                 new HotelsResponseDTO(hotels.getContent(), hotels.getNumber());
@@ -105,10 +105,17 @@ public class HotelController {
 //        return hotelService.calculateAverageRatingPoints(hotelId);
 //    }
 
-    @GetMapping("/api/search/hotels")
-    public ResponseEntity <?> search(@RequestBody HotelSearchDTO hotelSearchDTO) {
+    @PostMapping("/api/search/hotels")
+    public ResponseEntity<?> search(@RequestBody HotelSearchDTO hotelSearchDTO) {
         HotelsResponseDTO hotelsResponseDTO =
                 hotelService.search(hotelSearchDTO);
         return ResponseEntity.ok().body(hotelsResponseDTO);
     }
+
+    @GetMapping("/api/hotels/partner")
+    public ResponseEntity<?> getHotelByPartner(@RequestParam("partnerId") Integer partnerId) {
+        return ResponseEntity.ok().body(hotelService.findAllByPartner_Id(partnerId));
+
+    }
+
 }

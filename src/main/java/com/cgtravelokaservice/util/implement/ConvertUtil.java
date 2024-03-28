@@ -1,18 +1,7 @@
 package com.cgtravelokaservice.util.implement;
 
-import com.cgtravelokaservice.dto.AirplaneBrandDto;
-import com.cgtravelokaservice.dto.FlightInfoSearchDTO;
-import com.cgtravelokaservice.dto.FlightInformationDetailedDto;
-import com.cgtravelokaservice.dto.FlightInformationRegisterDto;
-import com.cgtravelokaservice.dto.HotelRegisterFormDTO;
-import com.cgtravelokaservice.dto.RoomRegisterFormDTO;
-import com.cgtravelokaservice.dto.SeatDetailsDto;
-import com.cgtravelokaservice.dto.TicketAirPlaneDTO;
-import com.cgtravelokaservice.dto.request.ComboHasSeatAndHotelDTO;
-import com.cgtravelokaservice.dto.request.HotelSearchDTO;
-import com.cgtravelokaservice.dto.request.ReviewRequestDTO;
-import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
-import com.cgtravelokaservice.dto.request.UpdateProfileCustomerRequestDTO;
+import com.cgtravelokaservice.dto.*;
+import com.cgtravelokaservice.dto.request.*;
 import com.cgtravelokaservice.dto.response.ComboResponeDTO;
 import com.cgtravelokaservice.dto.response.UnitComboResponeDTO;
 import com.cgtravelokaservice.dto.response.UpdateProfileCustomerResponseDTO;
@@ -25,7 +14,17 @@ import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelReview;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.entity.user.Customer;
-import com.cgtravelokaservice.repo.*;
+import com.cgtravelokaservice.repo.AirplaneBrandRepo;
+import com.cgtravelokaservice.repo.AirportLocationRepo;
+import com.cgtravelokaservice.repo.BedTypeRepo;
+import com.cgtravelokaservice.repo.CityRepo;
+import com.cgtravelokaservice.repo.CustomerRepo;
+import com.cgtravelokaservice.repo.HotelImgRepo;
+import com.cgtravelokaservice.repo.HotelRepo;
+import com.cgtravelokaservice.repo.RoomContractRepo;
+import com.cgtravelokaservice.repo.RoomRepo;
+import com.cgtravelokaservice.repo.RoomTypeRepo;
+import com.cgtravelokaservice.repo.SeatInformationRepo;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.service.implement.AirplaneBrandService;
 import com.cgtravelokaservice.util.IConvertUtil;
@@ -44,7 +43,8 @@ import java.util.stream.Collectors;
 @Service
 public class ConvertUtil implements IConvertUtil {
     @Autowired
-    private AirplaneBrandService airplaneBrandService;
+    private AirplaneBrandService
+            airplaneBrandService;
     @Autowired
     CityRepo cityRepo;
     @Autowired
@@ -58,12 +58,14 @@ public class ConvertUtil implements IConvertUtil {
     @Autowired
     BedTypeRepo bedTypeRepo;
     @Autowired
-    private AirportLocationRepo airportLocationRepo;
+    private AirportLocationRepo
+            airportLocationRepo;
     @Autowired
     private AirplaneBrandRepo airplaneBrandRepo;
 
     @Autowired
-    private SeatInformationRepo seatInformationRepo;
+    private SeatInformationRepo
+            seatInformationRepo;
     @Autowired
     private RoomRepo roomRepo;
     @Autowired
@@ -71,7 +73,8 @@ public class ConvertUtil implements IConvertUtil {
     @Autowired
     private RoomContractRepo roomContractRepo;
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper =
+            new ModelMapper();
 
     @Override
     public AirPlantBrand airplaneBrandDtoToAirplaneBrand(AirplaneBrandDto airplaneBrandDto) {
@@ -110,7 +113,8 @@ public class ConvertUtil implements IConvertUtil {
 
     @Override
     public FlightInformation convertToNewFlightInformation(FlightInformationRegisterDto flightInformationRegisterDto) {
-        FlightInformation flightInformation = new FlightInformation();
+        FlightInformation flightInformation =
+                new FlightInformation();
         flightInformation.setStartTime(flightInformationRegisterDto.getStartTime());
         flightInformation.setEndTime(flightInformationRegisterDto.getEndTime());
         flightInformation.setFromAirPortLocation(airportLocationRepo.getReferenceById(flightInformationRegisterDto.getFromAirportLocationId()));
@@ -130,8 +134,10 @@ public class ConvertUtil implements IConvertUtil {
         roomContract.setStatus("pending");
         roomContract.setEnableReview(false);
 //        Tính tiền phòng
-        int days = (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays();
-        Integer totalMoney = days * roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
+        int days =
+                (int) Duration.between(roomContractRegisterFormDTO.getStartDate().atStartOfDay(), roomContractRegisterFormDTO.getEndDate().atStartOfDay()).toDays();
+        Integer totalMoney =
+                days * roomContractRegisterFormDTO.getRoomQuantity() * roomRepo.getReferenceById(roomContractRegisterFormDTO.getRoomId()).getUnitPriceSell();
 
         roomContract.setTotalMoney(totalMoney);
         return roomContract;
@@ -140,11 +146,15 @@ public class ConvertUtil implements IConvertUtil {
     @Override
 
     public FlightInfoSearchDTO convertToFlightDetailsDTO(FlightInformation flightInfo, Integer seatTypeId) {
-        FlightInfoSearchDTO dto = modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
-        Optional<SeatInformation> optionalSeatInfo = seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
+        FlightInfoSearchDTO dto =
+                modelMapper.map(flightInfo, FlightInfoSearchDTO.class);
+        Optional <SeatInformation>
+                optionalSeatInfo =
+                seatInformationRepo.findByFlightInformationIdAndSeatTypeId(flightInfo.getId(), seatTypeId);
 
         if (optionalSeatInfo.isPresent()) {
-            SeatInformation seatInfo = optionalSeatInfo.get();
+            SeatInformation seatInfo =
+                    optionalSeatInfo.get();
             dto.setSeatQuantity(seatInfo.getQuantity());
             dto.setSeatTypeName(seatInfo.getSeatType().getName());
             dto.setUnitPrice(seatInfo.getUnitPrice());
@@ -155,31 +165,36 @@ public class ConvertUtil implements IConvertUtil {
 
     @Override
     public FlightInformationDetailedDto convertToDetailedDto(FlightInformation flightInformation) {
-        FlightInformationDetailedDto detailedDto = modelMapper.map(flightInformation, FlightInformationDetailedDto.class);
+        FlightInformationDetailedDto detailedDto =
+                modelMapper.map(flightInformation, FlightInformationDetailedDto.class);
         detailedDto.setFlightDuration(Duration.between(flightInformation.getStartTime(), flightInformation.getEndTime()));
         detailedDto.setSeatDetails(convertSeatInformationToDto(flightInformation.getId()));
         return detailedDto;
     }
 
-    public List<SeatDetailsDto> convertSeatInformationToDto(Integer flightId) {
-        List<SeatInformation> seatInformationList = seatInformationRepo.findByFlightInformationId(flightId);
+    public List <SeatDetailsDto> convertSeatInformationToDto(Integer flightId) {
+        List <SeatInformation>
+                seatInformationList =
+                seatInformationRepo.findByFlightInformationId(flightId);
         return seatInformationList.stream().map(seatInformation -> modelMapper.map(seatInformation, SeatDetailsDto.class)).collect(Collectors.toList());
     }
 
 
     public RoomContract convertToRoomContract(Room room, HotelSearchDTO hotelSearchDTO) {
-        RoomContract roomContract = new RoomContract();
+        RoomContract roomContract =
+                new RoomContract();
         roomContract.setRoom(room);
-        roomContract.setRoomQuantity(hotelSearchDTO.getQuantity());
+        roomContract.setRoomQuantity(hotelSearchDTO.getRoomQuantity());
         roomContract.setStartDate(hotelSearchDTO.getStartDate());
-        roomContract.setEndDate(hotelSearchDTO.getEndDate());
+        roomContract.setEndDate(hotelSearchDTO.getStartDate().plusDays(hotelSearchDTO.getNights()));
         return roomContract;
 
     }
 
     @Override
     public TicketAirPlant convertToTicketAirPlant(TicketAirPlaneDTO ticketDTO, SeatInformation seatInformation) {
-        TicketAirPlant ticket = new TicketAirPlant();
+        TicketAirPlant ticket =
+                new TicketAirPlant();
         ticket.setFlightInformation(seatInformation.getFlightInformation());
         ticket.setSeatType(seatInformation.getSeatType());
         ticket.setQuantity(ticketDTO.getQuantity());
@@ -188,27 +203,34 @@ public class ConvertUtil implements IConvertUtil {
     }
 
     public Customer convertDTOToCustomer(UpdateProfileCustomerRequestDTO requestDTO) {
-        Customer customer = customerRepo.getReferenceById(requestDTO.getCustomerId());
+        Customer customer =
+                customerRepo.getReferenceById(requestDTO.getCustomerId());
         customer.setName(requestDTO.getName());
         customer.setGender(requestDTO.getGender());
-        LocalDate dateOfBirth = LocalDate.of(requestDTO.getYear(), requestDTO.getMonth(), requestDTO.getDate());
+        LocalDate dateOfBirth =
+                LocalDate.of(requestDTO.getYear(), requestDTO.getMonth(), requestDTO.getDate());
         customer.setDateOfBirth(dateOfBirth);
         return customer;
     }
 
     public HotelReview convertDTOToHotelReview(ReviewRequestDTO reviewRequestDTO) {
-        HotelReview hotelReview = new HotelReview();
+        HotelReview hotelReview =
+                new HotelReview();
         hotelReview.setRoomContract(roomContractRepo.getReferenceById(reviewRequestDTO.getContractId()));
-        double ratingPoint = reviewRequestDTO.getRatingPoint();
+        double ratingPoint =
+                reviewRequestDTO.getRatingPoint();
         hotelReview.setRatingPoint(Math.round(ratingPoint * 10) / 10.0);
         hotelReview.setComment(reviewRequestDTO.getComment());
-        RoomContract roomContract = roomContractRepo.getReferenceById(reviewRequestDTO.getContractId());
+        RoomContract roomContract =
+                roomContractRepo.getReferenceById(reviewRequestDTO.getContractId());
         hotelReview.setRoomContract(roomContract);
         return hotelReview;
     }
 
     public RoomContractRegisterFormDTO convertToRoomContractRegisterFormDTO(ComboHasSeatAndHotelDTO comboHasSeatAndHotelDTO) {
-        RoomContractRegisterFormDTO roomContractRegisterFormDTO = new RoomContractRegisterFormDTO();
+        RoomContractRegisterFormDTO
+                roomContractRegisterFormDTO =
+                new RoomContractRegisterFormDTO();
         roomContractRegisterFormDTO.setRoomId(comboHasSeatAndHotelDTO.getRoomId());
         roomContractRegisterFormDTO.setRoomQuantity(comboHasSeatAndHotelDTO.getRoomQuantity());
         roomContractRegisterFormDTO.setStartDate(comboHasSeatAndHotelDTO.getStartDate());
@@ -216,11 +238,16 @@ public class ConvertUtil implements IConvertUtil {
         return roomContractRegisterFormDTO;
     }
 
-    public ComboResponeDTO convertToComBoResponeDTO(Integer comboPage, SeatInformation seat, List<Hotel> hotels) {
-        ComboResponeDTO comboResponeDTO = new ComboResponeDTO();
-        List<UnitComboResponeDTO> unitComboResponeDTOs = new ArrayList<>();
+    public ComboResponeDTO convertToComBoResponeDTO(Integer comboPage, SeatInformation seat, List <Hotel> hotels) {
+        ComboResponeDTO comboResponeDTO =
+                new ComboResponeDTO();
+        List <UnitComboResponeDTO>
+                unitComboResponeDTOs =
+                new ArrayList <>();
         for (Hotel hotel : hotels) {
-            UnitComboResponeDTO unitComboResponDTO = new UnitComboResponeDTO();
+            UnitComboResponeDTO
+                    unitComboResponDTO =
+                    new UnitComboResponeDTO();
             unitComboResponDTO.setSeat(seat);
             unitComboResponDTO.setHotel(hotel);
             unitComboResponDTO.setOriginPrice(seat.getUnitPrice() + hotel.getMinSellPrice());

@@ -31,18 +31,15 @@ import java.util.NoSuchElementException;
 
 @RestController
 public class FlightInformationController {
-    private final IFlightInformationService
-            flightInformationService;
+    private final IFlightInformationService flightInformationService;
     private final SeatService seatService;
     private final ConvertUtil convertUtil;
-
     private final IFlightService flightService;
 
     @Autowired
 
     public FlightInformationController(IFlightInformationService flightInformationService, SeatService seatService, ConvertUtil convertUtil, IFlightService flightService) {
-        this.flightInformationService =
-                flightInformationService;
+        this.flightInformationService = flightInformationService;
         this.seatService = seatService;
         this.convertUtil = convertUtil;
         this.flightService = flightService;
@@ -50,11 +47,10 @@ public class FlightInformationController {
 
     @PostMapping(value = "/api/flights", consumes = "application/json")
 
-    public ResponseEntity <?> createFlightAndSeats(@Validated @RequestBody FlightInformationRegisterDto flightInformationRegisterDto) {
+    public ResponseEntity<?> createFlightAndSeats(@Validated @RequestBody FlightInformationRegisterDto flightInformationRegisterDto) {
         try {
             // Tạo thông tin chuyến bay
-            FlightInformation flightInformation =
-                    convertUtil.convertToNewFlightInformation(flightInformationRegisterDto);
+            FlightInformation flightInformation = convertUtil.convertToNewFlightInformation(flightInformationRegisterDto);
             // Lưu thông tin chuyến bay vào cơ sở dữ liệu
             flightInformationService.saveFlightInformation(flightInformation);
 
@@ -69,13 +65,13 @@ public class FlightInformationController {
 
 
     @GetMapping("/api/flights")
-    public ResponseEntity <?> getAllFlightsSortedByStartDate(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<?> getAllFlightsSortedByStartDate(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         try {
             // Kiểm tra lỗi truyền tham số
-            Slice <FlightInformationDetailedDto>
+            Slice<FlightInformationDetailedDto>
                     flights =
                     flightService.getAllFlightsSortedByStartDate(page, size);
-            return new ResponseEntity <>(flights, HttpStatus.OK);
+            return new ResponseEntity<>(flights, HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi truy xuất thông tin chuyến " + "bay", e);
         }
@@ -84,6 +80,7 @@ public class FlightInformationController {
 
     @PostMapping("/api/flights/search/filter")
     public ResponseEntity <?> searchFlights(@RequestBody  SearchFlightDetailsRequestDTO request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
 
         try {
             if (request.getPage() != 0) {
@@ -100,6 +97,7 @@ public class FlightInformationController {
             return ResponseEntity.ok().body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
         }
     }
+
 
 
     @PostMapping("/api/flights/search")

@@ -89,12 +89,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource())).authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
 
-                        .requestMatchers("/css/**", "/js/**", "/img/**").permitAll().requestMatchers("/login", "/login/**", "/register/**", "/login/oauth2/**", "/api/**","/forgetPass/**").permitAll().requestMatchers("/logout").permitAll().requestMatchers("/register", "/oauth2/**").permitAll().requestMatchers("/error/**").permitAll()
+
+                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll().requestMatchers("/login", "/login/**", "/register/**", "/login/oauth2/**", "/forgetPass/**").permitAll().requestMatchers("/logout").permitAll().requestMatchers("/register", "/oauth2/**").permitAll().requestMatchers("/error/**").permitAll()
 //                                        .requestMatchers("/api/users/**").hasRole("ADMIN")
 //                                        .requestMatchers("/api/hotels/**").hasRole("PARTNER")
-//                                        .anyRequest().authenticated()
-                                        .anyRequest().permitAll()
-        ).oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService)).failureHandler(oAuth2AuthenticationFailureHandler)).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).logout(logout -> logout.deleteCookies("remove").invalidateHttpSession(false).logoutUrl("/logout").clearAuthentication(true)).rememberMe(remember -> remember.userDetailsService(userDetailsService()).tokenRepository(persistentTokenRepository()).tokenValiditySeconds(24 * 60 * 60)).userDetailsService(userDetailsService()).httpBasic(basic -> basic.authenticationEntryPoint(restServicesEntryPoint())).exceptionHandling(Customizer.withDefaults());
+//                        .anyRequest().authenticated()
+                .anyRequest().permitAll()).oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(oAut2UserService)).failureHandler(oAuth2AuthenticationFailureHandler)).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).logout(logout -> logout.deleteCookies("remove").invalidateHttpSession(false).logoutUrl("/logout").clearAuthentication(true)).rememberMe(remember -> remember.userDetailsService(userDetailsService()).tokenRepository(persistentTokenRepository()).tokenValiditySeconds(24 * 60 * 60)).userDetailsService(userDetailsService()).httpBasic(basic -> basic.authenticationEntryPoint(restServicesEntryPoint())).exceptionHandling(Customizer.withDefaults());
 
         return http.build();
     }

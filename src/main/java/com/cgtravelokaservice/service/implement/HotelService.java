@@ -2,11 +2,11 @@ package com.cgtravelokaservice.service.implement;
 
 import com.cgtravelokaservice.dto.request.HotelSearchDTO;
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
+import com.cgtravelokaservice.dto.response.HotelRegisterResponse;
 import com.cgtravelokaservice.dto.response.HotelsResponseDTO;
 import com.cgtravelokaservice.entity.booking.RoomContract;
 import com.cgtravelokaservice.entity.hotel.Hotel;
 import com.cgtravelokaservice.entity.hotel.HotelImg;
-import com.cgtravelokaservice.entity.hotel.HotelReview;
 import com.cgtravelokaservice.entity.room.Room;
 import com.cgtravelokaservice.repo.HotelImgRepo;
 import com.cgtravelokaservice.repo.HotelRepo;
@@ -16,7 +16,11 @@ import com.cgtravelokaservice.service.IHotelService;
 import com.cgtravelokaservice.service.IImageService;
 import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +41,8 @@ public class HotelService implements IHotelService {
     @Autowired
     private RoomRepo roomRepo;
     @Autowired
-    private RoomContractService roomContractService;
+    private RoomContractService
+            roomContractService;
 
     //    public Hotel convertToNewHotel(HotelRegisterForm hotelRegisterForm) {
 //        Hotel hotel = new Hotel();
@@ -52,12 +57,15 @@ public class HotelService implements IHotelService {
     @Autowired
     IConvertUtil convertUtil;
 
-    public boolean setImagesForHotel(Hotel hotel, List<MultipartFile> files) {
-        List<HotelImg> hotelImgs = new ArrayList<>();
+    public boolean setImagesForHotel(Hotel hotel, List <MultipartFile> files) {
+        List <HotelImg> hotelImgs =
+                new ArrayList <>();
         for (MultipartFile file : files) {
             try {
-                String imageUrl = imageService.save(file);
-                HotelImg hotelImg = new HotelImg();
+                String imageUrl =
+                        imageService.save(file);
+                HotelImg hotelImg =
+                        new HotelImg();
                 hotelImg.setHotel(hotel);
                 hotelImg.setUrl(imageUrl);
                 hotelImgs.add(hotelImg);
@@ -73,20 +81,24 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public Slice<Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable) {
+    public Slice <Hotel> getHotelsSortedByHotelBookedNumbers(Pageable pageable) {
         return hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
     }
 
     @Override
-    public Slice<Hotel> getHotels(Pageable pageable) {
-        Slice<Hotel> allHotels = hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
-        List<Hotel> availableHotels = new ArrayList<>();
+    public Slice <Hotel> getHotels(Pageable pageable) {
+        Slice <Hotel> allHotels =
+                hotelRepo.findAllByOrderByHotelBookedNumbersDesc(pageable);
+        List <Hotel> availableHotels =
+                new ArrayList <>();
 
         for (Hotel hotel : allHotels) {
-            List<Room> rooms = roomRepo.findByHotelId(hotel.getId());
+            List <Room> rooms =
+                    roomRepo.findByHotelId(hotel.getId());
 
             for (Room room : rooms) {
-                RoomContract roomContract = new RoomContract();
+                RoomContract roomContract =
+                        new RoomContract();
                 roomContract.setRoom(room);
                 roomContract.setStartDate(LocalDate.now());
                 roomContract.setEndDate(LocalDate.now().plusDays(1));
@@ -97,14 +109,16 @@ public class HotelService implements IHotelService {
                 }
             }
         }
-        return new SliceImpl<>(availableHotels, pageable, allHotels.hasNext());
+        return new SliceImpl <>(availableHotels, pageable, allHotels.hasNext());
     }
 
     public Room findSuitableRoom(RoomContractRegisterFormDTO roomRegister) {
-        Room room = roomRepo.findById(roomRegister.getRoomId()).orElse(null);
+        Room room =
+                roomRepo.findById(roomRegister.getRoomId()).orElse(null);
 
         if (room != null) {
-            RoomContract roomContract = new RoomContract();
+            RoomContract roomContract =
+                    new RoomContract();
             roomContract.setRoom(room);
             roomContract.setStartDate(roomRegister.getStartDate());
             roomContract.setEndDate(roomRegister.getEndDate());
@@ -121,16 +135,23 @@ public class HotelService implements IHotelService {
     public HotelsResponseDTO search(HotelSearchDTO hotelSearchDTO) {
         Integer cityId =
                 hotelSearchDTO.getCityId();
-        List<Integer> hotelStars =
-                hotelSearchDTO.getHotelStars();
+        List <Integer> hotelStars =
+                hotelSearchDTO.getStars();
+        if (hotelStars.isEmpty()) {
+            hotelStars.add(1);
+            hotelStars.add(2);
+            hotelStars.add(3);
+            hotelStars.add(4);
+            hotelStars.add(5);
+        }
         Integer personQuantity =
-                hotelSearchDTO.getPersonQuantity() / hotelSearchDTO.getQuantity();
+                hotelSearchDTO.getPersonQuantity() / hotelSearchDTO.getRoomQuantity();
         Integer minPrice =
-                hotelSearchDTO.getMinPrice();
+                hotelSearchDTO.getMoneyFrom();
         Integer maxPrice =
-                hotelSearchDTO.getMaxPrice();
+                hotelSearchDTO.getMoneyTo();
         Integer quantity =
-                hotelSearchDTO.getQuantity();
+                hotelSearchDTO.getRoomQuantity();
         Sort sort =
                 Sort.by("hotel" + ".hotelBookedNumbers").descending();
         switch (hotelSearchDTO.getSort()) {
@@ -153,13 +174,13 @@ public class HotelService implements IHotelService {
         }
         Pageable pageable =
                 PageRequest.of(hotelSearchDTO.getPageNumber(), 5, sort);
-        Slice<Hotel> hotels =
+        Slice <Hotel> hotels =
                 hotelRepo.search(cityId, hotelStars, personQuantity, minPrice, maxPrice, quantity, pageable);
-        List<Hotel> hotelList =
-                new ArrayList<>(hotels.getContent());
+        List <Hotel> hotelList =
+                new ArrayList <>(hotels.getContent());
         for (int j =
              0; j < hotelList.size(); j++) {
-            List<Room> rooms =
+            List <Room> rooms =
                     roomRepo.findAllByHotel(hotelList.get(j));
             for (int i =
                  0; i < rooms.size(); i++) {
@@ -167,7 +188,7 @@ public class HotelService implements IHotelService {
                         convertUtil.convertToRoomContract(rooms.get(i), hotelSearchDTO);
                 boolean isValid =
                         roomContractService.isContractValid(roomContract);
-                if (!isValid) {
+                if (! isValid) {
                     rooms.remove(rooms.get(i));
                     i--;
                 }
@@ -182,5 +203,10 @@ public class HotelService implements IHotelService {
         hotelsResponseDTO.setHotels(hotelList);
         hotelsResponseDTO.setPageNumber(hotelSearchDTO.getPageNumber());
         return hotelsResponseDTO;
+    }
+
+    @Override
+    public List<HotelRegisterResponse> findAllByPartner_Id(Integer partnerId) {
+        return hotelRepo.findAllByPartner_Id(partnerId, Sort.by("hotelName"));
     }
 }
