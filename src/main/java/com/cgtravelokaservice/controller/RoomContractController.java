@@ -2,11 +2,16 @@ package com.cgtravelokaservice.controller;
 
 import com.cgtravelokaservice.dto.request.RoomContractRegisterFormDTO;
 import com.cgtravelokaservice.entity.booking.RoomContract;
+import com.cgtravelokaservice.entity.user.Customer;
+import com.cgtravelokaservice.repo.CustomerRepo;
 import com.cgtravelokaservice.repo.RoomContractRepo;
+import com.cgtravelokaservice.repo.UserRepo;
 import com.cgtravelokaservice.service.IRoomContractService;
 import com.cgtravelokaservice.util.IConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +25,18 @@ public class RoomContractController {
             roomContractService;
     @Autowired
     private RoomContractRepo roomContractRepo;
+    @Autowired
+    private CustomerRepo customerRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @PostMapping(value = "/api/contracts")
-    public ResponseEntity <?> makeContract(@RequestBody RoomContractRegisterFormDTO roomContractRegisterFormDTO) {
+    public ResponseEntity <?> makeContract(@RequestBody RoomContractRegisterFormDTO roomContractRegisterFormDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        Customer customer =
+                customerRepo.findByUserUsername(userDetails.getUsername());
         RoomContract roomContract =
                 convertUtil.roomContractFormDTOToRoomContract(roomContractRegisterFormDTO);
+        roomContract.setCustomer(customer);
         boolean isValid =
                 roomContractService.isContractValid(roomContract);
         if (isValid) {
