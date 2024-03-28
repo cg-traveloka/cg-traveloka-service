@@ -112,6 +112,7 @@ public class SeatService implements ISeatService {
         return result;
     }
 
+
     public List <SeatInformation> findAllAvailableSeatByRequest(SearchFlightDetailsRequestDTO flightRequest, Integer page) {
         Sort sort =
                 Sort.by("flightInformation" + ".startTime").ascending();

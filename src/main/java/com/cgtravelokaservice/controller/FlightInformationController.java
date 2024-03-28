@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -77,11 +78,10 @@ public class FlightInformationController {
     }
 
 
-    @GetMapping("/api/flights/search/filter")
-    public ResponseEntity<?> searchFlights(@Validated @RequestBody SearchFlightDetailsRequestDTO request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Request không hợp lệ.");
-        }
+    @PostMapping("/api/flights/search/filter")
+    public ResponseEntity <?> searchFlights(@RequestBody  SearchFlightDetailsRequestDTO request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+
         try {
             if (request.getPage() != 0) {
                 page = request.getPage();
@@ -92,27 +92,26 @@ public class FlightInformationController {
                     new ListFlightInformationsDTO();
             list.setFlights(flightInformationService.searchFlights(request, pageable));
             list.setPage(request.getPage());
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            return ResponseEntity.ok().body(list);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
+            return ResponseEntity.ok().body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
         }
     }
 
 
-    @GetMapping("/api/flights/search")
-    public ResponseEntity<?> searchGeneral(@Validated @RequestBody SearchFlightDetailsRequestDTO requestDTO, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body("Request không hợp lệ.");
-        }
+
+    @PostMapping("/api/flights/search")
+    public ResponseEntity <?> searchGeneral(@RequestBody  SearchFlightDetailsRequestDTO requestDTO) {
+
         try {
             requestDTO.setAirPlantBrandId(null);
             SearchFlightResponse response =
                     flightInformationService.loadSearchFlightResponse(requestDTO);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok().body(response);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Không có chuyến bay phù hợp.");
+            return ResponseEntity.ok().body("Không có chuyến bay phù hợp.");
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
+            return ResponseEntity.ok().body("Đã xảy ra lỗi khi tìm kiếm chuyến " + "bay.");
 
         }
     }
