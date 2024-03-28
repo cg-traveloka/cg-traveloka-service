@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingResponseDTO {
+    private  Integer contractId;
+
     private String hotelName;
 
     private String flightNameFromCity;

@@ -214,15 +214,12 @@ public class ConvertUtil implements IConvertUtil {
     }
 
     public HotelReview convertDTOToHotelReview(ReviewRequestDTO reviewRequestDTO) {
-        HotelReview hotelReview =
-                new HotelReview();
+        HotelReview hotelReview = new HotelReview();
         hotelReview.setRoomContract(roomContractRepo.getReferenceById(reviewRequestDTO.getContractId()));
-        double ratingPoint =
-                reviewRequestDTO.getRatingPoint();
+        Double ratingPoint = reviewRequestDTO.getRatingPoint();
         hotelReview.setRatingPoint(Math.round(ratingPoint * 10) / 10.0);
         hotelReview.setComment(reviewRequestDTO.getComment());
-        RoomContract roomContract =
-                roomContractRepo.getReferenceById(reviewRequestDTO.getContractId());
+        RoomContract roomContract = roomContractRepo.getReferenceById(reviewRequestDTO.getContractId());
         hotelReview.setRoomContract(roomContract);
         return hotelReview;
     }
